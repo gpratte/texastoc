@@ -1,0 +1,11 @@
+
+apt-get update
+apt-get upgrade
+
+apt-get install mysql-server-5.5
+	root / h#l
+apt-get install tomcat7
+
+On a Linux Debian-based (so Ubuntu included) you have also to go \
+to /etc/defaults/tomcat7, uncomment the #AUTHBIND=no line and 
+set its value to 'yes', in order to let the server bind on a privileged port.

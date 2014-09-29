@@ -1,0 +1,21 @@
+
+#parse("toc_global.vm")
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/toc/resources/css/toc.css" />
+<link rel="stylesheet" type="text/css" href="/toc/resources/css/smoothness/jquery-ui-1.10.4.custom.css">
+</head>
+#if ($request.getSession().getAttribute('font'))
+	#set ($fontSize = 25 * $request.getSession().getAttribute('font'))
+	#set ($fontSize = 100 + $fontSize)
+	<body style="font-size:$fontSize%;">
+#else
+	<body>
+#end
+<div id="head">
+#if ($request.getSession().getAttribute('userLoggedIn'))
+	<a align="right" href="/toc/logout">Logout</a>
+	<br/>
+#end
+</div>

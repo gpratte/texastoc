@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>What do you want to do</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page" id="mobileseasons">
+	<script src="/toc/resources/js/mobileseasons.js"></script>
+
+	<div data-role="header">
+		<input type="button" value="<-- Back"
+			onClick="window.location.href='/toc'">
+	</div>
+
+	<div role="main" class="ui-content">
+		<ul data-role="listview">
+		#foreach($season in $seasons)
+			<li>
+			<a href="/toc/mobile/season/summary/$season.id">$season.startDateText - $season.endDateText</a>
+			</li>
+		#end
+		</ul>
+	</div>
+
+	<div data-role="footer">
+	</div>
+
+</div>
+
+</body>
+</html>

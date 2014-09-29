@@ -1,0 +1,66 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a> -> 
+	<a href="/toc/admin/seasons">Seasons</a> -> 
+	Season ->
+	<a href="/toc/admin/game/$game.id">Game</a>
+
+	<form name="input" action="/toc/admin/game/randomize/$game.id" method="post">
+	<br/>
+	<br/>
+	Number of tables: 
+	<select id="tables" name="tables">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+		<option value="7">7</option>
+		<option value="8">8</option>
+		<option value="9">9</option>
+		<option value="10">10</option>
+	<select>
+	
+	<br/>
+	<br/>
+	Players per table: 
+	<select id="pertable" name="pertable">
+		<option value="1">1</option>
+		<option value="2">2</option>
+		<option value="3">3</option>
+		<option value="4">4</option>
+		<option value="5">5</option>
+		<option value="6">6</option>
+		<option value="7">7</option>
+		<option value="8">8</option>
+		<option value="9">9</option>
+		<option value="10">10</option>
+	<select>
+	
+	#if ($game.players && $game.players.size() > 0)
+		<br/>
+		<br/>
+		The following players have not bought in. Select which one should be seated.
+		#foreach ($player in $game.players)
+			#if (! $player.buyIn)
+				<br/>
+				<input type="checkbox" name="players" 
+					value="$player.id" />$!player.player.firstName $!player.player.lastName
+			#end
+		#end
+	#end
+	<br/>
+	<br/>
+	<!--
+	<input id="submit" type="submit" value="Randomize">
+	-->
+
+	</form>
+</div>
+
+#parse("footer.vm")

@@ -1,0 +1,59 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+<script src="/toc/resources/js/emailtext.js"></script>
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a>
+	<br>
+	<br>
+	<fieldset>
+	<legend>Player</legend>
+		<form name="input" action="/toc/admin/emailtext" method="post">
+		<input type="hidden" id="activity" name="activity" value="">
+			<select id="playerId" name="playerId">
+				<option value="0">&nbsp;</option>
+				#foreach($player in $players)
+					<option value="$player.id">$player.fullName</option>
+				#end
+			</select>
+		<br>
+		<br>
+		Email: <span id="playerEmail">$!player.email</span>
+		&nbsp;&nbsp;<input type="button" id="email" value="Email">
+		<br>
+		Cell: <span id="playerCell"></span><span id="playerCarrier"></span>
+		&nbsp;&nbsp;<input type="button" id="text" value="Text">
+		<br>
+		<br>
+		Result: <span id="result"></span>
+		</form>
+	</fieldset>
+
+	<br>
+	<br>
+	<fieldset>
+	<legend>Text</legend>
+		<input type="text" maxlength="10" id="phone">
+		<br>
+		#foreach($cellCarrier in $cellCarriers)
+			$!carriers.put($cellCarrier.carrier, $cellCarrier.name)
+		#end
+		<select id="carrier" name="carrier">
+			<option value="0">&nbsp;</option>
+			#foreach($cellCarrier in $cellCarriers)
+				<option value="$cellCarrier.carrier">$cellCarrier.name ($cellCarrier.carrier)</option>
+			#end
+		</select>
+		<br>
+		<br>
+		<input type="button" id="freeformtext" value="Text">
+		<br>
+		<br>
+		Result: <span id="freeformresult"></span>
+	</fieldset>
+
+</div>
+
+#parse("footer.vm")

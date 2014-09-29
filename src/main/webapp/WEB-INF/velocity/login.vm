@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css" />
+	<script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<h1>Login</h1>
+	</div>
+
+	<div role="main" class="ui-content">
+		<form name="input" action="/toc/login" method="post">
+		
+		<table align="center">
+			<tr>
+				<td align="right">User</td>
+				<td align="left"><input type="text" name="user"></input></td>
+			</tr>
+			<tr>
+				<td align="right">Password</td>
+				<td align="left"><input type="password" name="password"></input></td>
+			</tr>
+			<tr>
+			#if ($oops)
+				<td colspan="2" align="center" style="color:red">Wrong</td>
+			#else
+				<td></td>
+			#end
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<input id="submit" type="submit" value="Log In">
+				</td>
+			</tr>
+		<table>
+		
+		</form>
+	</div>
+
+</div>
+
+</body>
+</html>

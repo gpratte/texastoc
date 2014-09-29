@@ -1,0 +1,188 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+<script src="/toc/resources/js/game.js"></script>
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a> -> 
+	<a href="/toc/admin/seasons">Seasons</a> -> 
+	<a href="/toc/admin/season/$game.seasonId">Season</a>
+
+	#if ($game.id == 0)
+		#set($creating=true)
+	#else
+		#set($creating=false)
+	#end 
+
+	#springBind("game.*")
+	#set($hasErrors = false)
+	#foreach($error in $status.errorMessages)
+		#set($hasErrors = true)
+		#break
+	#end 
+	#if ($hasErrors == true)
+		<div id=validationErrors>
+			Please fix the following validation problems:
+			<ul id="binderrors">
+				#foreach($error in $status.errorMessages) <li>$error</li> #end 
+			</ul>
+		</div>
+	#end
+	
+	#if ($creating)
+		<form name="input" action="/toc/admin/game/add" method="post">
+	#elseif ($editing)
+		<form name="input" action="/toc/admin/game/update" method="post">
+		#springFormHiddenInput("game.id")
+		#springFormHiddenInput("game.seasonId")
+	#end 
+	#springFormHiddenInput("game.seasonId")
+	
+	#set ($d = "$")	
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+			#if($creating)
+				<h1>New Game</h1>
+			#else
+				<h1>Game</h1>
+			#end
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+				#if ($game.finalized)
+					<fieldset>
+					#parse("game_stats.vm")
+					</fieldset>
+					<br/>
+					<br/>
+				#end
+				#if (! $creating && ! $editing)
+					
+					#if($game.players.size() > 0)
+					<fieldset>
+					<table>
+						<tr><td colspan="9" align="center"><h2>Players</h2></td></tr>
+						<tr>
+							<th>Finish</th>
+							<th>Name</th>
+							<th>Points</th>
+							<th>Chop</th>
+							<th>&nbsp;&nbsp;TOC&nbsp;&nbsp;</th>
+							<th>&nbsp;&nbsp;QTOC&nbsp;&nbsp;</th>
+							<th>Buy-in</th>
+							<th title="Re-buy or Add-on">Option</th>
+							<th>Notes</th>
+						</tr>
+					
+						#foreach($player in $game.players)
+							<tr>
+								<td align="center">$!player.finish</td>
+								<td>
+									<a href="/toc/admin/gameplayer/$player.id">$!player.player.firstName $!player.player.lastName</a>
+								</td>
+								<td align="center">$!player.points</td>
+								
+								#if($player.chop && $player.chop > 0)
+									<td>$player.chop</td>
+								#else
+									<td></td>
+								#end
+								#if($player.annualTocPlayer)
+									<td align="center">Yes</td>
+								#else
+									<td></td>
+								#end
+								#if($player.quarterlyTocPlayer)
+									<td align="center">Yes</td>
+								#else
+									<td></td>
+								#end
+								#if($player.buyIn && $player.buyIn > 0)
+									<td align="center">$d$player.buyIn</td>
+								#else
+									<td></td>
+								#end
+								#if($player.reBuyIn && $player.reBuyIn > 0)
+									<td align="center">$d$player.reBuyIn</td>
+								#else
+									<td></td>
+								#end
+								#if($player.note && "$player.note" != "")
+									<td align="center">
+										<a href="/toc/admin/gameplayer/$player.id" title="$player.note">...</a>
+									</td>
+								#else
+									<td></td>
+								#end
+							</tr>
+						#end
+					</table>
+					</fieldset>
+					#end
+					#if(! $game.finalized)
+						<input type="button" 
+						       onClick="window.location.href='/toc/admin/gameplayer/new/$game.id'"
+						       value="Add Players">
+					#end
+				#else
+					<span id="gameDatePicker"></span> 
+				#end
+				#if (! $game.finalized)
+					<br/>
+					<br/>
+					<fieldset>
+					#parse("game_stats.vm")
+					</fieldset>
+				#end
+			</td>
+		</tr>
+		#if (! $creating && ! $editing && ! $game.finalized)
+		<tr>
+			<td>
+				<fieldset>
+				<table>
+					<tr>
+						<td colspan="2" align="center">
+							<h1>Random Seating</h1>
+						</td>
+					</tr>
+					<tr>
+						<th>Player</th>
+						<th>Table</th>
+						<th>Seat</th>
+					</tr>
+					#foreach ($seat in $game.seating)
+					<tr>
+						<td>$!seat.player.firstName $!seat.player.lastName</td>
+						<td align="center">$seat.table</td>
+						<td align="center">$seat.position</td>
+					</tr>
+					#end
+					<!--
+					#<tr>
+					#	<td colspan="2" align="center">
+					#		<br/>
+					#		<br/>
+					#		<input type="button" 
+					#		       onClick="window.location.href='/toc/admin/game/random/$game.id'"
+					#		       value="Randomize"/>
+					#		&nbsp;&nbsp;&nbsp;
+					#		<input id="$game.id" class="send" type="button" 
+					#		       value="Send Texts/Emails"/>
+					#	</td>
+					#</tr>
+					-->
+				</table>
+				</fieldset>
+			</td>
+		</tr>
+		#end
+
+	</table>
+	</form>
+</div>
+
+#parse("footer.vm")

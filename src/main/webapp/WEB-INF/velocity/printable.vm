@@ -1,0 +1,252 @@
+<div id="main">
+	<a href="/toc/admin/home">Home</a> -> 
+	<a href="/toc/admin/seasons">Seasons</a> -> 
+	<a href="/toc/admin/season/$season.id">Season</a>
+
+	#set ($d = "$")
+	<p/>
+	<fieldset>	
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Game</h2>
+			</td>
+		</tr>
+		<tr>
+			<table>
+				<tr>
+					<td>Date:</td>
+					<td>$game.gameDateText</td> 
+				</tr>
+				<tr>
+					<td>Double buy in:</td>
+					#if($game.doubleBuyIn)
+						<td>Yes</td>
+					#else
+						<td>No</td>
+					#end
+				</tr>
+				<tr>
+					<td>Number of Players:</td>
+					<td>$!game.numPlayers</td>
+				</tr>
+				<tr>
+					<td>Total buy in:</td>
+					<td>$d$!game.totalBuyIn</td>
+				</tr>
+				<tr>
+					<td>Total Re-buy/Add-on:</td>
+					<td>$d$!game.totalReBuy</td>
+				</tr>
+				<tr>
+					<td>Total Annual TOC:</td>
+					<td>$d$!game.totalAnnualToc</td>
+				</tr>
+				<tr>
+					<td>Total Quarterly TOC:</td>
+					<td>$d$!game.totalQuarterlyToc</td>
+				</tr>
+				<tr>
+					<td>Notes:</td>
+					<td>$!game.note</td>
+				</tr>
+			</table>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr><td colspan="9" align="center"><h2>Players</h2></td></tr>
+					<tr>
+						<th>Finish</th>
+						<th>Name</th>
+						<th>Points</th>
+						<th>Chop</th>
+						<th>&nbsp;&nbsp;TOC&nbsp;&nbsp;</th>
+						<th>&nbsp;&nbsp;QTOC&nbsp;&nbsp;</th>
+						<th>Buy-in</th>
+						<th title="Re-buy or Add-on">Option</th>
+						<th>Notes</th>
+					</tr>
+				
+					#foreach($player in $game.players)
+						<tr>
+							<td align="center">$!player.finish</td>
+							<td>
+								$!player.player.fullName
+							</td>
+							<td align="center">$!player.points</td>
+							
+							#if($player.chop && $player.chop > 0)
+								<td>$player.chop</td>
+							#else
+								<td></td>
+							#end
+							#if($player.annualTocPlayer)
+								<td align="center">Yes</td>
+							#else
+								<td></td>
+							#end
+							#if($player.quarterlyTocPlayer)
+								<td align="center">Yes</td>
+							#else
+								<td></td>
+							#end
+							#if($player.buyIn && $player.buyIn > 0)
+								<td align="center">$player.buyIn</td>
+							#else
+								<td></td>
+							#end
+							#if($player.reBuyIn && $player.reBuyIn > 0)
+								<td align="center">$player.reBuyIn</td>
+							#else
+								<td></td>
+							#end
+							#if($player.note && "$player.note" != "")
+								<td align="center">
+									$!player.note
+								</td>
+							#else
+								<td></td>
+							#end
+						</tr>
+					#end
+				</table>
+			<td>
+		</tr>
+	</table>
+	</fieldset>	
+
+	<p/>
+	<fieldset>	
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Season</h2>
+			</td>
+		</tr>
+		<tr>
+			<td>Start date:</td>
+			<td>$season.startDateText</td> 
+		</tr>
+		<tr>
+			<td>End date:</td>
+			<td>$season.endDateText</td> 
+		</tr>
+		<tr>
+			<td>Total pot:</td>
+			<td>$d$!season.totalPot</td>
+		</tr>
+		<tr>
+			<td>Total buy in:</td>
+			<td>$d$!season.totalBuyIn</td>
+		</tr>
+		<tr>
+			<td>Total rebuy/add on:</td>
+			<td>$d$!season.totalReBuy</td>
+		</tr>
+		<tr>
+			<td>Total Annual TOC:</td>
+			<td>$d$!season.totalAnnualToc</td>
+		</tr>
+		<tr>
+			<td>Notes:</td>
+			<td>$!season.note</td>
+		</tr>
+	</table>
+	<p/>
+	<table>
+		<tr>
+			<th>Place</th>
+			<th>Name</th>
+			<th>Points</th>
+			<th>Entries</th>
+		</tr>
+		#foreach ($player in $season.seasonPlayers)
+		<tr>
+			#if($player.place > 0)
+				<td align="center">$player.place</td> 
+			#else
+			<td align="center"></td> 
+			#end
+			<td align="right">$!player.player.firstName $!player.player.lastName</td>
+			#if ($player.points > 0)
+				<td align="center">$player.points</td> 
+			#else
+				<td align="center"></td> 
+			#end
+			<td align="center">$player.numEntries</td> 
+		</tr>
+		#end
+	</table>
+	</fieldset>	
+
+	<p/>
+	<fieldset>
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Quarterly Seasons</h2>
+			</td>
+		</tr>
+		#if ($quarterly)
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td>Quarter</td>
+						<td>$quarterly.quarter.text</td>
+					</tr>
+					<tr>
+						<td>Start date</td>
+						<td>$quarterly.startDateText</td>
+					</tr>
+					<tr>
+						<td>End date</td>
+						<td>$quarterly.endDateText</td>
+					</tr>
+					<tr>
+						<td>Total Quarterly TOC</td>
+						<td>$d$!quarterly.totalQuarterlyToc</td>
+					</tr>
+					<tr>
+						<td>Note</td>
+						<td>$!quarterly.note</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Place</th>
+						<th>Name</th>
+						<th>Points</th>
+						<th>Entries</th>
+					</tr>
+					#foreach ($player in $quarterly.quarterlySeasonPlayers)
+					<tr>
+						#if($player.place > 0)
+							<td align="center">$player.place</td> 
+						#else
+						<td align="center"></td> 
+						#end
+						<td align="right">$!player.player.firstName $!player.player.lastName</td>
+						#if ($player.points > 0)
+							<td align="center">$player.points</td> 
+						#else
+							<td align="center"></td> 
+						#end
+						<td align="center">$player.numEntries</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+		#end
+	</table>
+	</fieldset>
+
+	</form>
+
+</div>

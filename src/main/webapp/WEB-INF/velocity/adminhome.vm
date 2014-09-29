@@ -1,0 +1,12 @@
+#parse("header.vm")
+
+<div id="main">
+	<a href="/toc/admin/seasons">Seasons</a>
+	<p/>
+	<a href="/toc/admin/players">Players</a>
+	<p/>
+	<a href="/toc/admin/pointsystem?min=2&max=50">Point System</a>
+	<p/>
+	<a href="/toc/admin/emailtext">Email and Texting</a>
+</div>
+#parse("footer.vm")

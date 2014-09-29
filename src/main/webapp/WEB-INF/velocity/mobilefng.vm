@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Select a game or start a new game</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<input type="button" value="<-- Back"
+			onClick="window.location.href='/toc/mobile/game/$gameId'">
+	</div>
+
+	#set ($d = "$")	
+	<div role="main" class="ui-content" align="center">
+		<form name="input" action="/toc/mobile/gameplayer/addfng/$gameId" method="post">
+		<table id="players">
+			<tbody>
+				<tr>
+					<td align="right">First Name</td>
+					<td align="left">
+						<input type="text" name="firstName">
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Last Name</td>
+					<td align="left">
+						<input type="text" name="lastName">
+					</td>
+				</tr>
+				<tr>
+					<td>Email:</td>
+					<td align="left">
+						<input type="text" name="email">
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Buy In</td>
+					<td align="left">
+						<input type="checkbox" name="buyin" value="buyin"
+							#if ($gamePlayer.buyIn && $gamePlayer.buyIn > 0)
+								checked="checked"
+							#end
+						>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">TOC</td>
+					<td align="left">
+						<input type="checkbox" name="toc" value="toc"
+							#if ($gamePlayer.annualTocPlayer)
+								checked="checked"
+							#end
+						>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Quarterly TOC</td>
+					<td align="left">
+						<input type="checkbox" name="qtoc" value="qtoc"
+							#if ($gamePlayer.quarterlyTocPlayer)
+								checked="checked"
+							#end
+						>
+					</td>
+				</tr>
+			<tbody>		
+		</table>
+		<input type="submit" value="Submit">
+		</form>
+	</div>
+</div>
+
+</body>
+</html>

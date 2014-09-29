@@ -1,0 +1,195 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+<script type="text/javascript">
+function deleteClicked() {
+    if (confirm('Are you sure you want to delete?')) {
+    	window.location.href='/toc/admin/gameplayer/delete/$gamePlayer.id';
+    }
+    return false;
+}
+</script>
+<div id="main">
+	<a href="/toc/admin/home">Home</a> -> 
+	<a href="/toc/admin/seasons">Seasons</a> -> 
+	Season ->
+	<a href="/toc/admin/game/$gamePlayer.gameId">Game</a>
+
+	#if ($gamePlayer.id == 0)
+		#set($creating=true)
+	#else
+		#set($creating=false)
+	#end 
+
+	#springBind("gamePlayer.*")
+	#set($hasErrors = false)
+	#foreach($error in $status.errorMessages)
+		#set($hasErrors = true)
+		#break
+	#end 
+	#if ($hasErrors == true)
+		<div id=validationErrors>
+			Please fix the following validation problems:
+			<ul id="binderrors">
+				#foreach($error in $status.errorMessages) <li>$error</li> #end 
+			</ul>
+		</div>
+	#end
+	
+	#if ($creating)
+		<form name="input" action="/toc/admin/gameplayer/add" method="post">
+	#elseif ($editing)
+		<form name="input" action="/toc/admin/gameplayer/update" method="post">
+		#springFormHiddenInput("gamePlayer.id")
+	#end 
+	#springFormHiddenInput("gamePlayer.gameId")
+	
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+			#if($creating)
+				<h1>New Game Player</h1>
+			#else
+				<h1>Game Player</h1>
+			#end
+			</td>
+		</tr>
+		<tr>
+			<td>Player:</td>
+			#if ($creating || $editing)
+				#set($playerList = {})
+				#foreach($player in $players)
+					#set($playerName = "$!player.firstName $!player.lastName")
+					$!playerList.put($player.id, $playerName)
+				#end
+				
+				<td>#springFormSingleSelect("gamePlayer.playerId", $playerList)</td>
+			#else
+				<td>
+				#foreach($player in $players)
+					#if($gamePlayer.playerId && $gamePlayer.playerId == $player.id)
+						$player.firstName $player.lastName
+						#set($found = true)
+						#break 
+					#end
+				#end
+				</td>
+			#end
+		</tr>
+		<tr>
+			<td>Annual TOC:</td>
+			#if ($creating || $editing)
+				#set($yesno = {"false":"No","true":"Yes"})
+				<td>#springFormSingleSelect("gamePlayer.annualTocPlayer", $yesno)</td>
+			#else
+				#if($gamePlayer.annualTocPlayer)
+					<td>Yes</td>
+				#else
+					<td>No</td>
+				#end
+			#end
+		</tr>
+		<tr>
+			<td>Quarterly TOC:</td>
+			#if ($creating || $editing)
+				#set($yesno = {"false":"No","true":"Yes"})
+				<td>#springFormSingleSelect("gamePlayer.quarterlyTocPlayer", $yesno)</td>
+			#else
+				#if($gamePlayer.quarterlyTocPlayer)
+					<td>Yes</td>
+				#else
+					<td>No</td>
+				#end
+			#end
+		</tr>
+		<tr>
+			<td>Buy in:</td>
+			#if ($creating || $editing)
+				#set($buyin = {"":"","$buyIn":"$buyIn"})
+				<td>#springFormSingleSelect("gamePlayer.buyIn", $buyin)</td>
+			#else
+				#if($gamePlayer.buyIn && $gamePlayer.buyIn > 0)
+					<td>$gamePlayer.buyIn</td>
+				#else
+					<td></td>
+				#end
+			#end
+		</tr>
+		<tr>
+			<td>Re-buyAdd-on:</td>
+			#if ($creating || $editing)
+				#set($rebuyin = {"":"","$reBuy":"$reBuy"})
+				<td>#springFormSingleSelect("gamePlayer.reBuyIn", $rebuyin)</td>
+			#else
+				#if($gamePlayer.reBuyIn && $gamePlayer.reBuyIn > 0)
+					<td>$gamePlayer.reBuyIn</td>
+				#else
+					<td></td>
+				#end
+			#end
+		</tr>
+		<tr>
+			<td>Chop:</td>
+			#if ($creating || $editing)
+				<td>#springFormInput("gamePlayer.chop")</td>
+			#else
+				<td>$!gamePlayer.chop</td>
+			#end
+		</tr>
+		<tr>
+			<td>Finish:</td>
+			#if ($creating || $editing)
+				#set($finishes = {"":""})
+				#foreach($fin in $finish.values())
+					$!finishes.put($fin.getValue(), $fin.getText())
+				#end
+				<td>#springFormSingleSelect("gamePlayer.finish", $finishes)</td>
+			#else
+				#if($gamePlayer.finish && $gamePlayer.finish > 0)
+					<td>$gamePlayer.finish</td>
+				#else
+					<td></td>
+				#end
+			#end
+		</tr>
+		
+		<tr>
+			<td>Notes:</td>
+			#if ($creating || $editing)
+				<td>#springFormTextarea("gamePlayer.note")</td>
+			#else
+				<td>$!gamePlayer.note</td>
+			#end
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			#if($creating)
+				<td colspan="2" align="center">
+					<input id="submit" type="submit" value="Add">
+					<input id="cancel" type="button" value="Cancel"
+					onClick="window.location.href='/toc/admin/game/$gamePlayer.gameId'"></td>
+				</td>
+			#elseif($editing)
+				<td colspan="2" align="center">
+					<input id="submit" type="submit" value="Update">
+					<input id="cancel" type="button" value="Cancel"
+					onClick="window.location.href='/toc/admin/gameplayer/$gamePlayer.id'"></td>
+				</td>
+			#else
+				<td colspan="2" align="center">
+					<input id="edit" type="button" value="Edit"
+						onClick="window.location.href='/toc/admin/gameplayer/$gamePlayer.id?editing=true'">
+					&nbsp;&nbsp;
+					<input id="edit" type="button" value="Delete"
+						onClick="deleteClicked()">
+				</td>
+			#end
+		</tr>
+	</table>
+	</form>
+</div>
+
+#parse("footer.vm")

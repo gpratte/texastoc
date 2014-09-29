@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TOC Clock</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileclock.js"></script>
+	<script src="/toc/resources/js/ion.sound.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<input type="button" value="<-- Back"
+			onClick="window.location.href='/toc/mobile'">
+	</div>
+
+	<div data-role="header">
+		<h1 align="center"></h1>
+	</div>
+
+	<div role="main" class="ui-content">
+		<form id="clockForm" action="/toc/mobile/clock" method="post">
+		<input type="hidden" id="activity" name="activity" value="">
+		<input type="hidden" name="round" value="$clock.currentLevel.round">
+		<input type="hidden" id="minutes" name="minutes" value="0">
+		<input type="hidden" id="seconds" name="seconds" value="0">
+		
+		<table width="100%">
+			<tr>
+				<td align="center">
+					<h1><span id="currentRound">$clock.currentLevel.round</span></h1>
+				</td>
+				<td align="center">
+					<h1>
+					<table>
+						<tr>
+							<td align="center"><img id="upMinutes" src="/toc/resources/img/up.arrow.png"></td>
+							<td align="center"></td>
+							<td align="center"><img id="upSeconds" src="/toc/resources/img/up.arrow.png"></td>
+						</tr>
+						<tr>
+							<td align="center">
+								<span id="remainingMinutes">$clock.remainingMinutes</span>
+							</td>
+							<td align="center">:</td>
+							<td align="center">
+								<span id="remainingSeconds">$clock.remainingSeconds</span>
+							</td>
+						</tr>
+						<tr>
+							<td align="center"><img id="downMinutes" src="/toc/resources/img/down.arrow.png"></td>
+							<td align="center"></td>
+							<td align="center"><img id="downSeconds" src="/toc/resources/img/down.arrow.png"></td>
+						</tr>
+					</table>
+					</h1>
+				</td>
+				<td align="center">
+					<h1>
+					<span id="currentSmallBlind">$clock.currentLevel.smallBlind</span>
+					/
+					<span id="currentBigBlind">$clock.currentLevel.bigBlind</span>
+					/
+					<span id="currentAnte">$clock.currentLevel.ante</span>
+					</h1>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td align="center">
+					<h2><span id="nextRound">$clock.nextLevel.round</span></h2>
+				</td>
+				<td align="center">
+					&nbsp;
+				</td>
+				<td align="center">
+					<h2>
+					<span id="nextSmallBlind">$clock.nextLevel.smallBlind</span>
+					/
+					<span id="nextBigBlind">$clock.nextLevel.bigBlind</span>
+					/
+					<span id="nextAnte">$clock.nextLevel.ante</span>
+					</h2>
+				</td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td align="center">
+					<input id="prev" type="button" value="Prev">
+				</td>
+				<td align="center">
+					#if ($clock.running)
+						<input id="play" type="button" value="Pause">
+					#else
+						<input id="play" type="button" value="Play">
+					#end
+				</td>
+				<td align="center">
+					<input id="next" type="button" value="Next">
+				</td>
+				<td align="right">
+					<input id="reset" type="button" value="Reset">
+					<audio id="frog">
+					  <source src="/toc/resources/audio/frog.mp3" type="audio/mpeg">
+					</audio>
+				</td>
+			</tr>
+		</table>
+		</form>
+	</div>
+	<br/>
+	<br/>
+
+	<div data-role="footer">
+	</div>	
+</div>
+
+</body>
+</html>

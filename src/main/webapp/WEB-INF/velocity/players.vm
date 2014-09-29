@@ -1,0 +1,67 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+
+<style>
+.uline
+{
+border-bottom:1px solid black;
+border-right:1px solid black;
+}
+</style>
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a>
+	<table cellpadding="4">
+		<tr>
+			<td colspan="2" align="center">
+			<h1>Players</h1>
+			</td>
+		</tr>
+		<tr>
+			<th>Name</th>
+			<th>Phone</th>
+			<th>Email</th>
+			<th>Carrier</th>
+			<th>Address</th>
+			<th>Note</th>
+		</tr>
+	
+		#foreach($player in $players)
+			<tr>
+				<td class="uline">
+					<a href="/toc/admin/player/$player.id">$!player.firstName $!player.lastName</a>
+				</td>
+				<td class="uline">$!player.phone</td>
+				<td class="uline">$!player.email</td>
+				#set($carrier = "")
+				#if ($player.cellCarrier)
+					#foreach($cellCarrier in $cellCarriers)
+						#if ($player.cellCarrier == $cellCarrier.carrier)
+							#set($carrier = $cellCarrier.name)
+							#break
+						#end
+					#end
+				#end
+				<td class="uline">$carrier</td>
+				<td class="uline">$!player.address</td>
+				#if($player.note && "$player.note" != "")
+					<td class="uline" align="center">
+						<a href="/toc/admin/player/$player.id" title="$player.note">...</a>
+					</td>
+				#else
+					<td class="uline"></td>
+				#end
+			</tr>
+		#end
+	</table>
+	<br/>
+	<input type="button" 
+	       onClick="window.location.href='/toc/admin/player/new'"
+	       value="Add Player">
+	<br/>
+	</form>
+</div>
+
+#parse("footer.vm")

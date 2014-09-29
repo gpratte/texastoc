@@ -1,0 +1,324 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+<script src="/toc/resources/js/season.js"></script>
+
+<div id="main">
+	<table width="100%">
+		<tr>
+			<td align="left">
+				<a href="/toc/admin/home">Home</a> -> 
+				<a href="/toc/admin/seasons">Seasons</a>
+			</td>
+			#if (! $season.useHistoricalData)
+			<td align="right">
+				<a href="/toc/admin/season/summary/$season.id">Summary</a>
+			</td>
+			#end
+		</tr>
+	</table>
+
+	#if ($season.id == 0)
+		#set($creating=true)
+	#else
+		#set($creating=false)
+	#end 
+
+	#springBind("season.*")
+	#set($hasErrors = false)
+	#foreach($error in $status.errorMessages)
+		#set($hasErrors = true)
+		#break
+	#end 
+	#if ($hasErrors == true)
+		<div id=validationErrors>
+			Please fix the following validation problems:
+			<ul id="binderrors">
+				#foreach($error in $status.errorMessages) <li>$error</li> #end 
+			</ul>
+		</div>
+	#end
+	
+	#if ($creating)
+		<form name="input" action="/toc/admin/season/add" method="post">
+	#elseif ($editing)
+		<form name="input" action="/toc/admin/season/update" method="post">
+		#springFormHiddenInput("season.id")
+	#end 
+	
+	#set ($d = "$")
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+			#if($creating)
+				<h1>New Season</h1>
+			#else
+				<h1>Season</h1>
+			#end
+			</td>
+		</tr>
+		<tr>
+			<td valign="top">
+				<h2 align="center">Info</h2>
+				#if (! $creating && ! $editing)
+				<fieldset>
+				#end
+				<table>
+					<tr>
+						<td>Start date:</td>
+						#if ($creating || $editing)
+							<td>#springFormInput("season.startDateText", "class='date'") mm/dd/yyyy</td>
+							<td><img id="startDateImg" src="/toc/resources/img/calendar.png"></td> 
+						#else
+							<td>$season.startDateText</td> 
+						#end
+					</tr>
+					<tr>
+						<td>End date:</td>
+						#if ($creating || $editing)
+							<td>#springFormInput("season.endDateText", "class='date'") mm/dd/yyyy</td> 
+							<td><img id="endDateImg" src="/toc/resources/img/calendar.png"></td> 
+						#else
+							<td>$season.endDateText</td> 
+						#end
+					</tr>
+					<tr>
+						<td>Use historical data:</td>
+						#if ($creating || $editing)
+							#set($yesno = {"false":"No","true":"Yes"})
+							<td>#springFormSingleSelect("season.useHistoricalData", $yesno)</td>
+						#else
+							#if($season.useHistoricalData)
+								<td>Yes</td>
+							#else
+								<td>No</td>
+							#end
+						#end
+					</tr>
+					#if($creating == false && $editing == false && $season.useHistoricalData == false)
+						#set ($pot = $season.totalBuyIn + $season.totalReBuy)
+						<tr>
+							<td>Total pot:</td>
+							<td>$d$pot</td>
+						</tr>
+						<tr>
+							<td>Total buy in:</td>
+							<td>$d$season.totalBuyIn</td>
+						</tr>
+						<tr>
+							<td>Total rebuy/add on:</td>
+							<td>$d$season.totalReBuy</td>
+						</tr>
+						<tr>
+							<td>Total Annual TOC:</td>
+							<td>$d$season.totalAnnualToc</td>
+						</tr>
+					#end
+					
+					<tr>
+						<td>Notes:</td>
+						#if ($creating || $editing)
+							<td>#springFormTextarea("season.note")</td>
+						#else
+							<td>$!season.note</td>
+						#end
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						#if($creating)
+							<td colspan="2" align="center"><input id="submit" type="submit" value="Add">
+								<input id="cancel" type="button" value="Cancel"
+								onClick="window.location.href='/toc/admin/seasons'">
+							</td>
+						#elseif($editing)
+							<td colspan="2" align="center">
+								<input id="submit" type="submit" value="Update">
+								<input id="cancel" type="button" value="Cancel"
+								onClick="window.location.href='/toc/admin/season/$season.id'">
+							</td>
+						#else
+							<td colspan="2" align="center"><input id="edit" type="button" value="Edit"
+								onClick="window.location.href='/toc/admin/season/$season.id?editing=true'">
+							</td>
+						#end
+					</tr>
+				</table>
+				#if (! $creating && ! $editing)
+				</fieldset>
+				#end
+				
+				#if($creating == false && $editing == false)
+				<h2 align="center">Leaders</h2>
+				<fieldset>
+				<table>
+					#if ($season.useHistoricalData)
+						<tr>
+							<th>Name</th>
+							<th>Points</th>
+							<th>Entries</th>
+						</tr>
+						#foreach ($history in $season.histories)
+						<tr>
+							<td align="right">$history.player.fullName</td>
+							<td align="center">$history.points</td> 
+							<td align="center">$history.entries</td> 
+						</tr>
+						#end
+					#else
+						<tr>
+							<th>Place</th>
+							<th>Name</th>
+							<th>Points</th>
+							<th>Entries</th>
+						</tr>
+						#foreach ($player in $season.seasonPlayers)
+						<tr>
+							#if($player.place > 0)
+								<td align="center">$player.place</td> 
+							#else
+							<td align="center"></td> 
+							#end
+							<td align="right">$!player.player.firstName $!player.player.lastName</td>
+							#if ($player.points > 0)
+								<td align="center">$player.points</td> 
+							#else
+								<td align="center"></td> 
+							#end
+							<td align="center">$player.numEntries</td> 
+						</tr>
+						#end
+					#end
+				</table>
+				</fieldset>
+				#end
+			</td>
+			<td valign="top">
+				#if (! $creating && ! $editing && ! $season.useHistoricalData)
+					<h2 align="center">Games</h2>
+					<fieldset>
+					#foreach($game in $season.games)
+						<a href="/toc/admin/game/$game.id">$game.gameDateText</a>
+						&nbsp;&nbsp;&nbsp;
+						#if($foreach.count % 4 == 0)
+							<br/>
+						#end
+					#end
+					</fieldset>
+					#if($season.games.size() < 52)
+						<input id="cancel" type="button" value="Add Game"
+						onClick="window.location.href='/toc/admin/game/new/$season.id'">
+					#end
+					
+					#if (! $creating && ! $editing && ! $season.useHistoricalData)
+						<h2 align="center">Quarterly Seasons</h2>
+						#set($quartCount = 0)
+						#foreach($quarterly in $season.quarterlies)
+							#set($quartCount = $quartCount + 1)
+							<fieldset>
+							<table>
+								<tr>
+									<td>Quarter</td>
+									<td>$quarterly.quarter.text</td>
+								</tr>
+								<tr>
+									<td>Start date</td>
+									<td>$quarterly.startDateText</td>
+								</tr>
+								<tr>
+									<td>End date</td>
+									<td>$quarterly.endDateText</td>
+								</tr>
+								<tr>
+									<td>Total Quarterly TOC</td>
+									<td>$d$!quarterly.totalQuarterlyToc</td>
+								</tr>
+								<tr>
+									<td>Note</td>
+									<td>$!quarterly.note</td>
+								</tr>
+								<tr>
+									<td colspan="2">Games:
+									<a name="quarterlyGames$quarterly.quarter.value" 
+									   id="quarterlyGames$quarterly.quarter.value" 
+									   href="#id=quarterlyGames$quarterly.quarter.value">View</a>
+									<br/>
+									<span id="quarterly$quarterly.quarter.value">
+									#set($count = 0)
+									#foreach($game in $quarterly.games)
+										<a href="/toc/admin/game/$game.id">$game.gameDateText</a>
+										&nbsp;&nbsp;
+										#set($count = $count + 1)
+										#if($count == 4)
+											<br/>
+											#set($count = 0)
+										#end
+									#end
+									</span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">Leaders:
+									<a name="quarterlyLeadersToggle$quarterly.quarter.value" 
+									   id="quarterlyLeadersToggle$quarterly.quarter.value" 
+									   href="#id=quarterlyLeadersToggle$quarterly.quarter.value">View</a>
+									<br/>
+									<span id="quarterlyLeaders$quarterly.quarter.value">
+									<table>
+										<tr>
+											<th>Place</th>
+											<th>Name</th>
+											<th>Points</th>
+											<th>Entries</th>
+										</tr>
+										#foreach ($player in $quarterly.quarterlySeasonPlayers)
+										<tr>
+											#if($player.place > 0)
+												<td align="center">$player.place</td> 
+											#else
+											<td align="center"></td> 
+											#end
+											<td align="right">$!player.player.firstName $!player.player.lastName</td>
+											#if ($player.points > 0)
+												<td align="center">$player.points</td> 
+											#else
+												<td align="center"></td> 
+											#end
+											<td align="center">$player.numEntries</td> 
+										</tr>
+										#end
+									</table>
+									</span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2" align="center">
+										<input id="edit" type="button" value="Edit"
+										onClick="window.location.href='/toc/admin/quarterly/$quarterly.id?editing=true'">
+									</td>
+								</tr>
+							</table>
+							</fieldset>
+							<p/>
+					
+						#end
+						#if($quartCount < 4)
+							<input type="button" 
+							       value="Add Quarterly Season" 
+							       onClick="window.location.href='/toc/admin/quarterly/new/$season.id'">
+						#end
+					#end
+				#else
+					<span id="startDatePicker"></span> 
+					<span id="endDatePicker"></span> 
+				#end
+			</td>
+		</tr>
+	</table>
+	</form>
+
+</div>
+
+#parse("footer.vm")

@@ -1,0 +1,149 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+<script src="/toc/resources/js/player.js"></script>
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a> -> 
+	<a href="/toc/admin/players">Players</a>
+
+	#if ($player.id == 0)
+		#set($creating=true)
+	#else
+		#set($creating=false)
+	#end 
+
+	#springBind("player.*")
+	#set($hasErrors = false)
+	#foreach($error in $status.errorMessages)
+		#set($hasErrors = true)
+		#break
+	#end 
+	#if ($hasErrors == true)
+		<div id=validationErrors>
+			Please fix the following validation problems:
+			<ul id="binderrors">
+				#foreach($error in $status.errorMessages) <li>$error</li> #end 
+			</ul>
+		</div>
+	#end
+	
+	#if ($creating)
+		<form name="input" action="/toc/admin/player/add" method="post">
+	#elseif ($editing)
+		<form name="input" action="/toc/admin/player/update" method="post">
+		#springFormHiddenInput("player.id")
+	#end 
+	
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+			#if($creating)
+				<h1>New Player</h1>
+			#else
+				<h1>Player</h1>
+			#end
+			</td>
+		</tr>
+		<tr>
+			<td>First:</td>
+			#if ($creating || $editing)
+				<td>#springFormInput("player.firstName")</td>
+			#else
+				<td>$!player.firstName</td>
+			#end
+		</tr>
+		<tr>
+			<td>Last:</td>
+			#if ($creating || $editing)
+				<td>#springFormInput("player.lastName")</td>
+			#else
+				<td>$!player.lastName</td>
+			#end
+		</tr>
+		<tr>
+			<td>Phone:</td>
+			#if ($creating || $editing)
+				<td>#springFormInput("player.phone")</td>
+			#else
+				<td>$!player.phone</td>
+			#end
+		</tr>
+		<tr>
+			<td>Email:</td>
+			#if ($creating || $editing)
+				<td>#springFormInput("player.email")</td>
+			#else
+				<td>$!player.email</td>
+			#end
+		</tr>
+		<tr>
+			<td>Cell carrier:</td>
+			#if ($creating || $editing)
+				#set($carriers = {})
+				$!carriers.put("#", " ")
+				#foreach($cellCarrier in $cellCarriers)
+					$!carriers.put($cellCarrier.carrier, $cellCarrier.name)
+				#end
+				<td>#springFormSingleSelect("player.cellCarrier", $carriers)</td>
+			#else
+				#set($carrier = "")
+				#if ($player.cellCarrier)
+					#foreach($cellCarrier in $cellCarriers)
+						#if ($player.cellCarrier == $cellCarrier.carrier)
+							#set($carrier = $cellCarrier.name)
+							#break
+						#end
+					#end
+				#end
+				<td>$carrier</td>
+			#end
+		</tr>
+		<tr>
+			<td>Address:</td>
+			#if ($creating || $editing)
+				<td>#springFormInput("player.address")</td>
+			#else
+				<td>$!player.address</td>
+			#end
+		</tr>
+		<tr>
+			<td>Notes:</td>
+			#if ($creating || $editing)
+				<td>#springFormTextarea("player.note")</td>
+			#else
+				<td>$!player.note</td>
+			#end
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			#if($creating)
+				<td colspan="2" align="center">
+					<input id="submit" type="submit" value="Add">
+					<input id="cancel" type="button" value="Cancel"
+					onClick="window.location.href='/toc/admin/players'"></td>
+				</td>
+			#elseif($editing)
+				<td colspan="2" align="center">
+					<input id="submit" type="submit" value="Update">
+					<input id="cancel" type="button" value="Cancel"
+					onClick="window.location.href='/toc/admin/player/$player.id'"></td>
+				</td>
+			#else
+				<td colspan="2" align="center">
+					<input id="edit" type="button" value="Edit"
+						onClick="window.location.href='/toc/admin/player/$player.id?editing=true'">
+					&nbsp;&nbsp;
+					<input id="edit" type="button" value="Delete"
+						onClick="deleteClicked()">
+				</td>
+			#end
+		</tr>
+	</table>
+	</form>
+</div>
+
+#parse("footer.vm")

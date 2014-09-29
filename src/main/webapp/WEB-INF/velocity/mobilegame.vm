@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Select a game or start a new game</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+	<script src="/toc/resources/js/mobilegame_v1_3.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<input type="button" value="<-- Back"
+			onClick="window.location.href='/toc/mobile'">
+	</div>
+
+	#set ($d = "$")	
+	
+	<div data-role="tabs" align="center">
+    	<div data-role="navbar">
+        	<ul>
+          		<li><a href="#one" data-theme="a" data-ajax="false" class="ui-btn-active">Game</a></li>
+          		<li><a href="#three" data-theme="a" data-ajax="false">Money</a></li>
+          		<li><a href="#two" data-theme="a" data-ajax="false">Seating</a></li>
+        	</ul>
+    	</div>
+	    <div id="one" class="ui-content">
+	    	#if ($errorMsg)
+		    	<div id="error" style="color:red;">
+		    		Please correct the following problem:
+		    		<br/>
+		    		$errorMsg
+		    	</div>
+		    		<br/>
+	    	#end
+	    
+			Date: $game.gameDateText 
+			<span style="border-left: thin solid black;">&nbsp;</span> 
+			Double buy in:
+			#if($game.doubleBuyIn) Yes #else No #end
+			<span style="border-left: thin solid black;">&nbsp;</span> 
+			Paid Players $!game.numPlayers
+			<br/>
+			<br/>
+			<table id="players">
+				<thead>
+				<tr>
+					<th>Name</th>
+					<th>TOC</th>
+					<th>QTOC</th>
+					<th>Buy<br/>In</th>
+					<th>Re<br/>Buy</th>
+					<th>Fin</th>
+					<th>Pts</th>
+					<th>Chp</th>
+				</tr>
+				</thead>
+	
+				<tbody>		
+				#foreach($player in $game.players)
+					<tr>
+						<td>
+						#if($player.knockedOut)<span style="color:red">x</span>&nbsp;#end
+						<a href="/toc/mobile/gameplayer/edit/$player.id">$!player.player.firstName<br/>$!player.player.lastName</a></td>
+						
+						#if($player.annualTocPlayer)
+							<td align="center">Yes</td>
+						#else
+							<td></td>
+						#end
+						#if($player.quarterlyTocPlayer)
+							<td align="center">Yes</td>
+						#else
+							<td></td>
+						#end
+						#if($player.buyIn && $player.buyIn > 0)
+							<td align="center">$d$player.buyIn</td>
+						#else
+							<td></td>
+						#end
+						#if($player.reBuyIn && $player.reBuyIn > 0)
+							<td align="center">$d$player.reBuyIn</td>
+						#else
+							<td></td>
+						#end
+						<td align="center">$!player.finish</td>
+						<td align="center">$!player.points</td>
+						#if($player.chop && $player.chop > 0)
+							<td>$player.chop</td>
+						#else
+							<td></td>
+						#end
+					</tr>
+				#end
+				<tbody>		
+			</table>
+			#if (! $game.finalized)
+				<input type="button" id="addPlayer" value="Add Players"
+					onClick="window.location.href='/toc/mobile/gameplayer/add/$game.id'">
+				<br/>
+				<input type="button" value="Add FNG"
+					onClick="window.location.href='/toc/mobile/gameplayer/addfng/$game.id'">
+				#if ($game.finalizable)
+				<br/>
+				<input type="button" value="Game over"
+					onClick="window.location.href='/toc/mobile/game/finalize/$game.id'">
+				#end
+			#end
+	    </div>
+	    <div id="two" class="ui-content">
+	    	#if ($game.seating)
+		    	#parse("mobilerandomseating.vm")
+	    	#else
+		    	#parse("mobilerandomizeseating.vm")
+	    	#end
+    	</div>
+	    <div id="three" class="ui-content">
+			#set($pot = $game.totalBuyIn + $game.totalReBuy)
+			#set($toc = $game.totalAnnualToc + $game.totalQuarterlyToc)
+			#set($all = $pot + $toc)
+			<table>
+				<tr>
+					<td>Paid Players: $!game.numPlayers</td>
+				</tr>
+				<tr>
+					<td>Money Collected: $d$all</td>
+				</tr>
+				<tr>
+					<td>Prize Pot: $d$pot</td>
+				</tr>
+				<tr>
+					<td>TOC: $d$toc</td>
+				</tr>
+			</table>
+			<br/>
+			<br/>
+			<table>
+				#set($chop = false)
+				#foreach ($payout in $game.payouts)
+					#if ($payout.chopAmount)
+						#set($chop = true)
+					#end
+				#end
+				<tr>
+					<th align="left">Place</th>
+					<th align="left">Amount</th>
+					#if($chop)
+						<th align="left">Chop Amount</th>
+						<th align="left">Chop Percent</th>
+					#end
+				</tr>
+				#foreach ($payout in $game.payouts)
+				<tr>
+					<td align="center">$payout.place</td>
+					#if($chop && $payout.chopAmount)
+						<td align="center"><strike>$d$payout.amount</strike></td>
+						<td align="center">$d$payout.chopAmount</td>
+						<td align="center">$payout.chopPercent</td>
+					#else
+						<td align="center">$d$payout.amount</td>
+					#end
+				</tr>
+				#end
+				<tr>
+					<td align="center"
+					#if($chop)
+						colspan="2">
+					#else
+						>
+					#end
+						<input id="cancel" type="button" value="Add"
+							onClick="window.location.href='/toc/mobile/game/addpayout/$game.id'">
+					</td>
+					<td align="center"
+					#if($chop)
+						colspan="2">
+					#else
+						>
+					#end
+						<input id="cancel" type="button" value="Remove"
+							onClick="window.location.href='/toc/mobile/game/removepayout/$game.id'">
+					</td>
+				</tr>
+			</table>
+    	</div>
+	</div>
+</div>
+
+</body>
+</html>

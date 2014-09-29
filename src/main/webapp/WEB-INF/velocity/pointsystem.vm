@@ -1,0 +1,39 @@
+#parse("header.vm")
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a>
+	
+	<h1>Point System</h1>
+	<table cellspacing="5">
+		<tr>
+			<th>Players</th>
+			<th>1</th>
+			<th>2</th>
+			<th>3</th>
+			<th>4</th>
+			<th>5</th>
+			<th>6</th>
+			<th>7</th>
+			<th>8</th>
+			<th>9</th>
+			<th>10</th>
+		</tr>
+		#foreach($topTen in $topTenPoints)
+			<tr>
+				<td style="border-bottom: 1px solid black;" align="center">$topTen.numPlayers</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(1)</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(2)</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(3)</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(4)</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(5)</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(6)</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(7)</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(8)</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(9)</td>
+				<td style="border-bottom: 1px solid black;">$topTen.getPointsForPlace(10)</td>
+			</tr>
+		#end
+	</table>
+</div>
+
+#parse("footer.vm")

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>FAQ</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<input type="button" value="<-- Back"
+			onClick="window.location.href='/toc/mobile'">
+	</div>
+
+	<div data-role="header">
+		<h1 align="center">FAQ</h1>
+	</div>
+
+	<div role="main" class="ui-content">
+		<ul data-role="listview">
+			<li>
+				<a href="/toc/mobile/faq/chop">How does the chop work?</a>
+			</li>
+		</ul>
+	</div>
+	<br/>
+	<br/>
+	<div data-role="footer">
+		<a align="center" href="/toc/logout">Logout</a>
+	</div>
+	
+</div>
+
+</body>
+</html>

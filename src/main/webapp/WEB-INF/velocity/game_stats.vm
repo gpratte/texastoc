@@ -1,0 +1,152 @@
+#set ($d = "$")	
+<table>
+	<tr>
+		<td>
+			<table>
+				<tr>
+					<td colspan="2" align="center"><h2>Stats</h2></td>
+				</tr>
+				<tr>
+					<td>Date:</td>
+					#if ($creating || $editing)
+						<td>#springFormInput("game.gameDateText", "class='date'") mm/dd/yyyy</td>
+						<td><img id="gameDateImg" src="/toc/resources/img/calendar.png"></td> 
+					#else
+						<td>$game.gameDateText</td> 
+					#end
+				</tr>
+				<tr>
+					<td>Host:</td>
+					#if ($creating || $editing)
+						#set($hosts = {})
+						#foreach($player in $players)
+							#set($playerName = "$!player.firstName $!player.lastName")
+							$!hosts.put($player.id, $playerName)
+						#end
+						
+						<td>#springFormSingleSelect("game.hostId", $hosts)</td>
+					#else
+						#set($found = false)
+						#foreach($player in $players)
+							#if($game.hostId && $game.hostId == $player.id)
+								<td>$player.firstName $player.lastName</td>
+								#set($found = true)
+								#break 
+							#end
+						#end
+						#if(! $found) 
+							<td/>
+						#end
+					#end
+				</tr>
+				<tr>
+					<td>Double buy in:</td>
+					#if ($creating || $editing)
+						#set($yesno = {"false":"No","true":"Yes"})
+						<td>#springFormSingleSelect("game.doubleBuyIn", $yesno)</td>
+					#else
+						#if($game.doubleBuyIn)
+							<td>Yes</td>
+						#else
+							<td>No</td>
+						#end
+					#end
+				</tr>
+				#if (! $creating)
+				<tr>
+					<td>Finalized:</td>
+					#if ($editing)
+						#set($yesno = {"false":"No","true":"Yes"})
+						<td>#springFormSingleSelect("game.finalized", $yesno)</td>
+					#else
+						#if($game.finalized)
+							<td>Yes</td>
+						#else
+							<td>No</td>
+						#end
+					#end
+				</tr>
+				#end
+				
+				#if(! $creating && ! $editing)
+					<tr>
+						<td>Number of Players:</td>
+						<td>$game.numPlayers</td>
+					</tr>
+					<tr>
+						<td>Total buy in:</td>
+						<td>$d$game.totalBuyIn</td>
+					</tr>
+					<tr>
+						<td>Total Re-buy/Add-on:</td>
+						<td>$d$game.totalReBuy</td>
+					</tr>
+					<tr>
+						<td>Total Annual TOC:</td>
+						<td>$d$game.totalAnnualToc</td>
+					</tr>
+					<tr>
+						<td>Total Quarterly TOC:</td>
+						<td>$d$game.totalQuarterlyToc</td>
+					</tr>
+				#end
+				
+				<tr>
+					<td>Notes:</td>
+					#if ($creating || $editing)
+						<td>#springFormTextarea("game.note")</td>
+					#else
+						<td>$!game.note</td>
+					#end
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					#if($creating)
+						<td colspan="2" align="center">
+							<input id="submit" type="submit" value="Add">
+							<input id="cancel" type="button" value="Cancel"
+							onClick="window.location.href='/toc/admin/season/$game.seasonId'"></td>
+						</td>
+					#elseif($editing)
+						<td colspan="2" align="center">
+							<input id="submit" type="submit" value="Update">
+							<input id="cancel" type="button" value="Cancel"
+							onClick="window.location.href='/toc/admin/game/$game.id'"></td>
+						</td>
+					#else
+						<td colspan="2" align="center">
+							<input id="edit" type="button" value="Edit"
+							onClick="window.location.href='/toc/admin/game/$game.id?editing=true'">
+						</td>
+					#end
+				</tr>
+			</table>
+		</td>
+		<td>&nbsp;&nbsp;&nbsp;</td>
+		<td valign="top">
+			#if(! $creating && ! $editing)
+			#set($pot = $game.totalBuyIn + $game.totalReBuy)
+			<table>
+				<tr>
+					<td colspan="2" align="center"><h2>Payout</h2></td>
+				</tr>
+				<tr>
+					<td>Pot: $d$pot</td>
+				</tr>
+				<tr>
+					<th align="left">Place</th>
+					<th align="left">Amount</th>
+				</tr>
+				#foreach ($payout in $game.payouts)
+				<tr>
+					<td align="center">$payout.place</td>
+					<td align="center">$payout.amount</td>
+				</tr>
+				#end
+			</table>
+			#end
+		</td>
+	</tr>
+</table>

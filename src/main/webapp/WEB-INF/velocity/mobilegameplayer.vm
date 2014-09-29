@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Select a game or start a new game</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<input type="button" value="<-- Back"
+			onClick="window.location.href='/toc/mobile/game/$gamePlayer.gameId'">
+	</div>
+
+	#set ($d = "$")	
+	<div role="main" class="ui-content" align="center">
+		<form name="input" action="/toc/mobile/gameplayer/update/$gamePlayer.id" method="post">
+		<table id="players">
+			<tbody>
+				<tr>
+					<td align="right">Name</td>
+					<td align="left">
+						<select name="playerId">
+							#foreach($player in $players)
+								<option value="$player.id"
+								#if ($gamePlayer.playerId == $player.id)
+									selected="selected"
+								#end
+								>$player.fullName</option>
+							#end
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<table>
+							<tr>
+								<td align="right">Buy In</td>
+								<td align="left">
+									<input type="checkbox" name="buyin" value="buyin"
+										#if ($gamePlayer.buyIn && $gamePlayer.buyIn > 0)
+											checked="checked"
+										#end
+									>
+								</td>
+								<td align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								<td align="right">TOC</td>
+								<td align="left">
+									<input type="checkbox" name="toc" value="toc"
+										#if ($gamePlayer.annualTocPlayer)
+											checked="checked"
+										#end
+									>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td align="right">QTOC</td>
+								<td align="left">
+									<input type="checkbox" name="qtoc" value="qtoc"
+										#if ($gamePlayer.quarterlyTocPlayer)
+											checked="checked"
+										#end
+									>
+								</td>
+								<td align="right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+								<td align="right">Re-buy</td>
+								<td align="left">
+									<input type="checkbox" name="rebuy" value="rebuy"
+										#if ($gamePlayer.reBuyIn && $gamePlayer.reBuyIn > 0)
+											checked="checkbox"
+										#end
+									>
+								</td>
+							</tr>
+							<tr>
+								<td>&nbsp;</td>
+							</tr>
+							<tr>
+								<td colspan="5">
+								<table align="center">
+									<tr>
+										<td align="right">Opt in for clock text<br></td>
+										<td align="left">
+											<input type="checkbox" name="optIn" value="optIn"
+											#if ($gamePlayer.optIn)
+												checked="checked"
+											#end
+										>
+									</tr>
+								</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Place</td>
+					<td align="left">
+						<select name="place">
+							<option value="0">&nbsp;</option>
+							#foreach($number in $places)
+							<option value="$number"
+								#if ($gamePlayer.finish == $number)
+									selected="selected"
+								#end
+								>$number</option>
+							#end
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td align="right">Chop</td>
+					<td align="left">
+						<input type="text" name="chop" value="$!gamePlayer.chop">
+					</td>
+				</tr>
+			<tbody>		
+		</table>
+		<input type="submit" value="Update">
+		<br/>
+		<br/>
+		<input type="button" value="Delete"
+			onClick="window.location.href='/toc/mobile/gameplayer/delete/$gamePlayer.id'">
+		</form>
+	</div>
+</div>
+
+</body>
+</html>

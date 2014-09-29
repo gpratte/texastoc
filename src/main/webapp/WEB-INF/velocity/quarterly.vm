@@ -1,0 +1,98 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+<script src="/toc/resources/js/season.js"></script>
+
+<div id="main">
+	#springBind("quarterlySeason.*")
+
+	<a href="/toc/admin/home">Home</a> -> 
+	<a href="/toc/admin/seasons">Seasons</a> -> 
+	<a href="/toc/admin/season/$quarterlySeason.seasonId">Season</a>
+
+	#if ($quarterlySeason.id == 0)
+		#set($creating=true)
+		<h1>New Quarterly Season</h1>
+	#else
+		#set($creating=false)
+		<h1>Quarterly Season</h1>
+	#end 
+
+	#set($hasErrors = false)
+	#foreach($error in $status.errorMessages)
+		#set($hasErrors = true)
+		#break
+	#end 
+	#if ($hasErrors == true)
+		<div id=validationErrors>
+			Please fix the following validation problems:
+			<ul id="binderrors">
+				#foreach($error in $status.errorMessages) <li>$error</li> #end 
+			</ul>
+		</div>
+	#end
+	
+	#if ($creating)
+		<form name="input" action="/toc/admin/quarterly/add" method="post">
+	#elseif ($editing)
+		<form name="input" action="/toc/admin/quarterly/update" method="post">
+		#springFormHiddenInput("quarterlySeason.id")
+	#end 
+	#springFormHiddenInput("quarterlySeason.seasonId")
+	
+	<table>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<td>Quarter:</td>
+						#set($quart = {"FIRST":"1st","SECOND":"2nd","THIRD":"3rd","FOURTH":"4th"})
+						<td>#springFormSingleSelect("quarterlySeason.quarter", $quart)</td>
+					</tr>
+					<tr>
+						<td>Start date:</td>
+						<td>#springFormInput("quarterlySeason.startDateText", "class='date'") mm/dd/yyyy</td>
+						<td><img id="startDateImg" src="/toc/resources/img/calendar.png"></td> 
+					</tr>
+					<tr>
+						<td>End date:</td>
+						<td>#springFormInput("quarterlySeason.endDateText", "class='date'") mm/dd/yyyy</td> 
+						<td><img id="endDateImg" src="/toc/resources/img/calendar.png"></td> 
+					</tr>
+					
+					<tr>
+						<td>Notes:</td>
+						<td>#springFormTextarea("quarterlySeason.note")</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						#if($creating)
+							<td colspan="2" align="center">
+								<input id="submit" type="submit" value="Add">
+								<input id="cancel" type="button" value="Cancel"
+									onClick="window.location.href='/toc/admin/season/$quarterlySeason.seasonId'"></td>
+							</td>
+						#elseif($editing)
+							<td colspan="2" align="center">
+								<input id="submit" type="submit" value="Update">
+								<input id="cancel" type="button" value="Cancel"
+								onClick="window.location.href='/toc/admin/season/$quarterlySeason.seasonId'"></td>
+							</td>
+						#end
+					</tr>
+				</table>
+			</td>
+			<td>
+				<span id="startDatePicker"></span> 
+				<span id="endDatePicker"></span> 
+			</td>
+		</tr>
+	</table>
+	</form>
+
+</div>
+
+#parse("footer.vm")

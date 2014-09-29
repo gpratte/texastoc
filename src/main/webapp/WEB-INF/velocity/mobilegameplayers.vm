@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Select a game or start a new game</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+	<script src="/toc/resources/js/mobilegameplayers.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<input type="button" value="<-- Back"
+			onClick="window.location.href='/toc/mobile/game/$gameId'">
+	</div>
+
+	#set ($d = "$")	
+	<div role="main" class="ui-content" align="center">
+		<form name="input" action="/toc/mobile/gameplayer/add" method="post">
+		<input type="hidden" name="gameId" value="$gameId">
+		<table id="players">
+			<thead>
+			<tr>
+				<th>Name</th>
+				<th>Buy-in<br>$d$buyIn</th>
+				<th>TOC</th>
+				<th>QTOC</th>
+			</tr>
+			</thead>
+
+			<tbody>
+			#foreach($number in [1..5])
+				<tr>
+					<td>
+						<select name="playerId--$foreach.count">
+							<option value="0">&nbsp;</option>
+							#foreach($player in $players)
+								<option value="$player.id">$player.fullName</option>
+							#end
+						</select>
+					</td>
+					<td align="center"><input type="checkbox" name="buyin--$foreach.count" value="buyin"></td>
+					<td align="center"><input type="checkbox" name="toc--$foreach.count" value="toc"></td>
+					<td align="center"><input type="checkbox" name="qtoc--$foreach.count" value="qtoc"></td>
+				</tr>
+			#end
+			<tbody>		
+		</table>
+		<input type="submit" value="Submit">
+		</form>
+	</div>
+</div>
+
+</body>
+</html>

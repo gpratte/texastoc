@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>What do you want to do</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<input type="button" value="<-- Back"
+			onClick="window.location.href='/toc/mobile'">
+	</div>
+
+	<div role="main" class="ui-content">
+	<h1>Payouts</h1>
+	
+	#foreach($numPlayers in $payouts.keySet())
+		Players paid: $numPlayers 
+		#set($payout = $payouts.get($numPlayers))
+		<ul>
+		#foreach($place in $payout.keySet())
+			<li>
+			Place: $place 
+			#set($percent = $payout.get($place) * 100)
+			#set($percent = $math.roundTo(2,$percent))
+			Percent: $percent
+			</li>
+		#end
+		</ul>
+	#end
+	
+	</div>
+
+</div>
+
+</body>
+</html>

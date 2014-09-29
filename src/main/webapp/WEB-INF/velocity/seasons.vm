@@ -1,0 +1,19 @@
+#parse("header.vm")
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a>
+	
+	<h1>Seasons</h1>
+	<ul>
+	#foreach($season in $seasons)
+		<li>
+		<a href="/toc/admin/season/$season.id">$season.startDateText - $season.endDateText</a>
+		</li>
+	#end
+	</ul>
+	<p/>
+	<input id="cancel" type="button" value="Add"
+		onClick="window.location.href='/toc/admin/season/new'">
+</div>
+
+#parse("footer.vm")

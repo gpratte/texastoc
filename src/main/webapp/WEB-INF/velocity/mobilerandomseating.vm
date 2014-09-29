@@ -1,0 +1,47 @@
+       	#if ($randomErrorMsg)
+	    	<div id="error" style="color:red;">
+	    		Please correct the following problem:
+	    		<br/>
+	    		$randomErrorMsg
+	    	</div>
+	    	<br/>
+    	#end
+	    
+		<table>
+			<tr>
+				<th>Player</th>
+				<th>Table</th>
+				<th>Seat</th>
+			</tr>
+			#foreach ($seat in $game.seating)
+			<tr>
+				<td>$!seat.player.firstName $!seat.player.lastName</td>
+				<td align="center">$seat.table</td>
+				<td align="center">$seat.position</td>
+			</tr>
+			#end
+			#if ($game.seating)
+				<tr>
+					<td colspan="2" align="center">
+						<br/>
+						<input id="$game.id" class="send" type="button" 
+						       value="Text Seating"/>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<br/>
+						<input type="button" value="Start Over"
+							onClick="window.location.href='/toc/mobile/game/clear_seating/$game.id'">
+					</td>
+				</tr>
+			#else
+				<tr>
+					<td colspan="2" align="center">
+						<br/>
+						<input type="button" value="Try Again"
+							onClick="window.location.href='/toc/mobile/game/$game.id'">
+					</td>
+				</tr>
+			#end
+		</table>
