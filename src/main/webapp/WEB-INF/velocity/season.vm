@@ -11,11 +11,6 @@
 				<a href="/toc/admin/home">Home</a> -> 
 				<a href="/toc/admin/seasons">Seasons</a>
 			</td>
-			#if (! $season.useHistoricalData)
-			<td align="right">
-				<a href="/toc/admin/season/summary/$season.id">Summary</a>
-			</td>
-			#end
 		</tr>
 	</table>
 
@@ -96,6 +91,14 @@
 							#end
 						#end
 					</tr>
+					<tr>
+						<td>Game kitty debit:</td>
+						#if ($creating || $editing)
+							<td>$d#springFormInput("season.kittyGameDebit")</td>
+						#else
+							<td>$d$!season.kittyGameDebit</td>
+						#end
+					</tr>
 					#if($creating == false && $editing == false && $season.useHistoricalData == false)
 						#set ($pot = $season.totalBuyIn + $season.totalReBuy)
 						<tr>
@@ -114,8 +117,44 @@
 							<td>Total Annual TOC:</td>
 							<td>$d$season.totalAnnualToc</td>
 						</tr>
+						<tr>
+							<td>Total Annual TOC Supplies:</td>
+							<td>$d$season.totalAnnualTocSupplies</td>
+						</tr>
+						
 					#end
 					
+					#if(!$season.useHistoricalData)
+					<tr>
+						<td>Finalized:</td>
+						#if ($editing)
+							#set($yesno = {"false":"No","true":"Yes"})
+							<td>#springFormSingleSelect("season.finalized", $yesno)</td>
+						#else
+							#if($season.finalized)
+								<td>Yes</td>
+							#else
+								<td>No</td>
+							#end
+						#end
+					</tr>
+					<tr>
+						<td>Final table thumb:</td>
+						#if ($editing)
+							<td>$d#springFormInput("season.finalTableThumb")</td>
+						#else
+							<td>$!season.finalTableThumb</td>
+						#end
+					</tr>
+					<tr>
+						<td>Final table image:</td>
+						#if ($editing)
+							<td>#springFormInput("season.finalTableImage")</td>
+						#else
+							<td>$!season.finalTableImage</td>
+						#end
+					</tr>
+					#end
 					<tr>
 						<td>Notes:</td>
 						#if ($creating || $editing)
@@ -162,7 +201,7 @@
 						</tr>
 						#foreach ($history in $season.histories)
 						<tr>
-							<td align="right">$history.player.fullName</td>
+							<td align="right">#if ($history.wsop)*#end<a href="/toc/admin/seasonhistory/$history.playerId?seasonId=$history.seasonId">$history.player.fullName</a></td>
 							<td align="center">$history.points</td> 
 							<td align="center">$history.entries</td> 
 						</tr>
@@ -181,7 +220,13 @@
 							#else
 							<td align="center"></td> 
 							#end
-							<td align="right">$!player.player.firstName $!player.player.lastName</td>
+							<td align="right">
+							#if ($player.forfeit)
+								#if($player.wsop)*#end<a href="/toc/admin/seasonplayer/$player.id?seasonId=$season.id"><strike>$!player.player.firstName $!player.player.lastName</strike></a>
+							#else
+								#if($player.wsop)*#end<a href="/toc/admin/seasonplayer/$player.id?seasonId=$season.id">$!player.player.firstName $!player.player.lastName</a>
+							#end
+							</td>
 							#if ($player.points > 0)
 								<td align="center">$player.points</td> 
 							#else
@@ -192,6 +237,7 @@
 						#end
 					#end
 				</table>
+				<br> * WSOP participant
 				</fieldset>
 				#end
 			</td>
@@ -206,11 +252,12 @@
 							<br/>
 						#end
 					#end
-					</fieldset>
 					#if($season.games.size() < 52)
+						<br/>
 						<input id="cancel" type="button" value="Add Game"
 						onClick="window.location.href='/toc/admin/game/new/$season.id'">
 					#end
+					</fieldset>
 					
 					#if (! $creating && ! $editing && ! $season.useHistoricalData)
 						<h2 align="center">Quarterly Seasons</h2>

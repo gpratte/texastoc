@@ -17,8 +17,11 @@ $(document).ready(function() {
     }, 900);
 
     $("#prev").click(function(event) {
-        $("#activity").val('prev');
-        $("#clockForm").submit();
+//        $("#activity").val('prev');
+//        $("#clockForm").submit();
+    	//$.post( "https://www.texastoc.com/toc/mobile/clock", 
+    	$.post( "http://192.168.1.31:8080/toc/mobile/clock", 
+    			{ gameId: $("#gameId").val(), activity: 'prev' });
     });
 
     $("#play").click(function(event) {
@@ -36,8 +39,11 @@ $(document).ready(function() {
     });
 
     $("#next").click(function(event) {
-        $("#activity").val('next');
-        $("#clockForm").submit();
+//        $("#activity").val('next');
+//        $("#clockForm").submit();
+    	//$.post( "https://www.texastoc.com/toc/mobile/clock", 
+    	$.post( "http://192.168.1.31:8080/toc/mobile/clock", 
+    			{ gameId: $("#gameId").val(), activity: 'next' });
     });
     $("#reset").click(function(event) {
         $("#activity").val('reset');
@@ -68,13 +74,11 @@ $(document).ready(function() {
             $("#remainingSeconds").text(seconds - 1);
         }
     });
-
 });
 
 function poll() {
     //$.getJSON('https://www.texastoc.com/toc/clock').done(function(data) {
-    //$.getJSON('http://localhost:8080/toc/clock').done(function(data) {
-    $.getJSON('/toc/clock').done(function(data) {
+    $.getJSON('/toc/clock/' + $("#gameId").val()).done(function(data) {
         if (data.running === true) {
             var currentRound = $("#currentRound").text();
             var updateRound = data.currentLevel.round;

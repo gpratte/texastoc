@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Prize Pot Distribution</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/faq'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+		<h1 align="center">How can the final table prize pot be distributed?</h1>
+	</div>
+
+	<div role="main" class="ui-content">
+	<ol>
+		<li>You have to provide the TOC with a flight confirmation to Vegas to get your prize money. You send the confirmation, we hand you a check.
+
+		<li>Only $1,000 can come off the table in cash. In other words we will only give $1,000 out in total without a flight confirmation to Vegas. There is an order of preference for this $1,000 cash payout. The pecking order is:
+		<ol type="a">
+			<li>Regular season winner
+			<li>Regular season runner-up
+			<li>1st place on the final table, then 2nd place on the final table, then 3rd place and so on
+			<li>2nd place on play-in table, then 3rd place on play-in table, and so on
+		</ol>
+
+		<li>So, let's assume the regular season winner and regular season runner-up have already shown flight reservations, so let's not worry about them and assuming no final table chop:
+		<ol type="a">
+			<li>If 1st place on the final table can't go to Vegas, he gets the $1,000 cash prize and the $1,000 he forfeits goes to 5th place on the TOC table now giving that person a total of $2,000 (the $1,000 original prize 5th place won + $1,000 from the forfeited prize) as long as the 5th place person provides the TOC with a flight confirmation to Vegas. If the 5th place person can't provide the TOC with a flight confirmation to Vegas, they get nothing and the $2,000 moves down to the next person on the pecking order and so on and so on.
+			<li>If 1st place on the final table can go to Vegas, but 2nd place can't, 2nd place gets the $1,000 cash prize and the $1,000 he forfeits goes to 5th place.....(see above paragraph for rest).
+			<li>If 1st place and 2nd place on the final table can go to Vegas, but 3rd place can't, 3rd place gets the $1,000 cash prize and the $1,000 he forfeits goes to 5th place.....(see above paragraph for rest).
+			<li>If 1st, 2nd, and 3rd place on the final table can go to Vegas, but 4th place can't, 4th place gets the $1,000 cash prize and the $1,000 he forfeits goes to 5th place.....(see above paragraph for rest).
+		</ol>
+
+		<li>If more than one of the 1st, 2nd, 3rd, and 4th place finishers on the Final Table can't go to Vegas, they will split the $1,000 cash prize and both of their forfeited $2,000 prizes will move down the pecking order until two people provide the TOC with a flight confirmation to Vegas.
+
+		<li>If the TOC does not have a flight confirmation from you three weeks before the first WSOP event, you are deemed to have forfeited your prize and will be receiving the cash payout. Why three weeks? Because the next guy down the pecking order should have three weeks notice to plan his trip with ork and his family.
+	</ol>
+	</div>
+</div>
+
+</body>
+</html>

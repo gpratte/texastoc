@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Minimum Requirements</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/faq'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+		<h1 align="center">What are the minimum requirements to be eligible to
+		play at a final table?</h1>
+	</div>
+
+	<div role="main" class="ui-content">
+	In order to qualify for the final table or the play-in table, a player must have played in the TOC at least 10 times OR earned 250 points.
+	</div>
+</div>
+
+</body>
+</html>

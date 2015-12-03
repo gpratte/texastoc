@@ -20,6 +20,7 @@
 				<td align="center">$seat.position</td>
 			</tr>
 			#end
+			
 			#if ($game.seating)
 				<tr>
 					<td colspan="2" align="center">
@@ -31,7 +32,7 @@
 				<tr>
 					<td colspan="2" align="center">
 						<br/>
-						<input type="button" value="Start Over"
+						<input type="button" id="startOverId" value="Start Over"
 							onClick="window.location.href='/toc/mobile/game/clear_seating/$game.id'">
 					</td>
 				</tr>

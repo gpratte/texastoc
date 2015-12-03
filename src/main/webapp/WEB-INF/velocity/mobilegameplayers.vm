@@ -16,8 +16,18 @@
 <div data-role="page">
 
 	<div data-role="header">
-		<input type="button" value="<-- Back"
-			onClick="window.location.href='/toc/mobile/game/$gameId'">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/game/$gameId'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
 	</div>
 
 	#set ($d = "$")	

@@ -3,16 +3,27 @@
 <beans xmlns="http://www.springframework.org/schema/beans" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:cache="http://www.springframework.org/schema/cache"
+	   xmlns:p="http://www.springframework.org/schema/p"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context 
-		http://www.springframework.org/schema/context/spring-context.xsd">
-		
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		   http://www.springframework.org/schema/cache 
+		   http://www.springframework.org/schema/cache/spring-cache.xsd 
+		">
+ 
     <context:component-scan base-package="com.toctexas"/>
     <context:property-placeholder location="classpath:toc.properties" />
 
 	<!-- Integration beans -->
 	<import resource="integration-context.xml" />
+
+	<!-- Caching -->
+	<import resource="cache.xml" />
 
 	<!-- Should not have to define these beans but the integration
 	     bean that uses them could not find them, why? ;;!! -->
@@ -20,15 +31,24 @@
 	<bean id="playerDao" class="com.texastoc.dao.PlayerDaoImpl" />
 
     <bean id="dataSource"
-        class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/toc"/>
-        <property name="user" value="tocuser"/>
+        class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/toc"/>
+        <property name="username" value="tocuser"/>
         <property name="password" value="tocpass"/>
-        <property name="testConnectionOnCheckin" value="true"/>
-        <property name="testConnectionOnCheckout" value="true"/>
-        <property name="idleConnectionTestPeriod" value="600"/>
+        <!-- <property name="defaultAutoCommit" value="false"/>  -->
     </bean>
+
+	<!-- 
+    <bean id="dataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+ 
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost:3306/toc"/>
+        <property name="username" value="tocuser"/>
+        <property name="password" value="tocpass"/>
+    </bean>
+	 -->
     
     <!-- SET default mail properties -->
     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
@@ -45,5 +65,14 @@
             </props>
         </property>
     </bean>
+
+    <!-- 
+    	Transactions 
+    -->
+	<tx:annotation-driven proxy-target-class="true" transaction-manager="txManager" />
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+    
 
 </beans>

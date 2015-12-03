@@ -24,6 +24,10 @@ border-right:1px solid black;
 			<th>Phone</th>
 			<th>Email</th>
 			<th>Carrier</th>
+			<th>Active</th>
+			<th>Host</th>
+			<th>Transporter</th>
+			<th>PTCG Player</th>
 			<th>Address</th>
 			<th>Note</th>
 		</tr>
@@ -45,6 +49,10 @@ border-right:1px solid black;
 					#end
 				#end
 				<td class="uline">$carrier</td>
+				<td class="uline">#if($player.active == true)Yes#end</td>
+				<td class="uline">#if($player.possibleHost == true)Yes#end</td>
+				<td class="uline">#if($player.transporter == true)Yes#end</td>
+				<td class="uline">#if($player.ptcg == true)Yes#end</td>
 				<td class="uline">$!player.address</td>
 				#if($player.note && "$player.note" != "")
 					<td class="uline" align="center">
@@ -61,7 +69,6 @@ border-right:1px solid black;
 	       onClick="window.location.href='/toc/admin/player/new'"
 	       value="Add Player">
 	<br/>
-	</form>
 </div>
 
 #parse("footer.vm")

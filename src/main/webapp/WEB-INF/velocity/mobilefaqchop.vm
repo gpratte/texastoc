@@ -15,11 +15,18 @@
 <div data-role="page">
 
 	<div data-role="header">
-		<input type="button" value="<-- Back"
-			onClick="window.location.href='/toc/mobile/faq'">
-	</div>
-
-	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/faq'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
 		<h1 align="center">How does the chop work?</h1>
 	</div>
 
@@ -53,13 +60,11 @@
 	</ol>
 	<h2>1st, 2nd and 3rd place chop</h2>
 	In this case all three get 3rd place points (money) and the rest is chopped.
+	<h2>Is there a ceiling on 1st place?</h2>
+	Yes. The algorithm prevents 1st place from getting more than 1st place points. 
+	For example if 1st place is 100 points with no chop then
+	1st place cannot get more than 100 points if there is a chop.
 	</div>
-	<br/>
-	<br/>
-	<div data-role="footer">
-		<a align="center" href="/toc/logout">Logout</a>
-	</div>
-	
 </div>
 
 </body>

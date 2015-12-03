@@ -5,6 +5,8 @@
 	<p/>
 	<a href="/toc/admin/players">Players</a>
 	<p/>
+	<a href="/toc/admin/supplies">Supplies</a>
+	<p/>
 	<a href="/toc/admin/pointsystem?min=2&max=50">Point System</a>
 	<p/>
 	<a href="/toc/admin/emailtext">Email and Texting</a>

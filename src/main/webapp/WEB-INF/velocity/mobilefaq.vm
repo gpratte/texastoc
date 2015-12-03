@@ -15,27 +15,52 @@
 <div data-role="page">
 
 	<div data-role="header">
-		<input type="button" value="<-- Back"
-			onClick="window.location.href='/toc/mobile'">
-	</div>
-
-	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
 		<h1 align="center">FAQ</h1>
 	</div>
 
 	<div role="main" class="ui-content">
 		<ul data-role="listview">
 			<li>
+				<a href="/toc/mobile/faq/stack">Guarantee a stack when late?</a>
+			</li>
+			<li>
+				<a href="/toc/mobile/faq/bonuschip">How to get the bonus chip?</a>
+			</li>
+			<li>
 				<a href="/toc/mobile/faq/chop">How does the chop work?</a>
+			</li>
+			<li>
+				<a href="/toc/mobile/faq/tocchop">How does the TOC affect the chop?</a>
+			</li>
+			<li>
+				<a href="/toc/mobile/faq/agerequirements">What are the TOC age requirements?</a>
+			</li>
+			<li>
+				<a href="/toc/mobile/faq/minrequirements">How do I qualify (games/points) for TOC?</a>
+			</li>
+			<li>
+				<a href="/toc/mobile/faq/prizepotdetermined">How is the TOC prize pot determined?</a>
+			</li>
+			<li>
+				<a href="/toc/mobile/faq/prizepotdistributed">How is the TOC prize pot distributed?</a>
+			</li>
+			<li>
+				<a href="/toc/mobile/faq/voterequirements">Who is qualified to vote on TOC issues?</a>
 			</li>
 		</ul>
 	</div>
-	<br/>
-	<br/>
-	<div data-role="footer">
-		<a align="center" href="/toc/logout">Logout</a>
-	</div>
-	
 </div>
 
 </body>

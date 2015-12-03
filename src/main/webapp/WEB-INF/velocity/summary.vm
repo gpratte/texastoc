@@ -48,6 +48,17 @@
 		<tr>
 			<table>
 				<tr>
+					<td>Season games</td>
+					<td>$game.annualIndex</td>
+				</tr>
+				<tr>
+					<td>Quarterly games</td>
+					<td> $game.quarterlyIndex</td>
+				</tr>
+				<tr>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+				<tr>
 					<td>Date:</td>
 					<td>$game.gameDateText</td> 
 				</tr>

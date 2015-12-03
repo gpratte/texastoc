@@ -1,6 +1,5 @@
 package com.texastoc.service;
 
-import java.sql.SQLException;
 import java.util.HashSet;
 
 import org.apache.log4j.Logger;
@@ -79,7 +78,12 @@ public class GamePlayerServiceImpl implements GamePlayerService {
     }
     
     @Override
-    public void delete(int id) throws SQLException{
+    public GamePlayer findByPlayerId(int playerId, int gameId) {
+        return gamePlayerDao.selectByPlayerId(playerId, gameId);
+    }
+    
+    @Override
+    public void delete(int id) {
         GamePlayer gamePlayer = gamePlayerDao.selectById(id);
         gamePlayerDao.delete(id);
 

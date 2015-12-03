@@ -1,0 +1,72 @@
+       	#if ($seatingErrorMsg)
+	    	<div id="error" style="color:red;">
+	    		Please correct the following problem:
+	    		<br/>
+	    		$seatingErrorMsg
+	    	</div>
+	    	<br/>
+    	#end
+
+		<form id="seatedFormId" name="input" action="/toc/mobile/game/assignseating/$game.id" method="post">
+		<table>
+			<tr>
+				<th>Player</th>
+				<th>Table</th>
+				<th>Seat</th>
+			</tr>
+			#foreach ($seat in $game.seating)
+			<tr>
+				<td>$!seat.player.firstName $!seat.player.lastName</td>
+				<td align="center">$seat.table</td>
+				<td align="center">$seat.position</td>
+			</tr>
+			#end
+		</table>
+		
+		#set ($moreToSeat = false)
+		#foreach ($player in $game.players)
+			#foreach ($seat in $game.seating)
+				#set ($alreadySeated = false)
+				#if ($seat.player.id == $player.playerId)
+					#set ($alreadySeated = true)
+					#break
+				#end
+			#end
+
+			#if (! $alreadySeated && $player.buyIn)
+				#set ($moreToSeat = true)
+				#break
+			#end
+		#end
+		
+		#if ($moreToSeat)
+			<br/>
+			<b>The following players have bought in. Select which ones should be seated.</b>
+			<input type="checkbox" id="selectAll" name="selectAll" value="true" />
+			<label id="selectAllLabel" for="selectAll">Select all</label>
+			#foreach ($player in $game.players)
+				#set ($alreadySeated = false)
+				#foreach ($seat in $game.seating)
+					#if ($seat.player.id == $player.playerId)
+						#set ($alreadySeated = true)
+						#break
+					#end
+				#end
+	
+				#if (! $alreadySeated && $player.buyIn)
+					<br>
+					<input type="checkbox" id="$player.id" name="playersWBuyIn" 
+						class="notyetseated" value="$player.id" />
+					<label for="$player.id">$!player.player.fullName</label>
+				#end
+			#end
+		#end
+		
+		#if (! $game.finalized)
+			<br/>
+			<br/>
+			<input id="submit" type="submit" value="Assign Seat">
+		#end
+		
+		</form>
+		

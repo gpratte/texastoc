@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>What do you want to do</title>
+	<title>Texas TOC home</title>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -15,39 +15,49 @@
 <div data-role="page">
 
 	<div data-role="header">
-		<h1 align="center">What to do?</h1>
+		<table width=100% align=right>
+			<tr>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
 	</div>
 
 	<div role="main" class="ui-content">
+		<h1 align="center">
+			<a href="/toc/resources/img/texastoc.spades.225x225.png" title="Click to enlarge">
+				<img id="texastoc" src="/toc/resources/img/texastoc.spades.100x100.png">
+			</a>
+		</h1>
 		<ul data-role="listview">
-			#if ($game && ! $game.finalized)
+			#if ($allowGoToCurrentGame)
 			<li>
-				<a href="/toc/mobile/game/$game.id">Game in progress</a>
+				<a href="/toc/mobile/game/current">Current Game</a>
+			</li>
+			#elseif ($allowStartNewGame)
+			<li>
+				<a href="/toc/mobile/game/new">Start a New Game</a>
 			</li>
 			#end
 			<li>
-				<a href="/toc/mobile/clock">Clock</a>
+				<a href="/toc/mobile/seasons">Look at Results</a>
 			</li>
 			<li>
-				<a href="/toc/mobile/seasons">Look at results</a>
+				<a href="/toc/mobile/numbers">Blinds/Payouts/Points</a>
 			</li>
 			<li>
-				<a href="/toc/mobile/pointsystem?min=2&max=50">Point System</a>
+				<a href="/toc/mobile/players">Players</a>
 			</li>
 			<li>
-				<a href="/toc/mobile/payouts">Payout Structure</a>
+				<a href="/toc/mobile/supplies">Supplies</a>
 			</li>
 			<li>
 				<a href="/toc/mobile/faq">FAQ</a>
 			</li>
 		</ul>
 	</div>
-	<br/>
-	<br/>
-	<div data-role="footer">
-		<a align="center" href="/toc/logout">Logout</a>
-	</div>
-	
 </div>
 
 </body>

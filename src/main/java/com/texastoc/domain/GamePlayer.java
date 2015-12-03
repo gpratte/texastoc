@@ -13,11 +13,13 @@ public class GamePlayer  implements Comparable<GamePlayer> {
     private Integer finish;
     private Integer chop;
     private Integer points;
+    private Integer nonTocPoints;
     private String note;
     private boolean annualTocPlayer;
     private boolean quarterlyTocPlayer;
     private boolean knockedOut;
     private boolean optIn;
+    private boolean emailOptIn;
     private DateTime lastCalculated;
     private Player player;
 
@@ -85,6 +87,14 @@ public class GamePlayer  implements Comparable<GamePlayer> {
         this.points = points;
     }
 
+    public Integer getNonTocPoints() {
+        return nonTocPoints;
+    }
+
+    public void setNonTocPoints(Integer nonTocPoints) {
+        this.nonTocPoints = nonTocPoints;
+    }
+
     public String getNote() {
         return note;
     }
@@ -123,6 +133,14 @@ public class GamePlayer  implements Comparable<GamePlayer> {
 
     public void setOptIn(boolean optIn) {
         this.optIn = optIn;
+    }
+
+    public boolean isEmailOptIn() {
+        return emailOptIn;
+    }
+
+    public void setEmailOptIn(boolean emailOptIn) {
+        this.emailOptIn = emailOptIn;
     }
 
     public DateTime getLastCalculated() {

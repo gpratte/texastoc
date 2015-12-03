@@ -1,5 +1,6 @@
 package com.texastoc.domain;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -13,6 +14,9 @@ public class Player implements Validator {
     private String cellCarrier;
     private String address;
     private String note;
+    private boolean possibleHost;
+    private boolean transporter;
+    private boolean ptcg;
     private boolean active;
     
     private transient String fullName;
@@ -67,11 +71,39 @@ public class Player implements Validator {
     public void setNote(String note) {
         this.note = note;
     }
+    public boolean isPossibleHost() {
+        return possibleHost;
+    }
+    public void setPossibleHost(boolean possibleHost) {
+        this.possibleHost = possibleHost;
+    }
+    public boolean isTransporter() {
+        return transporter;
+    }
+    public void setTransporter(boolean transporter) {
+        this.transporter = transporter;
+    }
+    public boolean isPtcg() {
+        return ptcg;
+    }
+    public void setPtcg(boolean ptcg) {
+        this.ptcg = ptcg;
+    }
     public boolean isActive() {
         return active;
     }
     public void setActive(boolean active) {
         this.active = active;
+    }
+    
+    public String getFirstInitial() {
+    	String initial = null;
+    	
+        if (! StringUtils.isEmpty(firstName)) {
+        	initial = firstName.substring(0, 1);
+        }
+        
+        return initial;
     }
     
     public String getFullName() {
@@ -116,4 +148,8 @@ public class Player implements Validator {
          }
      }
 
+     @Override
+     public String toString() {
+         return ToStringBuilder.reflectionToString(this);
+     }
 }

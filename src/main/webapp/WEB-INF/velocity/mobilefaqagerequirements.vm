@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Age Requirements</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/faq'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+		<h1 align="center">What are the age requirements to be eligible to
+		play in the TOC?</h1>
+	</div>
+
+	<div role="main" class="ui-content">
+	A player who will turn 18-20 before or during the May after that TOC season may play the TOC under the condition that they play in a WSOP Circuit event that next season at a Casino that allows 18+ players or a European WSOP stop that allows 18+ players. 
+	<br><br>This rule does not apply to players 21 and over. If a player is 21 or over they must still play in the WSOP in Vegas or the European WSOP.
+	</div>
+</div>
+
+</body>
+</html>

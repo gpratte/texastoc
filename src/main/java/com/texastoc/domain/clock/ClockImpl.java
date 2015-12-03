@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
+import com.texastoc.common.HomeGame;
 import com.texastoc.domain.Game;
 import com.texastoc.service.GameService;
 import com.texastoc.service.mail.MailService;
@@ -14,12 +13,9 @@ import com.texastoc.service.mail.MailService;
 /**
  * Spring makes this a singleton
  */
-@Component
 public class ClockImpl implements Clock, TimerListener {
     
-    @Autowired 
     private MailService mailService;
-    @Autowired 
     private GameService gameService;
     
     static final Logger logger = Logger.getLogger(ClockImpl.class);
@@ -32,14 +28,22 @@ public class ClockImpl implements Clock, TimerListener {
 
     private int currentLevelIndex = 0;
     private List<Level> levels;
+    private List<Level> tocLevels;
+    private List<Level> cpplLevels;
     private boolean running;
     private int remainingMinutes;
     private int remainingSeconds;
 
     private transient Timer timer;
 
-    public ClockImpl() {
+    public ClockImpl(GameService gameService, MailService mailService) {
+    	this.gameService = gameService;
+    	this.mailService = mailService;
         init();
+    }
+    
+    public List<Level> getLevels() {
+    	return levels;
     }
     
     public Level getCurrentLevel() {
@@ -60,8 +64,13 @@ public class ClockImpl implements Clock, TimerListener {
         // This last level is a dummy level not to be used, just shown
         if (currentLevelIndex + 2 < levels.size()) {
             ++currentLevelIndex;
-            checkIfNotBreak();
         }
+        
+        Level level = this.getCurrentLevel();
+        this.remainingMinutes = level.getDurationMinutes();
+        this.remainingSeconds = 0;
+        
+        sendLevelChange();
     }
     
     public void goToPreviousLevel(String round) {
@@ -69,15 +78,37 @@ public class ClockImpl implements Clock, TimerListener {
         currentLevelIndex = getLevelIndexFromRound(round);
         if (currentLevelIndex > 0) {
             --currentLevelIndex;
-            checkIfNotBreak();
         }
+
+        Level level = this.getCurrentLevel();
+        this.remainingMinutes = level.getDurationMinutes();
+        this.remainingSeconds = 0;
+        
+        sendLevelChange();
     }
     
-    public String getMaxRound() {
+	public void setRound(String round) {
+
+        if (round == null) {
+            round = "Round 1";
+        }
+        currentLevelIndex = getLevelIndexFromRound(round);
+	}
+
+	public String getMaxRound() {
         return levels.get(levels.size() - 1).getRound();
     }
     
-    public void start(String round, Integer minutes, Integer seconds) {
+	@Override
+	public void setHomeGame(HomeGame homeGame) {
+		if (homeGame == HomeGame.TOC) {
+			levels = tocLevels;
+		} else if (homeGame == HomeGame.CPPL) {
+			levels = cpplLevels;
+		}
+	}
+
+	public void start(String round, Integer minutes, Integer seconds) {
         reset();
 
         if (round == null) {
@@ -163,67 +194,130 @@ public class ClockImpl implements Clock, TimerListener {
     }
 
     private void init() {
-        levels = new ArrayList<Level>(26);
+        tocLevels = new ArrayList<Level>(26);
+        levels = tocLevels;
         Level level = new Level("Round 1", LevelType.NORMAL, 25, 50, 0, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 2", LevelType.NORMAL, 50, 100, 0, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 3", LevelType.NORMAL, 100, 200, 0, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 4", LevelType.NORMAL, 100, 200, 25, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 5", LevelType.NORMAL, 150, 300, 25, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 6", LevelType.NORMAL, 200, 400, 50, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 7", LevelType.NORMAL, 300, 600, 75, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Break 1", LevelType.BREAK, 0, 0, 0, MILLISECONDS_IN_BREAK_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 8", LevelType.NORMAL, 400, 800, 100, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 9", LevelType.NORMAL, 600, 1200, 100, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 10", LevelType.NORMAL, 800, 1600, 200, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 11", LevelType.NORMAL, 1000, 2000, 300, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 12", LevelType.NORMAL, 1500, 3000, 400, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Break 2", LevelType.BREAK, 0, 0, 0, MILLISECONDS_IN_BREAK_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 13", LevelType.NORMAL, 2000, 4000, 500, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 14", LevelType.NORMAL, 3000, 6000, 500, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 15", LevelType.NORMAL, 4000, 8000, 1000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 16", LevelType.NORMAL, 5000, 10000, 1000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Break 3", LevelType.BREAK, 0, 0, 0, MILLISECONDS_IN_BREAK_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 17", LevelType.NORMAL, 6000, 12000, 1000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 18", LevelType.NORMAL, 8000, 16000, 2000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 19", LevelType.NORMAL, 10000, 20000, 3000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 20", LevelType.NORMAL, 12000, 24000, 3000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 21", LevelType.NORMAL, 15000, 30000, 4000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 22", LevelType.NORMAL, 20000, 40000, 5000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 23", LevelType.NORMAL, 25000, 50000, 5000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 24", LevelType.NORMAL, 30000, 60000, 5000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 25", LevelType.NORMAL, 40000, 80000, 10000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Round 26", LevelType.NORMAL, 50000, 100000, 10000, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
         level = new Level("Repeat Round 26", LevelType.NORMAL, 0, 0, 0, MILLISECONDS_IN_ROUND, this);
-        levels.add(level);
+        tocLevels.add(level);
+
+        cpplLevels = new ArrayList<Level>(26);
+        level = new Level("Round 1", LevelType.NORMAL, 25, 50, 0, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 2", LevelType.NORMAL, 50, 100, 0, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 3", LevelType.NORMAL, 75, 150, 0, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 4", LevelType.NORMAL, 100, 200, 0, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 5", LevelType.NORMAL, 150, 300, 0, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 6", LevelType.NORMAL, 200, 400, 0, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 7", LevelType.NORMAL, 300, 600, 0, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Break 1", LevelType.BREAK, 0, 0, 0, MILLISECONDS_IN_BREAK_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 8", LevelType.NORMAL, 400, 800, 100, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 9", LevelType.NORMAL, 600, 1200, 100, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 10", LevelType.NORMAL, 800, 1600, 200, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 11", LevelType.NORMAL, 1000, 2000, 300, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 12", LevelType.NORMAL, 1500, 3000, 400, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Break 2", LevelType.BREAK, 0, 0, 0, MILLISECONDS_IN_BREAK_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 13", LevelType.NORMAL, 2000, 4000, 500, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 14", LevelType.NORMAL, 3000, 6000, 500, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 15", LevelType.NORMAL, 4000, 8000, 1000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 16", LevelType.NORMAL, 5000, 10000, 1000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Break 3", LevelType.BREAK, 0, 0, 0, MILLISECONDS_IN_BREAK_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 17", LevelType.NORMAL, 6000, 12000, 1000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 18", LevelType.NORMAL, 8000, 16000, 2000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 19", LevelType.NORMAL, 10000, 20000, 3000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 20", LevelType.NORMAL, 12000, 24000, 3000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 21", LevelType.NORMAL, 15000, 30000, 4000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 22", LevelType.NORMAL, 20000, 40000, 5000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 23", LevelType.NORMAL, 25000, 50000, 5000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 24", LevelType.NORMAL, 30000, 60000, 5000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 25", LevelType.NORMAL, 40000, 80000, 10000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Round 26", LevelType.NORMAL, 50000, 100000, 10000, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
+        level = new Level("Repeat Round 26", LevelType.NORMAL, 0, 0, 0, MILLISECONDS_IN_ROUND, this);
+        cpplLevels.add(level);
     }
 
     private int getLevelIndexFromRound(String round) {
@@ -236,15 +330,13 @@ public class ClockImpl implements Clock, TimerListener {
         return 0;
     }
     
-    private void checkIfNotBreak() {
+    private void sendLevelChange() {
         Level level = getCurrentLevel();
-        if (!level.getRound().startsWith("Break")) {
-            Game game = gameService.findMostRecent();
-            if (game != null && !game.isFinalized()) {
-                mailService.sendBlindsUpMail(game, level.getRound(), 
-                        level.getSmallBlind(), level.getBigBlind(), level.getAnte());
-            }
+        Game game = gameService.findMostRecent();
+        if (game != null && !game.isFinalized()) {
+            mailService.sendBlindsUpMail(game, level.getRound(), 
+                    level.getSmallBlind(), level.getBigBlind(), level.getAnte());
         }
-
     }
+
 }

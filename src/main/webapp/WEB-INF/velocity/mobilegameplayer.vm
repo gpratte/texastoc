@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Select a game or start a new game</title>
+	<title>Game Player</title>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -9,14 +9,25 @@
 	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
 	<script src="/toc/resources/js/mobileconfig.js"></script>
 	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+	<script src="/toc/resources/js/mobilegameplayer.js"></script>
 </head>
 <body>
 
 <div data-role="page">
 
 	<div data-role="header">
-		<input type="button" value="<-- Back"
-			onClick="window.location.href='/toc/mobile/game/$gamePlayer.gameId'">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/game/$gamePlayer.gameId'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
 	</div>
 
 	#set ($d = "$")	
@@ -25,18 +36,7 @@
 		<table id="players">
 			<tbody>
 				<tr>
-					<td align="right">Name</td>
-					<td align="left">
-						<select name="playerId">
-							#foreach($player in $players)
-								<option value="$player.id"
-								#if ($gamePlayer.playerId == $player.id)
-									selected="selected"
-								#end
-								>$player.fullName</option>
-							#end
-						</select>
-					</td>
+					<td align="center" colspan="2">$gamePlayer.player.fullName</td>
 				</tr>
 				<tr>
 					<td colspan="2">
@@ -95,7 +95,40 @@
 											#if ($gamePlayer.optIn)
 												checked="checked"
 											#end
-										>
+											>
+										</td>
+									</tr>
+									<tr>
+										<td align="right">Opt in for game emails<br></td>
+										<td align="left">
+											<input type="checkbox" name="emailOptIn" value="emailOptIn"
+											#if ($gamePlayer.emailOptIn)
+												checked="checked"
+											#end
+											>
+										</td>
+									</tr>
+									<tr>
+										<td align="right">Knocked out<br></td>
+										<td align="left">
+											<input type="checkbox" name="knockedOut" value="knockedOut"
+											#if ($gamePlayer.knockedOut)
+												checked="checked"
+											#end
+											>
+										</td>
+									</tr>
+									<tr>
+										<td align="right">Banker<br></td>
+										<td align="left">
+											<input type="checkbox" name="banker" value="$gamePlayer.playerId"
+											#foreach ($banker in $game.bankers)
+												#if ($gamePlayer.playerId == $banker.id)
+													checked="checked"
+\												#end
+											#end
+											>
+										</td>
 									</tr>
 								</table>
 								</td>
@@ -130,7 +163,7 @@
 		<br/>
 		<br/>
 		<input type="button" value="Delete"
-			onClick="window.location.href='/toc/mobile/gameplayer/delete/$gamePlayer.id'">
+			onClick="deleteClicked($gamePlayer.id)">
 		</form>
 	</div>
 </div>

@@ -4,12 +4,16 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc 
 		http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context 
-		http://www.springframework.org/schema/context/spring-context.xsd">
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task.xsd
+		">
 
 	<context:component-scan base-package="com.texastoc" />
 
@@ -26,5 +30,21 @@
 		<property name="suffix" value=".vm"/>
 	    <property name="toolboxConfigLocation" value="/WEB-INF/velocity/toolbox.xml" />
 	</bean>
+
+	<bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+ 
+         <!-- setting maximum upload size in bytes -->
+        <property name="maxUploadSize" value="1000000" />
+ 
+    </bean>
+
+	<!-- Scheduling. This would not work when in the application-config.xml.
+	     Had to move it here (maybe because this is loaded after 
+	     the application.xml?!? -->
+	<task:annotation-driven executor="myExecutor" scheduler="myScheduler"/>
+	<task:executor id="myExecutor" pool-size="5"/>
+	<task:scheduler id="myScheduler" pool-size="10"/>
+
 
 </beans>

@@ -8,6 +8,7 @@ public class AbstractSeasonPlayer {
     protected int place;
     protected int points;
     protected int numEntries;
+    protected Integer tie;
     protected Player player;
 
     public int getId() {
@@ -48,6 +49,14 @@ public class AbstractSeasonPlayer {
 
     public void setNumEntries(int numEntries) {
         this.numEntries = numEntries;
+    }
+
+    public Integer getTie() {
+        return tie;
+    }
+
+    public void setTie(Integer tie) {
+        this.tie = tie;
     }
 
     public Player getPlayer() {

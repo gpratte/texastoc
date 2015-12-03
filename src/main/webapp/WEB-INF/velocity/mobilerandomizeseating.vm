@@ -1,62 +1,99 @@
 			<form id="randomform" name="input" action="/toc/mobile/game/randomize/$game.id" method="post">
+			#set($numPlayers = $game.players.size())
+			<table>
+				<tr>
+					<td>Table 1 players:</td>
+					<td>
+						<select id="numTable1" name="numTable1">
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+						<select>
+					</td>
+				</tr>
+				<tr>
+					<td>Table 2 players:</td>
+					<td>
+						<select id="numTable2" name="numTable2">
+							<option value="0">0</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+						<select>
+					</td>
+				</tr>
+				<tr>
+					<td>Table 3 players:</td>
+					<td>
+						<select id="numTable3" name="numTable3">
+							<option value="0">0</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+						<select>
+					</td>
+				</tr>
+				<tr>
+					<td>Table 4 players:</td>
+					<td>
+						<select id="numTable4" name="numTable4">
+							<option value="0">0</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+						<select>
+					</td>
+				</tr>
+				<tr>
+					<td>Table 5 players:</td>
+					<td>
+						<select id="numTable5" name="numTable5">
+							<option value="0">0</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+						<select>
+					</td>
+				</tr>
+			</table>
 			<br/>
-			Number of tables: 
-			<select id="tables" name="tables">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-				<option value="6">6</option>
-				<option value="7">7</option>
-				<option value="8">8</option>
-				<option value="9">9</option>
-				<option value="10">10</option>
-			<select>
 			
-			<br/>
-			<br/>
-			Players per table: 
-			<select id="pertable" name="pertable">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-				<option value="6">6</option>
-				<option value="7">7</option>
-				<option value="8">8</option>
-				<option value="9">9</option>
-				<option value="10">10</option>
-			<select>
-			
-			#if ($game.players && $game.players.size() > 0)
-				<br/>
-				<br/>
-				<b>The following players have not bought in. Select which ones should be seated.</b>
-				#foreach ($player in $game.players)
-					#if (! $player.buyIn)
-						<br/>
-						<input type="checkbox" id="nobuyin$foreach.count" name="playersWOBuyIn" 
-							value="$player.id" />
-						<label for="nobuyin$foreach.count">$!player.player.fullName</label>
-					#end
-				#end
-				<br/>
-				<b>The following players have bought in. Select which ones should NOT be seated.</b>
-				#foreach ($player in $game.players)
-					#if ($player.buyIn)
-						<br/>
-						<input type="checkbox" id="buyin$foreach.count" name="playersWBuyIn" 
-							value="$player.id" />
-						<label for="buyin$foreach.count">$!player.player.fullName</label>
-					#end
-				#end
-			#end
-			
-			<br/>
-			Optionally select a player for table 1, seat 1
-			<select name="table1seat1">
+			Optionally select a player for table 1
+			<select name="table1seat">
 				<option value="#">&nbsp;</option>
 				#foreach($gamePlayer in $game.players)
 					<option value="$gamePlayer.player.id">$gamePlayer.player.fullName</option>

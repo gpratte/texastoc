@@ -1,24 +1,18 @@
 package com.texastoc.dao;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -28,57 +22,25 @@ import com.texastoc.domain.Quarter;
 import com.texastoc.domain.QuarterlySeason;
 
 @Repository
-public class QuarterlySeasonDaoImpl implements QuarterlySeasonDao {
+public class QuarterlySeasonDaoImpl extends BaseJDBCTemplateDao implements QuarterlySeasonDao {
 
-    private JdbcTemplate jdbcTemplate;
+    static final Logger logger = Logger.getLogger(QuarterlySeasonDaoImpl.class);
 
     @Autowired
-    GameDao gameDao;
+    private GameDao gameDao;
     @Autowired
-    GamePlayerDao gamePlayerDao;
+    private GamePlayerDao gamePlayerDao;
     @Autowired
-    QuarterlySeasonPlayerDao qSeasonPlayerDao;
+    private QuarterlySeasonPlayerDao qSeasonPlayerDao;
 
     @Autowired
     public void init(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        setDataSource(dataSource);
     }
 
-    private static final String UPDATE_QUARTERLY_SQL = "UPDATE quarterlyseason set "
-            + " startDate=?, endDate=?, note=?, quarter=?, totalQuarterlyToc=?, "
-            + " lastCalculated=? where id=?";
-
-    public void update(final QuarterlySeason quarterly) throws SQLException {
-        Connection connection = jdbcTemplate.getDataSource().getConnection();
-        jdbcTemplate.update(
-            new PreparedStatementCreator() {
-                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                    PreparedStatement ps = connection.prepareStatement(UPDATE_QUARTERLY_SQL);
-                    int index = 1;
-                    ps.setTimestamp(index++, new Timestamp(quarterly.getStartDate().toDate().getTime()));
-                    ps.setTimestamp(index++, new Timestamp(quarterly.getEndDate().toDate().getTime()));
-                    ps.setString(index++, quarterly.getNote());
-                    ps.setInt(index++, quarterly.getQuarter().getValue());
-                    ps.setInt(index++, quarterly.getTotalQuarterlyToc());
-                    if (quarterly.getLastCalculated() == null) {
-                        ps.setNull(index++, Types.DATE);
-                    } else {
-                        ps.setTimestamp(index++, new Timestamp(quarterly.getLastCalculated().toDate().getTime()));
-                    }
-                    ps.setInt(index++, quarterly.getId());
-                    return ps;
-                }
-            });
-        
-        // ;;!! Not sure if I need to do this
-        DataSourceUtils.releaseConnection(connection, jdbcTemplate.getDataSource());
-    }
-    
     public List<QuarterlySeason> selectBySeasonId(int seasonId) {
-        List<QuarterlySeason> quarterlies = this.jdbcTemplate
-                .query("select id, seasonId, startDate, endDate, "
-                        + " note, totalQuarterlyToc, quarter,"
-                        + " lastCalculated from quarterlyseason "
+        List<QuarterlySeason> quarterlies = this.getJdbcTemplate()
+                .query("select * from quarterlyseason "
                         + " where seasonId=" + seasonId + " order by quarter",
                         new QuarterlySeasonMapper());
 
@@ -95,10 +57,8 @@ public class QuarterlySeasonDaoImpl implements QuarterlySeasonDao {
     }
 
     public QuarterlySeason selectById(int id) {
-        QuarterlySeason quarterly = this.jdbcTemplate
-                .queryForObject("select id, seasonId, startDate, endDate, "
-                        + " note, totalQuarterlyToc, quarter,"
-                        + " lastCalculated from quarterlyseason "
+        QuarterlySeason quarterly = this.getJdbcTemplate()
+                .queryForObject("select * from quarterlyseason "
                         + " where id=" + id,
                         new QuarterlySeasonMapper());
         return quarterly;
@@ -106,50 +66,66 @@ public class QuarterlySeasonDaoImpl implements QuarterlySeasonDao {
 
     private static final String INSERT_QUARTERLY_SQL = "INSERT INTO quarterlyseason "
             + "(seasonId, startDate, endDate, quarter, note) "
-            + " VALUES (?,?,?,?,?)";
-    public int insert(final QuarterlySeason quarterly) throws SQLException {
+            + " VALUES "
+            + " (:seasonId, :startDate, :endDate, :quarter, :note)";
+    public int insert(final QuarterlySeason quarterly) {
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        Connection connection = jdbcTemplate.getDataSource().getConnection();
-        jdbcTemplate.update(
-            new PreparedStatementCreator() {
-                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                    PreparedStatement ps =
-                        connection.prepareStatement(INSERT_QUARTERLY_SQL, Statement.RETURN_GENERATED_KEYS);
-                    int index = 1;
-                    ps.setInt(index++, quarterly.getSeasonId());
-                    ps.setTimestamp(index++, new Timestamp(quarterly.getStartDate().toDate().getTime()));
-                    ps.setTimestamp(index++, new Timestamp(quarterly.getEndDate().toDate().getTime()));
-                    ps.setInt(index++, quarterly.getQuarter().getValue());
-                    ps.setString(index++, quarterly.getNote());
-                    return ps;
-                }
-            },
-            keyHolder);
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("seasonId", quarterly.getSeasonId());
+        params.addValue("startDate", quarterly.getStartDate().toDate());
+        params.addValue("endDate", quarterly.getEndDate().toDate());
+        params.addValue("quarter", quarterly.getQuarter().getValue());
+        params.addValue("note", quarterly.getNote());
         
-        // ;;!! Not sure if I need to do this
-        DataSourceUtils.releaseConnection(connection, jdbcTemplate.getDataSource());
+        String [] keys = {"id"};
+        getTemplate().update(INSERT_QUARTERLY_SQL, params, keyHolder, keys);
 
         return keyHolder.getKey().intValue();
     }
     
+    private static final String UPDATE_QUARTERLY_SQL = "UPDATE quarterlyseason set "
+            + " startDate=:startDate, endDate=:endDate, note=:note, "
+            + " quarter=:quarter, totalQuarterlyToc=:totalQuarterlyToc, "
+            + " lastCalculated=:lastCalculated where id=:id";
+
+    public void update(final QuarterlySeason quarterly) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("startDate", quarterly.getStartDate().toDate());
+        params.addValue("endDate", quarterly.getEndDate().toDate());
+        params.addValue("note", quarterly.getNote());
+        params.addValue("quarter", quarterly.getQuarter().getValue());
+        params.addValue("totalQuarterlyToc", quarterly.getTotalQuarterlyToc());
+        params.addValue("lastCalculated", quarterly.getLastCalculated());
+        params.addValue("id", quarterly.getId());
+
+        getTemplate().update(UPDATE_QUARTERLY_SQL, params);
+    }
+    
 
     private static final class QuarterlySeasonMapper implements RowMapper<QuarterlySeason> {
-        public QuarterlySeason mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public QuarterlySeason mapRow(ResultSet rs, int rowNum) {
             QuarterlySeason quarterly = new QuarterlySeason();
-            quarterly.setId(rs.getInt("id"));
-            quarterly.setSeasonId(rs.getInt("seasonId"));
-            quarterly.setStartDate(new LocalDate(rs.getDate("startDate")));
-            quarterly.setEndDate(new LocalDate(rs.getDate("endDate")));
-            quarterly.setNote(rs.getString("note"));
-            quarterly.setTotalQuarterlyToc(rs.getInt("totalQuarterlyToc"));
+            try {
+                quarterly.setId(rs.getInt("id"));
+                quarterly.setSeasonId(rs.getInt("seasonId"));
+                quarterly.setStartDate(new LocalDate(rs.getDate("startDate")));
+                quarterly.setEndDate(new LocalDate(rs.getDate("endDate")));
+                quarterly.setNote(rs.getString("note"));
+                quarterly.setTotalQuarterlyToc(rs.getInt("totalQuarterlyToc"));
 
-            Date date = rs.getDate("lastCalculated");
-            if (date != null) {
-                quarterly.setLastCalculated(new DateTime(date));
+                Date date = rs.getDate("lastCalculated");
+                if (date != null) {
+                    quarterly.setLastCalculated(new DateTime(date));
+                }
+                
+                int quarterlyValue = rs.getInt("quarter");
+                quarterly.setQuarter(Quarter.fromInt(quarterlyValue));
+            } catch (SQLException e) {
+                logger.error(e);
             }
-            
-            int quarterlyValue = rs.getInt("quarter");
-            quarterly.setQuarter(Quarter.fromInt(quarterlyValue));
             
             return quarterly;
         }

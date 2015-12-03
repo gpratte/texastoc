@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Bonus Chip</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/faq'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+		<h1 align="center">How to get the bonus chip?</h1>
+	</div>
+
+	<div role="main" class="ui-content">
+	To get the $500 bonus chip you have to have paid before the first hand is dealt (i.e. before the clock starts and 'shuffle up and deal' is proclaimed).
+	<br><br>
+	<b>Coung rule:</b> You cannot get the bonus chip and then leave the game for an extended time (e.g. you can make a phone call but you cannot drive somewhere else).
+	</div>
+</div>
+
+</body>
+</html>

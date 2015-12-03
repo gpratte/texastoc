@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Rally</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+	<script src="/toc/resources/js/mobilerally.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/game/$game.id'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div role="main" class="ui-content" align="center">
+		<form name="input" action="/toc/mobile/game/sendrally/$game.id" method="post">
+		
+		Select who the email is from: 
+		<select name="playerId">
+			<option value="0">&nbsp;</option>
+			#foreach($player in $players)
+				<option value="$player.id">$player.fullName</option>
+			#end
+		</select>
+		<br>
+		<br>
+		Enter the email body: 
+		<br>
+		<input name="textbody" id="textbodyid" type="textarea" rows="4" cols="50" style="width:100%; height: 120px;">
+		
+		<input type="submit" value="Send">
+		<br/>
+		</form>
+	</div>
+</div>
+
+</body>
+</html>

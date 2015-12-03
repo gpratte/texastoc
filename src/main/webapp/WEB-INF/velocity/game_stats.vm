@@ -1,6 +1,20 @@
 #set ($d = "$")	
 <table>
 	<tr>
+		#if ($editing)
+			<td>Season games #springFormInput("game.annualIndex")</td>
+		#else
+			<td colspan="2" align="left">Season games $game.annualIndex</td>
+		#end
+	</tr>
+	<tr>
+		#if ($editing)
+			<td>Quarterly games #springFormInput("game.quarterlyIndex")</td>
+		#else
+			<td colspan="2" align="left">Quarterly games $game.quarterlyIndex</td>
+		#end
+	</tr>
+	<tr>
 		<td>
 			<table>
 				<tr>
@@ -19,6 +33,7 @@
 					<td>Host:</td>
 					#if ($creating || $editing)
 						#set($hosts = {})
+						$!hosts.put(0, "Unknown")
 						#foreach($player in $players)
 							#set($playerName = "$!player.firstName $!player.lastName")
 							$!hosts.put($player.id, $playerName)
@@ -89,6 +104,15 @@
 						<td>Total Quarterly TOC:</td>
 						<td>$d$game.totalQuarterlyToc</td>
 					</tr>
+					<tr>
+						<td>Kitty Debit:</td>
+						<td>$d$game.kittyDebit</td>
+					</tr>
+				#elseif ($editing)
+					<tr>
+						<td>Kitty Debit:</td>
+						<td>#springFormInput("game.kittyDebit")</td>
+					</tr>
 				#end
 				
 				<tr>
@@ -116,9 +140,13 @@
 							onClick="window.location.href='/toc/admin/game/$game.id'"></td>
 						</td>
 					#else
-						<td colspan="2" align="center">
+						<td align="center">
 							<input id="edit" type="button" value="Edit"
 							onClick="window.location.href='/toc/admin/game/$game.id?editing=true'">
+						</td>
+						<td align="center">
+							<input id="delete" type="button" value="Delete"
+							onClick="window.location.href='/toc/admin/game/$game.id?deleting=true'">
 						</td>
 					#end
 				</tr>
@@ -138,11 +166,13 @@
 				<tr>
 					<th align="left">Place</th>
 					<th align="left">Amount</th>
+					<th align="left">Chop Amount</th>
 				</tr>
 				#foreach ($payout in $game.payouts)
 				<tr>
 					<td align="center">$payout.place</td>
 					<td align="center">$payout.amount</td>
+					<td align="center">$!payout.chopAmount</td>
 				</tr>
 				#end
 			</table>

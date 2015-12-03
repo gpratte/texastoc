@@ -5,7 +5,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 
 import com.texastoc.util.DateConverter;
 
@@ -41,6 +40,15 @@ public abstract class BaseSeason {
         }
     }
 
+    public String getStartDateYearText() {
+        if (startDate != null) {
+            String text = DateConverter.getDateAsString(startDate);
+            return text.substring(text.length() - 4);
+        } else {
+            return null;
+        }
+    }
+
     public void setStartDateText(String text) {
         if (StringUtils.isNotEmpty(text)) {
             this.startDate = DateConverter.getStringAsDate(text);
@@ -60,6 +68,15 @@ public abstract class BaseSeason {
     public String getEndDateText() {
         if (endDate != null) {
             return DateConverter.getDateAsString(endDate);
+        } else {
+            return null;
+        }
+    }
+
+    public String getEndDateYearText() {
+        if (endDate != null) {
+            String text = DateConverter.getDateAsString(endDate);
+            return text.substring(text.length() - 4);
         } else {
             return null;
         }

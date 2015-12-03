@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Season summary</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page" id="mobilehistoricalsummary">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/seasons'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div role="main" class="ui-content">
+
+	<fieldset>	
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Season</h2>
+			</td>
+		</tr>
+		<tr>
+			<td>Start date:</td>
+			<td>$season.startDateText</td> 
+		</tr>
+		<tr>
+			<td>End date:</td>
+			<td>$season.endDateText</td> 
+		</tr>
+	</table>
+	<p/>
+	<table>
+		#if ($season.useHistoricalData)
+			<tr>
+				<th>Name</th>
+				<th>Points</th>
+				<th>Entries</th>
+			</tr>
+			#foreach ($history in $season.histories)
+			<tr>
+				<td align="right">#if($history.wsop)*#end$history.player.fullName</td>
+				<td align="center">$history.points</td> 
+				<td align="center">$history.entries</td> 
+			</tr>
+			#end
+		#end
+	</table>
+	<br>
+	* WSOP participant 
+	</fieldset>	
+	</div>
+
+</div>
+
+</body>
+</html>

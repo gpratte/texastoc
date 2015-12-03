@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>What do you want to do</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div role="main" class="ui-content">
+	<h1>Supplies</h1>
+	
+	#set ($d = "$")
+	Amount in kitty: $d$!kitty
+
+	#set ($d = "$")		
+	<table cellpadding="4">
+		<tr>
+			<th>Date</th>
+			<th>Game/<br/>Season</th>
+			<th>Type</th>
+			<th>Pot</th>
+			<th>TOC</th>
+			<th>Kitty</th>
+			<th>Desc</th>
+		</tr>
+
+		#foreach($supply in $supplies)
+			#if ($foreach.count % 2 == 0)
+			<tr bgcolor="lightblue">
+			#else
+			<tr>
+			#end
+				<td>$supply.createDate</td>
+				<td>
+					#set($found = false)
+					#foreach($game in $games)
+						#if ($game.id == $supply.gameId)
+							$game.gameDateText
+							#set($found = true)
+							#break
+						#end
+					#end
+					#if($found == false)
+						#foreach($season in $seasons)
+							#if ($season.id == $supply.seasonId)
+								$season.startDateYearText - $season.endDateYearText
+								#break
+							#end
+						#end
+					#end
+				</td>
+				<td>$supply.type.text</td>
+				<td>$!supply.prizePotAmount</td>
+				<td>$!supply.annualTocAmount</td>
+				<td>$!supply.kittyAmount</td>
+				<td>$!supply.description</td>
+			</tr>
+		#end
+	</table>
+	
+	</div>
+
+</div>
+
+</body>
+</html>

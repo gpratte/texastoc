@@ -109,6 +109,58 @@
 			#end
 		</tr>
 		<tr>
+			<td>Active:</td>
+			#if ($creating || $editing)
+				#set($yesno = {"false":"No","true":"Yes"})
+				<td>#springFormSingleSelect("player.active", $yesno)</td>
+			#else
+				#if($player.active)
+					<td>Yes</td>
+				#else
+					<td>No</td>
+				#end
+			#end
+		</tr>
+		<tr>
+			<td>Possible Host:</td>
+			#if ($creating || $editing)
+				#set($yesno = {"false":"No","true":"Yes"})
+				<td>#springFormSingleSelect("player.possibleHost", $yesno)</td>
+			#else
+				#if($player.possibleHost)
+					<td>Yes</td>
+				#else
+					<td>No</td>
+				#end
+			#end
+		</tr>
+		<tr>
+			<td>Possible Transporter:</td>
+			#if ($creating || $editing)
+				#set($yesno = {"false":"No","true":"Yes"})
+				<td>#springFormSingleSelect("player.transporter", $yesno)</td>
+			#else
+				#if($player.transporter)
+					<td>Yes</td>
+				#else
+					<td>No</td>
+				#end
+			#end
+		</tr>
+		<tr>
+			<td>PTCG Player:</td>
+			#if ($creating || $editing)
+				#set($yesno = {"false":"No","true":"Yes"})
+				<td>#springFormSingleSelect("player.ptcg", $yesno)</td>
+			#else
+				#if($player.ptcg)
+					<td>Yes</td>
+				#else
+					<td>No</td>
+				#end
+			#end
+		</tr>
+		<tr>
 			<td>Notes:</td>
 			#if ($creating || $editing)
 				<td>#springFormTextarea("player.note")</td>
@@ -138,7 +190,7 @@
 						onClick="window.location.href='/toc/admin/player/$player.id?editing=true'">
 					&nbsp;&nbsp;
 					<input id="edit" type="button" value="Delete"
-						onClick="deleteClicked()">
+						onClick="deleteClicked($player.id)">
 				</td>
 			#end
 		</tr>

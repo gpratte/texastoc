@@ -39,7 +39,8 @@
 	#end 
 	#springFormHiddenInput("game.seasonId")
 	
-	#set ($d = "$")	
+	#set ($d = "$")
+    ##foreach($banker in $game.bankers)
 	<table>
 		<tr>
 			<td colspan="2" align="center">
@@ -81,6 +82,14 @@
 							<tr>
 								<td align="center">$!player.finish</td>
 								<td>
+									#set($isBanker = false)
+									#foreach($banker in $game.bankers)
+										#if ($banker.id == $player.playerId)
+											#set($isBanker = true)
+											#break
+										#end
+									#end
+									#if ($isBanker)$d#end
 									<a href="/toc/admin/gameplayer/$player.id">$!player.player.firstName $!player.player.lastName</a>
 								</td>
 								<td align="center">$!player.points</td>
@@ -126,7 +135,15 @@
 						<input type="button" 
 						       onClick="window.location.href='/toc/admin/gameplayer/new/$game.id'"
 						       value="Add Players">
+						&nbsp;&nbsp;&nbsp;
+						<input type="button" 
+						       onClick="window.location.href='/toc/admin/gameplayer/upload/$game.id'"
+						       value="Upload Players">
 					#end
+						&nbsp;&nbsp;&nbsp;
+						<input type="button" 
+						       onClick="window.location.href='/toc/admin/gamebanker/$game.id'"
+						       value="Bankers">
 				#else
 					<span id="gameDatePicker"></span> 
 				#end

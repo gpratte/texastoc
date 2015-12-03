@@ -1,0 +1,39 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a> -> 
+	<a href="/toc/admin/seasons">Seasons</a> -> 
+	<a href="/toc/admin/season/$seasonId">Season</a>
+
+	<form name="input" action="/toc/admin/seasonhistory/update" method="post">
+	<input type="hidden" id="id" name="playerId" value="$entry.playerId">
+	<input type="hidden" id="id" name="seasonId" value="$entry.seasonId">
+
+	<br><br>
+	$!entry.player.fullName
+	<br><br>
+	WSOP participant:
+		<select name="wsop">
+			<option value="true"
+				#if ($entry.wsop)
+					selected="selected"
+				#end
+				>True</option>
+			<option value="false"
+				#if (! $entry.wsop)
+					selected="selected"
+				#end
+				>False</option>
+		</select>
+
+	<br><br><br>
+	<input id="submit" type="submit" value="Update">
+	<input id="cancel" type="button" value="Cancel"
+	onClick="window.location.href='/toc/admin/season/$seasonId'"></td>
+	</form>
+</div>
+
+#parse("footer.vm")

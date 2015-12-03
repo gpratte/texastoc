@@ -11,10 +11,11 @@ $( document ).ready(function() {
 			{
 			    $("#two").html(data);
 			    $("#two").find(".send").click(function( event ) {
-			    	jQuery.post("http://www.texastoc.com/toc/game/message/" + $(this).attr('id'));
-			    	//jQuery.post("http://192.168.1.118:8080/toc/game/message/" + $(this).attr('id'));
+			    	jQuery.post("https://www.texastoc.com/toc/game/message/" + $(this).attr('id'));
+			    	//jQuery.post("http://192.168.1.31:8080/toc/game/message/" + $(this).attr('id'));
 			    	$(this).attr("disabled", "disabled");
 			    	$(this).prop('value', 'Sent');
+			    	$("#startOverId").hide();
 			    });
 			},
 			error: function(jqXHR, textStatus, errorThrown) 
@@ -27,4 +28,13 @@ $( document ).ready(function() {
 		return false; // prevent normal submit
 	});
 
+	$("#homegame").change(function() {
+		if (confirm('Are you sure you want to change the game? Do not do if you are not sure!')) { 
+	    	$.post( "https://www.texastoc.com/toc/game/homegame", 
+	    			{ gameId: $("#gameId").val(), marker: $("#homegame").val() });
+		} else {
+			location.reload(true);
+		}
+	});
+	
 });

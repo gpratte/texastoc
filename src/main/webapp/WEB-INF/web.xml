@@ -52,7 +52,7 @@
 	</session-config>
 
 	<!-- 
-	 -->		
+	 -->
 	<security-constraint>
     	<web-resource-collection>
         	<url-pattern>/*</url-pattern>
@@ -62,4 +62,10 @@
     	</user-data-constraint>
 	</security-constraint>
 
+   <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.htm</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+	
 </web-app>

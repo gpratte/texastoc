@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.validation.Errors;
 
+import com.texastoc.common.HomeGame;
 import com.texastoc.util.DateConverter;
 
 public class Game implements Comparable<Game> {
@@ -22,13 +23,24 @@ public class Game implements Comparable<Game> {
     private int adjustPot;
     private int totalAnnualToc;
     private int totalQuarterlyToc;
+    private int totalPotSupplies;
+    private int totalAnnualTocSupplies;
+    private int kittyDebit;
     private int numPlayers;
     private int payoutDelta;
+    private int annualIndex;
+    private int quarterlyIndex;
     private boolean finalized;
     private boolean doubleBuyIn;
+    private boolean transportRequired;
+    private boolean seated;
+    private HomeGame homeGame;
     private DateTime lastCalculated;
+    private DateTime startTime;
+    private DateTime actualStartTime;
     private List<GamePlayer> players;
     private List<GamePayout> payouts;
+    private List<Player> bankers;
     private List<Seat> seating;
     
     public int getId() {
@@ -105,6 +117,24 @@ public class Game implements Comparable<Game> {
     public void setTotalQuarterlyToc(int totalQuarterlyToc) {
         this.totalQuarterlyToc = totalQuarterlyToc;
     }
+    public int getTotalPotSupplies() {
+        return totalPotSupplies;
+    }
+    public void setTotalPotSupplies(int totalPotSupplies) {
+        this.totalPotSupplies = totalPotSupplies;
+    }
+    public int getTotalAnnualTocSupplies() {
+        return totalAnnualTocSupplies;
+    }
+    public void setTotalAnnualTocSupplies(int totalAnnualTocSupplies) {
+        this.totalAnnualTocSupplies = totalAnnualTocSupplies;
+    }
+    public int getKittyDebit() {
+        return kittyDebit;
+    }
+    public void setKittyDebit(int kittyDebit) {
+        this.kittyDebit = kittyDebit;
+    }
     public int getNumPlayers() {
         return numPlayers;
     }
@@ -129,13 +159,43 @@ public class Game implements Comparable<Game> {
     public void setDoubleBuyIn(boolean doubleBuyIn) {
         this.doubleBuyIn = doubleBuyIn;
     }
-    public DateTime getLastCalculated() {
+    public boolean isTransportRequired() {
+        return transportRequired;
+    }
+    public void setTransportRequired(boolean transportRequired) {
+        this.transportRequired = transportRequired;
+    }
+    public boolean isSeated() {
+        return seated;
+    }
+    public void setSeated(boolean seated) {
+        this.seated = seated;
+    }
+    public HomeGame getHomeGame() {
+		return homeGame;
+	}
+	public void setHomeGame(HomeGame homeGame) {
+		this.homeGame = homeGame;
+	}
+	public DateTime getLastCalculated() {
         return lastCalculated;
     }
     public void setLastCalculated(DateTime lastCalculated) {
         this.lastCalculated = lastCalculated;
     }
 
+    public DateTime getStartTime() {
+        return startTime;
+    }
+    public void setStartTime(DateTime startTime) {
+        this.startTime = startTime;
+    }
+    public DateTime getActualStartTime() {
+        return actualStartTime;
+    }
+    public void setActualStartTime(DateTime startTime) {
+        this.actualStartTime = startTime;
+    }
     public List<GamePlayer> getPlayers() {
         return players;
     }
@@ -147,6 +207,24 @@ public class Game implements Comparable<Game> {
     }
     public void setPayouts(List<GamePayout> payouts) {
         this.payouts = payouts;
+    }
+    public List<Player> getBankers() {
+        return bankers;
+    }
+    public void setBankers(List<Player> bankers) {
+        this.bankers = bankers;
+    }
+    public int getAnnualIndex() {
+        return annualIndex;
+    }
+    public void setAnnualIndex(int annualIndex) {
+        this.annualIndex = annualIndex;
+    }
+    public int getQuarterlyIndex() {
+        return quarterlyIndex;
+    }
+    public void setQuarterlyIndex(int quarterlyIndex) {
+        this.quarterlyIndex = quarterlyIndex;
     }
     public List<Seat> getSeating() {
         return seating;
@@ -183,7 +261,11 @@ public class Game implements Comparable<Game> {
             errors.rejectValue("gameDate", "emptyDate",
                     "Game date must be set");
         }
+        if (game.getHostId() != null && game.getHostId() == 0) {
+            game.setHostId(null);
+        }
     }
+
     @Override
     public int compareTo(Game o) {
         if (gameDate.isBefore(o.gameDate)) {

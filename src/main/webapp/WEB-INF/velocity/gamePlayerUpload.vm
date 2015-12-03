@@ -1,0 +1,53 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+<script src="/toc/resources/js/supplies.js"></script>
+
+#set ($d = "$")
+<div id="main">
+	<a href="/toc/admin/home">Home</a>
+	
+	#if ($error) 
+		<br/><br/><span style="color:red">$error</span><br/><br/>
+	#end
+	
+	#if ($errors)
+		<br/>
+		#foreach ($error in $errors)
+			<br/><span style="color:red">$error</span>
+		#end 
+		<br/><br/>
+	#end
+	
+	#if ($added)
+		<br/>
+		Added:
+		<ul>
+		#foreach ($add in $added)
+			<li>$add.fullName</li>
+		#end 
+		</ul>
+	#end
+
+	#if ($removed)
+		<br/>
+		Removed:
+		<ul>
+		#foreach ($remove in $removed)
+			<li>$remove.fullName</li>
+		#end 
+		</ul>
+	#end
+
+	<form method="POST" enctype="multipart/form-data" action="/toc/admin/gameplayer/upload/$gameId">
+		File to upload: <input type="file" name="file">
+		<br/> 
+		<br/>
+		<br/>
+		<input type="submit" value="Upload"> Press here to upload the file!
+	</form>
+	
+</div>
+
+#parse("footer.vm")

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 
 public class QuarterlySeason extends BaseSeason {
@@ -16,6 +15,7 @@ public class QuarterlySeason extends BaseSeason {
     private boolean finalized;
     private List<Game> games = new ArrayList<Game>();
     private List<QuarterlySeasonPlayer> quarterlySeasonPlayers = new ArrayList<QuarterlySeasonPlayer>();
+    private List<QuarterlyPayout> payouts = new ArrayList<QuarterlyPayout>();
 
     public int getSeasonId() {
         return seasonId;
@@ -53,6 +53,13 @@ public class QuarterlySeason extends BaseSeason {
     public void setQuarterlySeasonPlayers(List<QuarterlySeasonPlayer> quarterlySeasonPlayers) {
         this.quarterlySeasonPlayers = quarterlySeasonPlayers;
     }
+    public List<QuarterlyPayout> getPayouts() {
+        return payouts;
+    }
+    public void setPayouts(List<QuarterlyPayout> payouts) {
+        this.payouts = payouts;
+    }
+    
     /////////////////////
     // Validation stuff
     /////////////////////

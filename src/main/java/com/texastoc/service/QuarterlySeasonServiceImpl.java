@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 import com.texastoc.dao.QuarterlySeasonDao;
@@ -14,6 +16,7 @@ import com.texastoc.exception.InvalidDateException;
 import com.texastoc.exception.InvalidQuarterException;
 
 @Service
+@EnableCaching 
 public class QuarterlySeasonServiceImpl implements QuarterlySeasonService {
 
     @Autowired
@@ -29,12 +32,14 @@ public class QuarterlySeasonServiceImpl implements QuarterlySeasonService {
         return quarterlySeasonDao.selectById(id);
     }
 
+    @CacheEvict(value="seasoncache", allEntries=true)
     public int create(QuarterlySeason quarterly) throws Exception {
         Season season = seasonDao.selectById(quarterly.getSeasonId());
         checkQuarterlySeasonDates(season, quarterly, null);
         return quarterlySeasonDao.insert(quarterly);
     }
 
+    @CacheEvict(value="seasoncache", allEntries=true)
     public void update(QuarterlySeason quarterly) throws Exception {
         Season season = seasonDao.selectById(quarterly.getSeasonId());
         QuarterlySeason existingQuarterly = findById(quarterly.getId());

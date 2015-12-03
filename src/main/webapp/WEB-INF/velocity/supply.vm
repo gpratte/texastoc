@@ -1,0 +1,111 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+
+#set ($d = "$")	
+
+<div id="main">
+	<form name="input" action="/toc/admin/supplies/create" method="post">
+
+	<a href="/toc/admin/home">Home</a>
+
+	#if ($errors && $errors.size() > 0)
+		<br>
+		<br>
+		<span style="color : red">
+		Fix the following problems:
+		<ul>
+		#foreach ($error in $errors)
+			<li>$error</li>
+			<br/>
+		#end
+		</ul>
+		</span>
+	#end	
+	
+	#if ($supply)
+		<input type="hidden" name="supplyid" value="$supply.id">
+	#end
+
+	<table cellpadding="4">
+		<tr>
+			<td colspan="3" align="center">
+			<h1>Supply</h1>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" align="left">
+			Amount in kitty: $d$kitty
+			</td>
+		</tr>
+		<tr>
+			<th>Type</th>
+			#if ($supply)
+				<th>Pot Amount</th>
+			#end
+			<th>TOC Amount</th>
+			<th>Kitty Amount</th>
+			<th>Description</th>
+			<th>Invoice</th>
+		</tr>
+		<tr>
+			<td>
+				<select name="supplytype">
+					#foreach($type in $types)
+						<option value="$type.text"
+						#if ($supply && $supply.type.text == $type.text)
+							selected="selected"
+						#end
+						>$type.text</option>
+					#end
+				</select>
+			</td>
+			#if ($supply)
+				<td>$d$!supply.prizePotAmount</td>
+			#end
+			<td>
+				#if ($supply)
+					<input type="text" maxlength="10" name="tocamount" value="$!supply.annualTocAmount">
+				#else
+					<input type="text" maxlength="10" name="tocamount">
+				#end
+			</td>
+			<td>
+				#if ($supply)
+					<input type="text" maxlength="10" name="kittyamount" value="$!supply.kittyAmount">
+				#else
+					<input type="text" maxlength="10" name="kittyamount">
+				#end
+			</td>
+			<td>
+				#if ($supply)
+					<input type="text" name="description" value="$!supply.description">
+				#else
+					<input type="text" name="description">
+				#end
+			</td>
+			<td>
+				#if ($supply.invoice)
+					<a href="/toc/admin/supply/invoice/delete/$supply.id">Delete</a>
+				#elseif ($supply)
+					<a href="/toc/admin/supply/invoice/add/$supply.id">Add</a>
+				#end
+			</td>
+		</tr>
+	</table>
+	<br/>
+	#if ($supply)
+		<input type="submit" value="Update">
+	#else
+		<input type="submit" value="Create">
+	#end
+	&nbsp;&nbsp;&nbsp;
+	<input id="cancel" type="button" value="Cancel"
+		onClick="window.location.href='/toc/admin/supplies'"></td>
+	
+	<br/>
+	</form>
+</div>
+
+#parse("footer.vm")

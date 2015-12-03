@@ -1,11 +1,16 @@
 package com.texastoc.service.calculate;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.texastoc.dao.GameDao;
+import com.texastoc.dao.SeasonDao;
+import com.texastoc.dao.SupplyDao;
 import com.texastoc.domain.Game;
 import com.texastoc.domain.GamePlayer;
+import com.texastoc.domain.Supply;
 
 
 @Service
@@ -13,6 +18,10 @@ public class GameCalculatorImpl implements GameCalculator {
 
     @Autowired
     GameDao gameDao;
+    @Autowired
+    SupplyDao supplyDao;
+    @Autowired
+    SeasonDao seasonDao;
     @Autowired
     PointsCalculator pointCalculator;
     
@@ -24,6 +33,8 @@ public class GameCalculatorImpl implements GameCalculator {
         int totalAnnualToc = 0;
         int totalQuarterlyToc = 0;
         int numPlayers = 0;
+        int totalPotSupplies = 0;
+        int totalAnnualTocSupplies = 0;
         
         for (GamePlayer gp : game.getPlayers()) {
             if (gp.getBuyIn() == null) {
@@ -59,11 +70,23 @@ public class GameCalculatorImpl implements GameCalculator {
             }
         }
 
+        List<Supply> supplies = supplyDao.selectSuppliesForGame(id);
+        for (Supply supply : supplies) {
+            if (supply.getPrizePotAmount() != null) {
+                totalPotSupplies += supply.getPrizePotAmount();
+            }
+            if (supply.getAnnualTocAmount() != null) {
+                totalAnnualTocSupplies += supply.getAnnualTocAmount();
+            }
+        }
+        
         game.setNumPlayers(numPlayers);
         game.setTotalAnnualToc(totalAnnualToc);
         game.setTotalBuyIn(totalBuyIn);
         game.setTotalReBuy(totalReBuy);
         game.setTotalQuarterlyToc(totalQuarterlyToc);
+        game.setTotalAnnualTocSupplies(totalAnnualTocSupplies);
+        game.setTotalPotSupplies(totalPotSupplies);
         
         gameDao.update(game);
         

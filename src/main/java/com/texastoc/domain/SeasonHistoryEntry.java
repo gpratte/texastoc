@@ -7,6 +7,7 @@ public class SeasonHistoryEntry {
     private int playerId;
     private Player player;
     private int entries;
+    private boolean wsop;
     
     public int getSeasonId() {
         return seasonId;
@@ -38,4 +39,10 @@ public class SeasonHistoryEntry {
     public void setEntries(int entries) {
         this.entries = entries;
     }
+	public boolean isWsop() {
+		return wsop;
+	}
+	public void setWsop(boolean wsop) {
+		this.wsop = wsop;
+	}
 }

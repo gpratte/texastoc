@@ -16,15 +16,32 @@
 	<script src="/toc/resources/js/mobileseasons.js"></script>
 
 	<div data-role="header">
-		<input type="button" value="<-- Back"
-			onClick="window.location.href='/toc'">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
 	</div>
 
 	<div role="main" class="ui-content">
 		<ul data-role="listview">
 		#foreach($season in $seasons)
 			<li>
-			<a href="/toc/mobile/season/summary/$season.id">$season.startDateText - $season.endDateText</a>
+			<a href="/toc/mobile/season/summary/$season.id">
+				$season.startDateYearText - $season.endDateYearText
+				#foreach ($champ in $champions)
+					#if ($season.id == $champ.seasonId)
+						&nbsp;($!champ.player.firstInitial. $!champ.player.lastName $!champ.points)
+					#end
+				#end
+			</a>
 			</li>
 		#end
 		</ul>

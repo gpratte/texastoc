@@ -29,9 +29,18 @@ $( document ).ready(function() {
     $("#gameDatePicker").datepicker().hide();
     
     $(".send").click(function( event ) {
-    	jQuery.post("https://texastoc/toc/game/message/" + $(this).attr('id'));
+    	jQuery.post("https://www.texastoc.com/toc/game/message/" + $(this).attr('id'));
     	$(this).attr("disabled", "disabled");
     	$(this).prop('value', 'Sent');
     });
+
+    $("#delete").click(function( event ) {
+        if (confirm('Are you sure you want to delete?')) {
+        	return true;
+        }
+    	window.location.href='/toc/admin/home';
+        return false;
+    });
+
 
 });

@@ -1,0 +1,43 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+
+<style>
+.uline
+{
+border-bottom:1px solid black;
+border-right:1px solid black;
+}
+</style>
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a> -> 
+	<a href="/toc/admin/seasons">Seasons</a> -> 
+	<a href="/toc/admin/game/$gameId">Game</a>
+
+	<h1>Bankers</h1>
+	#if ($bankers.size() > 0)
+		<ul>
+			#foreach($banker in $bankers)
+			<li>$banker.fullName &nbsp;
+			<a href="/toc/admin/gamebanker/delete/$gameId?playerId=$banker.id">Delete</a>
+			</li>
+			#end
+		</ul>
+	#end
+	<br/>
+	<form name="input" action="/toc/admin/gamebanker/add/$gameId" method="post">
+		<input type="hidden" name="gameId" value="$gameId">
+		<select name="newbanker">
+			<option value="0">&nbsp;</option>
+			#foreach($player in $players)
+				<option value="$player.id">$player.fullName</option>
+			#end
+		</select>
+		<input id="submit" type="submit" value="Add Banker">
+	</form>
+	<br/>
+</div>
+
+#parse("footer.vm")

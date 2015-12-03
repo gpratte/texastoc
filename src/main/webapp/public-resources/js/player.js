@@ -10,9 +10,9 @@ $( document ).ready(function() {
     });
 });
 
-function deleteClicked() {
+function deleteClicked(playerId) {
     if (confirm('Are you sure you want to delete?')) {
-    	window.location.href='/toc/admin/player/delete/$player.id';
+    	window.location.href='/toc/admin/player/delete/' + playerId;
     }
     return false;
 }

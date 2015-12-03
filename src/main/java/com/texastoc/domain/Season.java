@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.validation.Errors;
 
 public class Season extends BaseSeason {
+    
 //public class Season extends BaseSeason implements Validator {
 
     private boolean useHistoricalData;     
@@ -13,11 +14,16 @@ public class Season extends BaseSeason {
     private int totalReBuy;
     private int totalPot;
     private int totalAnnualToc;
+    private int totalAnnualTocSupplies;
+    private int kittyGameDebit;
     private boolean finalized;
+    private String finalTableImage;
+    private String finalTableThumb;
     private List<QuarterlySeason> quarterlies = new ArrayList<QuarterlySeason>();
     private List<Game> games = new ArrayList<Game>();
     private List<SeasonPlayer> seasonPlayers = new ArrayList<SeasonPlayer>();
     private List<SeasonHistoryEntry> histories = null;
+    private List<SeasonPayout> payouts = new ArrayList<SeasonPayout>();
 
     public boolean isUseHistoricalData() {
         return useHistoricalData;
@@ -49,11 +55,35 @@ public class Season extends BaseSeason {
     public void setTotalAnnualToc(int totalAnnualToc) {
         this.totalAnnualToc = totalAnnualToc;
     }
+    public int getTotalAnnualTocSupplies() {
+        return totalAnnualTocSupplies;
+    }
+    public void setTotalAnnualTocSupplies(int totalAnnualTocSupplies) {
+        this.totalAnnualTocSupplies = totalAnnualTocSupplies;
+    }
+    public int getKittyGameDebit() {
+        return kittyGameDebit;
+    }
+    public void setKittyGameDebit(int kittyGameDebit) {
+        this.kittyGameDebit = kittyGameDebit;
+    }
     public boolean isFinalized() {
         return finalized;
     }
     public void setFinalized(boolean finalized) {
         this.finalized = finalized;
+    }
+    public String getFinalTableImage() {
+        return finalTableImage;
+    }
+    public void setFinalTableImage(String finalTableImage) {
+        this.finalTableImage = finalTableImage;
+    }
+    public String getFinalTableThumb() {
+        return finalTableThumb;
+    }
+    public void setFinalTableThumb(String finalTableThumb) {
+        this.finalTableThumb = finalTableThumb;
     }
     /**
      * Never null
@@ -83,6 +113,12 @@ public class Season extends BaseSeason {
     }
     public void setHistories(List<SeasonHistoryEntry> histories) {
         this.histories = histories;
+    }
+    public List<SeasonPayout> getPayouts() {
+        return payouts;
+    }
+    public void setPayouts(List<SeasonPayout> payouts) {
+        this.payouts = payouts;
     }
     /////////////////////
     // Validation stuff

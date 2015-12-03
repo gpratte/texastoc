@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Season summary</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page" id="mobileseasontopten">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/season/summary-by-game?gameId=$game.id'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div role="main" class="ui-content">
+
+	#set ($d = "$")
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Games Played</h2>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Times</th>
+					</tr>
+					#foreach ($playerCount in $topTen.gamesPlayed)
+					<tr>
+						<td>$playerCount.player.fullName</td> 
+						<td align="center">$playerCount.count</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<hr/>
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Points Per Game</h2>
+				Had to play at least 1/3 of the games of the season.
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Points</th>
+						<th>Games<br/>Played</th>
+					</tr>
+					#foreach ($playerCount in $topTen.pointsPerGame)
+					<tr>
+						<td>$playerCount.player.fullName</td> 
+						<td align="center">$playerCount.count</td> 
+						<td align="center">$playerCount.count2</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<hr/>
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Final Table</h2>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Times</th>
+					</tr>
+					#foreach ($playerCount in $topTen.finalTable)
+					<tr>
+						<td>$playerCount.player.fullName</td> 
+						<td align="center">$playerCount.count</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<hr/>
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">First Place</h2>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Times</th>
+					</tr>
+					#foreach ($playerCount in $topTen.firstPlace)
+					<tr>
+						<td>$playerCount.player.fullName</td> 
+						<td align="center">$playerCount.count</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+	</table>
+	<hr/>
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Cashes</h2>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Times</th>
+					</tr>
+					#foreach ($playerCount in $topTen.cashes)
+					<tr>
+						<td>$playerCount.player.fullName</td> 
+						<td align="center">$playerCount.count</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<hr/>
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Gross Money</h2>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				Total prize money won.
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Money</th>
+					</tr>
+					#foreach ($playerCount in $topTen.grossMoney)
+					<tr>
+						<td>$playerCount.player.fullName</td> 
+						<td align="center">$d$playerCount.count</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<hr/>
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Net Money</h2>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				Total prize money won minus buy in minus re-buy. 
+				<br/>Does not take into account any additional TOC money paid.
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Money</th>
+					</tr>
+					#foreach ($playerCount in $topTen.netMoney)
+					<tr>
+						<td>$playerCount.player.fullName</td> 
+						<td align="center">$d$playerCount.count</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<hr/>
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Net Money Per Game</h2>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				Total prize money won minus buy in minus re-buy divided
+				by number of games played. 
+				<br/>Does not take into account any additional TOC money paid.
+				<br/>Had to play at least 1/3 of the games of the season.
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Money</th>
+						<th>Games<br/>Played</th>
+					</tr>
+					#foreach ($playerCount in $topTen.netMoneyPerGame)
+					<tr>
+						<td>$playerCount.player.fullName</td> 
+						<td align="center">$d$playerCount.count</td> 
+						<td align="center">$playerCount.count2</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	<hr/>
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+				<h2 align="center">Money Bubble</h2>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>Times</th>
+					</tr>
+					#foreach ($playerCount in $topTen.moneyBubble)
+					<tr>
+						<td>$playerCount.player.fullName</td> 
+						<td align="center">$playerCount.count</td> 
+					</tr>
+					#end
+				</table>
+			</td>
+		</tr>
+	</table>
+
+	</div>
+</div>
+
+</body>
+</html>

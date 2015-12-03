@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>What do you want to do</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/numbers'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div role="main" class="ui-content">
+	<h1>Blinds</h1>
+	
+	<table>
+		<tr>
+		    <th>Round</th>
+		    <th>Small Blind</th>
+		    <th>Big Blind</th>
+		    <th>Ante</th>
+		    <th>Duration</th>
+		</tr>
+	#foreach($level in $levels)
+		#if ($foreach.count % 2 == 0)
+		<tr bgcolor="lightblue">
+		#else
+		<tr>
+		#end
+		    <td align="center">$level.round</td>
+		    <td align="center">$level.smallBlind</td>
+		    <td align="center">$level.bigBlind</td>
+		    <td align="center">$level.ante</td>
+		    #set ($minutes = $level.duration / 1000 / 60)
+		    <td align="center">$minutes</td>
+		</tr>
+	#end
+	</table>
+	
+	</div>
+
+</div>
+
+</body>
+</html>

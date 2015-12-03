@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Select a game or start a new game</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/season/summary-by-game?gameId=$gameId'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div role="main" class="ui-content" align="center">
+		<form name="input" action="/toc/mobile/season/email" method="post">
+		<input type="hidden" id="gameId" name="gameId" value="$gameId">
+		Select player to email
+		<br/>
+		<select name="playerId">
+			#foreach($player in $players)
+				<option value="$player.id">$player.fullName</option>
+			#end
+		</select>
+		<input type="submit" value="Send Email">
+		</form>
+	</div>
+</div>
+
+</body>
+</html>

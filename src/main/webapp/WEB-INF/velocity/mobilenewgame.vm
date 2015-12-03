@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Select a game or start a new game</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" type="text/css" href="/toc/resources/css/smoothness/jquery-ui-1.10.4.custom.css">
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+	<script src="/toc/resources/js/mobilenewgame.js"></script>
+</head>
+
+<body>
+
+<div data-role="page">
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	#springBind("game.*")
+	#if ($errors)
+		<div id=validationErrors style="color : red">
+			Please fix the following validation problems:
+			<ul id="binderrors">
+				#foreach($error in $errors.getAllErrors()) <li>$error.getDefaultMessage()</li> #end 
+			</ul>
+		</div>
+	#end
+	
+	<form name="input" action="/toc/mobile/game/add" method="post">
+	#springFormHiddenInput("game.seasonId")
+
+	<table>
+		<tr>
+			<td align="right">Date:</td>
+			<td>#springFormInput("game.gameDateText", "class='date'")</td>
+			<td><img id="gameDateImg" src="/toc/resources/img/calendar.png"></td> 
+		</tr>
+		<tr>
+			<td colspan="3"><span id="gameDatePicker"></span></td>
+		</tr>
+		<tr>
+			<td align="right">Host:</td>
+			#set($hosts = {})
+				$!hosts.put(0, "Pick a host")
+			#foreach($player in $players)
+				#set($playerName = "$!player.firstName $!player.lastName")
+				$!hosts.put($player.id, $playerName)
+			#end
+				
+			<td>#springFormSingleSelect("game.hostId", $hosts)</td>
+		</tr>
+			#set($yesno = {"false":"No","true":"Yes"})
+		<tr>
+			<td align="right">Double Buy-in:</td>
+			<td>#springFormSingleSelect("game.doubleBuyIn", $yesno)</td>
+		</tr>
+		<tr>
+			<td align="right">Supplies Need <br>Transporting:</td>
+			<td>#springFormSingleSelect("game.transportRequired", $yesno)</td>
+		</tr>
+	</table>
+	 
+	<input type="submit" value="Start Game"/>
+		
+	</form>
+</div>
+
+</body>
+</html>

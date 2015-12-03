@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>What do you want to do</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page" id="mobileseasons">
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div role="main" class="ui-content">
+	<table>
+		<tr>
+			<td colspan="2" align="center">
+			<h1>Players</h1>
+			</td>
+		</tr>
+		<tr>
+			<th>Name</th>
+			<th>Phone</th>
+			<th>Email</th>
+			<th>Cell<br>Carrier</th>
+			<th>Host</th>
+			<th>Trans-<br>porter</th>
+			<th>PTCG</th>
+			<th>Active</th>
+		</tr>
+	
+		#foreach($player in $players)
+			#if ($foreach.count % 2 == 0)
+			<tr bgcolor="lightblue">
+			#else
+			<tr>
+			#end
+				<td class="uline">
+					<a href="/toc/mobile/player/$player.id">$!player.fullName</a>
+				</td>
+				<td class="uline">$!player.phone</td>
+				<td class="uline">$!player.email</td>
+				#set($carrier = "")
+				#if ($player.cellCarrier)
+					#foreach($cellCarrier in $cellCarriers)
+						#if ($player.cellCarrier == $cellCarrier.carrier)
+							#set($carrier = $cellCarrier.name)
+							#break
+						#end
+					#end
+				#end
+				<td class="uline">$carrier</td>
+				<td class="uline">#if($player.possibleHost)Yes#end</td>
+				<td class="uline">#if($player.transporter)Yes#end</td>
+				<td class="uline">#if($player.ptcg)Yes#end</td>
+				<td class="uline">#if($player.active)Yes#end</td>
+			</tr>
+		#end
+	</table>
+	</div>
+</div>
+
+</body>
+</html>

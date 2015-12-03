@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Select a game or start a new game</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/players'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	#set ($d = "$")	
+	<div role="main" class="ui-content" align="center"">
+	#springBind("player.*")
+	#set($hasErrors = false)
+	#foreach($error in $status.errorMessages)
+		#set($hasErrors = true)
+		#break
+	#end 
+	#if ($hasErrors == true)
+		<span style="color:red;">
+		<div id="validationErrors">
+			Please fix the following validation problems:
+			#foreach($error in $status.errorMessages)<br/> $error #end 
+		</div>
+		</span>
+	#end
+	
+	<form name="input" action="/toc/mobile/player/update" method="post">
+	#springFormHiddenInput("player.id")
+
+	<table>
+		<tr>
+			<td colspan="3" align="center">
+			<h1>Player</h1>
+			</td>
+		</tr>
+		#if ($updated)
+		<tr>
+			<td colspan="3" align="center">
+			Updated $updated
+			</td>
+		</tr>
+		#end
+		#if ($result)
+		<tr>
+			<td colspan="3" align="center">
+			$result
+			</td>
+		</tr>
+		#end
+		<tr>
+			<td>Phone:</td>
+			<td>#springFormInput("player.phone")</td>
+			<td rowspan="2"><input id="cancel" type="button" value="Text"
+				onClick="window.location.href='/toc/mobile/player/$player.id/text'"></td>
+			</td>
+		</tr>
+		<tr>
+			<td>Cell carrier:</td>
+			#set($carriers = {})
+			$!carriers.put("#", " ")
+			#foreach($cellCarrier in $cellCarriers)
+				$!carriers.put($cellCarrier.carrier, $cellCarrier.name)
+			#end
+			<td>#springFormSingleSelect("player.cellCarrier", $carriers)</td>
+		</tr>
+		<tr>
+			<td>Email:</td>
+			<td>#springFormInput("player.email")</td>
+			<td><input id="cancel" type="button" value="Email"
+				onClick="window.location.href='/toc/mobile/player/$player.id/email'"></td>
+			</td>
+		</tr>
+		<tr>
+			<td>Active</td>
+			#set($yesno = {"false":"No","true":"Yes"})
+			<td>#springFormSingleSelect("player.active", $yesno)</td>
+		</tr>
+		<tr>
+			<td>Possible Host:</td>
+			#set($yesno = {"false":"No","true":"Yes"})
+			<td>#springFormSingleSelect("player.possibleHost", $yesno)</td>
+		</tr>
+		<tr>
+			<td>Possible <br>Transporter:</td>
+			#set($yesno = {"false":"No","true":"Yes"})
+			<td>#springFormSingleSelect("player.transporter", $yesno)</td>
+		</tr>
+		<tr>
+			<td>PTCG Player</td>
+			#set($yesno = {"false":"No","true":"Yes"})
+			<td>#springFormSingleSelect("player.ptcg", $yesno)</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center">
+				<input id="submit" type="submit" value="Update">
+				<input id="cancel" type="button" value="Cancel"
+				onClick="window.location.href='/toc/mobile/players'"></td>
+			</td>
+		</tr>
+	</table>
+	</form>
+	</div>
+</div>
+
+</body>
+</html>

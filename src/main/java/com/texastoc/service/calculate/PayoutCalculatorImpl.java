@@ -1,6 +1,5 @@
 
 package com.texastoc.service.calculate;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.texastoc.dao.GameDao;
 import com.texastoc.dao.GamePayoutDao;
+import com.texastoc.dao.SupplyDao;
 import com.texastoc.domain.Game;
 import com.texastoc.domain.GamePayout;
 import com.texastoc.domain.GamePlayer;
@@ -21,7 +21,11 @@ public class PayoutCalculatorImpl implements PayoutCalculator {
     @Autowired
     GameDao gameDao;
     @Autowired
+    SupplyDao suppyDao;
+    @Autowired
     GamePayoutDao gamePayoutDao;
+    @Autowired
+    private ChopCalculator chopCalculator;
 
     static final Logger logger = Logger.getLogger(PayoutCalculatorImpl.class);
 
@@ -113,13 +117,14 @@ public class PayoutCalculatorImpl implements PayoutCalculator {
         PAYOUTS.put(10, percent);
     }
     
+    @Override
     public HashMap<Integer, HashMap<Integer,Float>> getPayouts() {
         return PAYOUTS;
     }
 
     
-    // TODO cache results
-    public void calculate(int id) throws SQLException {
+    @Override
+    public void calculate(int id) {
         Game game = gameDao.selectById(id);
         
         // round to multiple of 5 (e.g. 12 > 10 but 13 > 15)
@@ -135,10 +140,10 @@ public class PayoutCalculatorImpl implements PayoutCalculator {
         calculatePayout(numberPaid, game);
     }
     
-    private void calculatePayout(int numToPay, Game game) throws SQLException {
+    private void calculatePayout(int numToPay, Game game) {
         
         HashMap<Integer,Float> payouts = PAYOUTS.get(numToPay);
-        int prizePot = game.getTotalBuyIn() + game.getTotalReBuy();
+        int prizePot = game.getTotalBuyIn() + game.getTotalReBuy() - game.getTotalPotSupplies() - game.getKittyDebit();
         int totalPayout = 0;
         List<GamePayout> gamePayouts = new ArrayList<GamePayout>();
         for (int i = 1; i <= numToPay; ++i) {
@@ -175,16 +180,107 @@ public class PayoutCalculatorImpl implements PayoutCalculator {
             }
         }
         
-        for (GamePlayer gamePlayer : game.getPlayers()) {
-            if (gamePlayer.getFinish() != null && gamePlayer.getChop() != null) {
-                calculateChopPayout(gamePayouts, game);
+        // See if there is a chop
+        List<Integer> chips = null;
+        List<Integer> amounts = null;
+        for (GamePlayer player : game.getPlayers()) {
+            if (player.getChop() != null) {
+                if (chips == null) {
+                    chips = new ArrayList<Integer>();
+                    chips.add(player.getChop());
+                    amounts = new ArrayList<Integer>();
+                    for (GamePayout gamePayout : gamePayouts) {
+                        if (gamePayout.getPlace() == player.getFinish()) {
+                            amounts.add(gamePayout.getAmount());
+                            break;
+                        }
+                    }
+                } else {
+                    boolean inserted = false;
+                    for (int i = 0; i < chips.size(); ++i) {
+                        if (player.getChop().intValue() >= chips.get(i).intValue()) {
+                            chips.add(i, player.getChop());
+                            for (GamePayout gamePayout : gamePayouts) {
+                                if (gamePayout.getPlace() == player.getFinish()) {
+                                    amounts.add(i, gamePayout.getAmount());
+                                    inserted = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (!inserted) {
+                        chips.add(player.getChop());
+                        for (GamePayout gamePayout : gamePayouts) {
+                            if (gamePayout.getPlace() == player.getFinish()) {
+                                amounts.add(gamePayout.getAmount());
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+                
+        if (chips != null) {
+            // If chips are more than the number of payouts then there
+            // is a problem because even though the top x chopped the
+            // points less than that gets paid.
+            int numChopThatGetPaid = Math.min(chips.size(), payouts.size());
+            List<Chop> chops = chopCalculator.calculate(
+                    chips.subList(0, numChopThatGetPaid), 
+                    amounts.subList(0, numChopThatGetPaid));
+            if (chops != null && chops.size() > 1) {
+                for (Chop chop : chops) {
+                    outer: for (GamePlayer player : game.getPlayers()) {
+                        if (player.getChop() != null) {
+                            for (GamePayout gamePayout : gamePayouts) {
+                                if (gamePayout.getAmount() == chop.getOrgAmount()) {
+                                    gamePayout.setChopAmount(chop.getChopAmount());
+                                    gamePayout.setChopPercent(chop.getPercent());
+                                    break outer;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        List<GamePayout> currentPayouts = gamePayoutDao.selectByGameId(game.getId());
+        
+        // Add or update existing
+        for (GamePayout gp : gamePayouts) {
+            boolean found = false;
+            for (GamePayout currentPayout : currentPayouts) {
+                if (gp.getPlace() == currentPayout.getPlace()) {
+                    // update
+                    gamePayoutDao.update(gp);
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                // add
+                gamePayoutDao.insert(gp);
             }
         }
         
-        gamePayoutDao.deleteAllByGameId(game.getId());
-        
-        for (GamePayout gp : gamePayouts) {
-            gamePayoutDao.insert(gp);
+        // Remove
+        for (GamePayout currentPayout : currentPayouts) {
+            boolean found = false;
+            for (GamePayout gp : gamePayouts) {
+                if (gp.getPlace() == currentPayout.getPlace()) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                // remove
+                gamePayoutDao.delete(currentPayout.getGameId(), currentPayout.getPlace());
+            }
         }
     }
     

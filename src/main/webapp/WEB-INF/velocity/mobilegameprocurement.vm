@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>What do you want to do</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="/toc/resources/css/mobile/jquery.mobile-1.4.4.min.css" />
+	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
+	<script src="/toc/resources/js/mobileconfig.js"></script>
+	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+					onClick="window.location.href='/toc/mobile/game/$gameId'">
+				</td>
+				<td align="right">
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div role="main" class="ui-content">
+	<h1>Supplies</h1>
+
+	#if ($errors && $errors.size() > 0)
+		<span style="color : red">
+		Fix the following problems:
+		<ul>
+		#foreach ($error in $errors)
+			<li>$error</li>
+			<br/>
+		#end
+		</ul>
+		</span>
+	#end	
+
+	
+	#set ($d = "$")	
+	<form name="input" action="/toc/mobile/game/procure/$gameId" method="post">
+	<table>
+		<tr>
+			<th>Type</th>
+			<th>Pot Amount</th>
+			<th>TOC Amount</th>
+			<th>Note</th>
+			<th>Delete</th>
+		</tr>
+		<tr>
+			<td>
+				<select name="supplytype">
+					#foreach($type in $types)
+						<option value="$type.text">$type.text</option>
+					#end
+				</select>
+			</td>
+			<td>
+				<input type="text" maxlength="10" name="potamount">
+			</td>
+			<td>
+				<input type="text" maxlength="10" name="tocamount">
+			</td>
+			<td>
+				<input type="text" name="description">
+			</td>
+		</tr>
+		#foreach($supply in $supplies)
+			<tr>
+				<td>$supply.type.text</td>
+				<td>$d$!supply.prizePotAmount</td>
+				<td>$d$!supply.annualTocAmount</td>
+				<td>$!supply.description</td>
+				<td>
+					<input type="checkbox" name="delete" value="$supply.id">
+				</td>
+			</tr>
+		#end
+	</table>
+	<input type="submit" value="Record Supplies">
+	</form>
+	
+	</div>
+
+</div>
+
+</body>
+</html>

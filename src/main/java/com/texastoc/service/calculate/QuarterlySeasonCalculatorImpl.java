@@ -3,6 +3,7 @@ package com.texastoc.service.calculate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import com.texastoc.dao.QuarterlySeasonPlayerDao;
 import com.texastoc.dao.SeasonDao;
 import com.texastoc.domain.Game;
 import com.texastoc.domain.GamePlayer;
+import com.texastoc.domain.QuarterlyPayout;
 import com.texastoc.domain.QuarterlySeason;
 import com.texastoc.domain.QuarterlySeasonPlayer;
 import com.texastoc.domain.Season;
@@ -62,16 +64,47 @@ public class QuarterlySeasonCalculatorImpl implements QuarterlySeasonCalculator 
             return;
         }
 
-        // Remove current quarterly season players
-        qSeasonPlayerDao.deleteAllByQuarterlySeasonId(qSeason.getId());
-
         ArrayList<QuarterlySeasonPlayer> qSeasonPlayers = calculate(qSeason, null, null);
         
         qSeasonDao.update(qSeason);
 
+        List<QuarterlySeasonPlayer> currentQSPlayers = qSeasonPlayerDao.selectByQuarterlySeasonId(qSeason.getId());
+        
+        // Add or update existing
         for (QuarterlySeasonPlayer player : qSeasonPlayers) {
-            qSeasonPlayerDao.insert(player);
+            boolean found = false;
+            for (QuarterlySeasonPlayer currentPlayer : currentQSPlayers) {
+                if (player.getPlayerId() == currentPlayer.getPlayerId()) {
+                    // update
+                    qSeasonPlayerDao.update(player);
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                // add
+                qSeasonPlayerDao.insert(player);
+            }
         }
+        
+        // Remove
+        for (QuarterlySeasonPlayer currentPlayer : currentQSPlayers) {
+            boolean found = false;
+            for (QuarterlySeasonPlayer player : qSeasonPlayers) {
+                if (player.getPlayerId() == currentPlayer.getPlayerId()) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                // remove
+                qSeasonPlayerDao.delete(currentPlayer.getId());
+            }
+        }
+
+        calculatePayouts(qSeason);
     }
 
 
@@ -111,6 +144,7 @@ public class QuarterlySeasonCalculatorImpl implements QuarterlySeasonCalculator 
             qSeasonPlayer.setPlayer(playerDao.selectById(qSeasonPlayer.getPlayerId()));
         }
         upToQSeason.setQuarterlySeasonPlayers(qSeasonPlayers);
+        calculatePayouts(upToQSeason);
         
         return upToQSeason;
     }
@@ -177,5 +211,23 @@ public class QuarterlySeasonCalculatorImpl implements QuarterlySeasonCalculator 
         }
         
         return qSeasonPlayers;
+    }
+    
+    private void calculatePayouts(QuarterlySeason qSeason) {
+        long firstPlace = Math.round(qSeason.getTotalQuarterlyToc() * 0.65d);
+
+        QuarterlyPayout first = new QuarterlyPayout();
+        first.setQuarterId(qSeason.getId());
+        first.setPlace(1);
+        first.setAmount((int)firstPlace);
+        
+        QuarterlyPayout second = new QuarterlyPayout();
+        second.setQuarterId(qSeason.getId());
+        second.setPlace(2);
+        second.setAmount(qSeason.getTotalQuarterlyToc() - first.getAmount());
+        
+        qSeason.getPayouts().clear();
+        qSeason.getPayouts().add(first);
+        qSeason.getPayouts().add(second);
     }
 }

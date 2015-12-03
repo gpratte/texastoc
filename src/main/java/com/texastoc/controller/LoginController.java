@@ -1,5 +1,7 @@
 package com.texastoc.controller;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.texastoc.domain.Game;
+import com.texastoc.domain.Season;
 import com.texastoc.service.GameService;
+import com.texastoc.service.SeasonService;
 
 @Controller
 public class LoginController extends BaseController {
@@ -23,6 +27,8 @@ public class LoginController extends BaseController {
 
     @Autowired
     GameService gameService;
+    @Autowired
+    SeasonService seasonService;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(final HttpServletRequest request) {
@@ -30,8 +36,21 @@ public class LoginController extends BaseController {
             return new ModelAndView("adminhome");            
         }
         if (this.isMobileLoggedIn(request)) {
-            Game game = gameService.findMostRecent();
-            return new ModelAndView("mobilehome", "game", game);
+            Boolean allowStartNewGame = false;
+            Boolean allowGoToCurrentGame = false;
+            Season currentSeason = seasonService.getCurrent();
+            if (! currentSeason.isFinalized()) {
+                Game currentGame = gameService.findMostRecent();
+                if (currentGame.isFinalized()) {
+                    allowStartNewGame = true;
+                } else {
+                    allowGoToCurrentGame = true;
+                }
+            }
+            ModelAndView mav = new ModelAndView("mobilehome");
+            mav.addObject("allowStartNewGame", allowStartNewGame);
+            mav.addObject("allowGoToCurrentGame", allowGoToCurrentGame);
+            return mav;
         }
         return new ModelAndView("mobilelogin");
     }
@@ -42,15 +61,27 @@ public class LoginController extends BaseController {
             @RequestParam(value="password", required=true) String password) {
         request.getSession().removeAttribute(USER_LOGGED_IN);
         
-        if (StringUtils.equals(user, "admin") && StringUtils.equals(password, "wsop2014")) {
+        if (StringUtils.equals(user, "admin") && StringUtils.equals(password, "wsop2015")) {
             request.getSession().setAttribute(USER_LOGGED_IN, "admin");
             return new ModelAndView("adminhome");            
         }
         if (StringUtils.equals(user, "toc") && StringUtils.equals(password, "shipit")) {
             request.getSession().setAttribute(USER_LOGGED_IN, "mobile");
-            logger.info(++count + " toc logins");
-            Game game = gameService.findMostRecent();
-            return new ModelAndView("mobilehome", "game", game);
+            Boolean allowStartNewGame = false;
+            Boolean allowGoToCurrentGame = false;
+            Season currentSeason = seasonService.getCurrent();
+            if (! currentSeason.isFinalized()) {
+                Game currentGame = gameService.findMostRecent();
+                if (currentGame.isFinalized()) {
+                    allowStartNewGame = true;
+                } else {
+                    allowGoToCurrentGame = true;
+                }
+            }
+            ModelAndView mav = new ModelAndView("mobilehome");
+            mav.addObject("allowStartNewGame", allowStartNewGame);
+            mav.addObject("allowGoToCurrentGame", allowGoToCurrentGame);
+            return mav;
         }
         return new ModelAndView("mobilelogin", "oops", "Try again");
     }

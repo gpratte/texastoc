@@ -9,15 +9,31 @@
 	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
 	<script src="/toc/resources/js/mobileconfig.js"></script>
 	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
-	<script src="/toc/resources/js/mobilegame_v1_3.js"></script>
+	<script src="/toc/resources/js/mobilegame_v1_7.js"></script>
+	<script src="/toc/resources/js/mobileclock_v1.3.js"></script>
+	<script src="/toc/resources/js/mobileseated.js"></script>
+	<script src="/toc/resources/js/ion.sound.js"></script>
 </head>
 <body>
 
 <div data-role="page">
 
 	<div data-role="header">
-		<input type="button" value="<-- Back"
-			onClick="window.location.href='/toc/mobile'">
+		<table width="100%">
+			<tr>
+				<td align="left">
+					<input type="button" value="<-- Back"
+						onClick="window.location.href='/toc/mobile'">
+				</td>
+				<td align="right">
+					<input type="button" value="Refresh"
+						onClick="window.location.href='/toc/mobile/game/$game.id'">
+					&nbsp;&nbsp;&nbsp;
+					<input type="button" value="Logout"
+						onClick="window.location.href='/toc/logout'">
+				</td>
+			</tr>
+		</table>
 	</div>
 
 	#set ($d = "$")	
@@ -25,7 +41,8 @@
 	<div data-role="tabs" align="center">
     	<div data-role="navbar">
         	<ul>
-          		<li><a href="#one" data-theme="a" data-ajax="false" class="ui-btn-active">Game</a></li>
+          		<li><a href="#one" data-theme="a" data-ajax="false" class="ui-btn-active">Players</a></li>
+          		<li><a href="#four" data-theme="a" data-ajax="false">Clock</a></li>
           		<li><a href="#three" data-theme="a" data-ajax="false">Money</a></li>
           		<li><a href="#two" data-theme="a" data-ajax="false">Seating</a></li>
         	</ul>
@@ -39,13 +56,32 @@
 		    	</div>
 		    		<br/>
 	    	#end
-	    
+			<select id="homegame" name="homegame">
+				#foreach($homegame in $homegames)
+				<option value="$homegame.marker"
+					#if ($game.homeGame.marker == $homegame.marker)
+						selected="selected"
+					#end
+					>Home Game: $homegame</option>
+				#end
+			</select>
+			<br/>	    
+
 			Date: $game.gameDateText 
 			<span style="border-left: thin solid black;">&nbsp;</span> 
 			Double buy in:
 			#if($game.doubleBuyIn) Yes #else No #end
 			<span style="border-left: thin solid black;">&nbsp;</span> 
 			Paid Players $!game.numPlayers
+
+			#if(!$clock.running && $clock.currentLevel.round == 'Round 1')
+				&nbsp;<span style="border-left: thin solid black;">&nbsp;</span>
+				#if($game.transportRequired) 
+					Transport Supplies Required <a href="/toc/mobile/game/transport/$game.id?required=false">Yes</a>
+				#else
+					Transport Supplies Required <a href="/toc/mobile/game/transport/$game.id?required=true">No</a>
+				#end
+			#end
 			<br/>
 			<br/>
 			<table id="players">
@@ -66,8 +102,14 @@
 				#foreach($player in $game.players)
 					<tr>
 						<td>
-						#if($player.knockedOut)<span style="color:red">x</span>&nbsp;#end
-						<a href="/toc/mobile/gameplayer/edit/$player.id">$!player.player.firstName<br/>$!player.player.lastName</a></td>
+						#if($player.knockedOut)<span style="color:red">x</span>#end
+						#foreach ($banker in $game.bankers)
+							#if ($banker.id == $player.playerId) $d #end
+						#end
+						#if ($player.optIn) <img id="texastoc" src="/toc/resources/img/icon-clock-small.png"> #end
+						#if ($player.emailOptIn) <img id="texastoc" src="/toc/resources/img/icon-small-email.gif"> #end
+						<a href="/toc/mobile/gameplayer/edit/$player.id">$!player.player.firstName<br/>$!player.player.lastName</a>
+						</td>
 						
 						#if($player.annualTocPlayer)
 							<td align="center">Yes</td>
@@ -101,29 +143,40 @@
 				<tbody>		
 			</table>
 			#if (! $game.finalized)
+				#if ($game.finalizable)
+				<input type="button" value="Game over"
+					onClick="window.location.href='/toc/mobile/game/finalize/$game.id'">
+				<br/>
+				#end
 				<input type="button" id="addPlayer" value="Add Players"
 					onClick="window.location.href='/toc/mobile/gameplayer/add/$game.id'">
 				<br/>
 				<input type="button" value="Add FNG"
 					onClick="window.location.href='/toc/mobile/gameplayer/addfng/$game.id'">
-				#if ($game.finalizable)
-				<br/>
-				<input type="button" value="Game over"
-					onClick="window.location.href='/toc/mobile/game/finalize/$game.id'">
-				#end
 			#end
+			
+			#if(!$clock.running && $clock.currentLevel.round == 'Round 1')
+				<br/>
+				<input type="button" value="Rally"
+					onClick="window.location.href='/toc/mobile/game/rally/$game.id'">
+			#end
+			
+			
 	    </div>
 	    <div id="two" class="ui-content">
-	    	#if ($game.seating)
+	    	#if ($game.seated)
+		    	#parse("mobileseated.vm")
+	    	#elseif ($game.seating)
 		    	#parse("mobilerandomseating.vm")
 	    	#else
 		    	#parse("mobilerandomizeseating.vm")
 	    	#end
     	</div>
 	    <div id="three" class="ui-content">
-			#set($pot = $game.totalBuyIn + $game.totalReBuy)
-			#set($toc = $game.totalAnnualToc + $game.totalQuarterlyToc)
-			#set($all = $pot + $toc)
+			#set($all = $game.totalBuyIn + $game.totalReBuy + $game.totalAnnualToc + $game.totalQuarterlyToc)
+			#set($pot = $game.totalBuyIn + $game.totalReBuy - $game.totalPotSupplies - $game.kittyDebit)
+			#set($toc = $game.totalAnnualToc + $game.totalQuarterlyToc - $game.totalAnnualTocSupplies)
+			#set($supplies = $game.totalPotSupplies + $game.totalAnnualTocSupplies)
 			<table>
 				<tr>
 					<td>Paid Players: $!game.numPlayers</td>
@@ -137,6 +190,14 @@
 				<tr>
 					<td>TOC: $d$toc</td>
 				</tr>
+				<tr>
+					<td>Supply Kitty: $d$game.kittyDebit</td>
+				</tr>
+				#if ($supplies > 0)
+					<tr>
+						<td>Supplies: $d$supplies</td>
+					</tr>
+				#end
 			</table>
 			<br/>
 			<br/>
@@ -174,7 +235,7 @@
 					#else
 						>
 					#end
-						<input id="cancel" type="button" value="Add"
+						<input type="button" value="Add"
 							onClick="window.location.href='/toc/mobile/game/addpayout/$game.id'">
 					</td>
 					<td align="center"
@@ -183,14 +244,150 @@
 					#else
 						>
 					#end
-						<input id="cancel" type="button" value="Remove"
+						<input type="button" value="Remove"
 							onClick="window.location.href='/toc/mobile/game/removepayout/$game.id'">
 					</td>
 				</tr>
 			</table>
+				<input type="button" value="Procurement"
+					onClick="window.location.href='/toc/mobile/game/procure/$game.id'">
     	</div>
-	</div>
+ 
+ 	    <div id="four" class="ui-content">
+			<input type="hidden" id="gameId" name="gameId" value="$game.id">
+			
+			<table width="100%">
+				<tr>
+					<td align="center">
+						<h1><span id="currentRound">$clock.currentLevel.round</span></h1>
+						<span id="selectRound">
+							<select id="round" name="round">
+							#foreach($level in $clock.levels)
+								<option value="$level.round"
+								#if ($clock.currentLevel.round == $level.round)
+									selected="selected"
+								#end
+								>$level.round</option>
+							#end
+						</select>
+						</span>
+					</td>
+					<td align="center">
+						<h1>
+						<table>
+							<tr>
+								<td align="center"><img id="dblUpMinutes" src="/toc/resources/img/dblup.arrow.png"></td>
+								<td align="center"></td>
+								<td align="center"><img id="dblUpSeconds" src="/toc/resources/img/dblup.arrow.png"></td>
+							</tr>
+							<tr>
+								<td align="center"><img id="upMinutes" src="/toc/resources/img/up.arrow.png"></td>
+								<td align="center"></td>
+								<td align="center"><img id="upSeconds" src="/toc/resources/img/up.arrow.png"></td>
+							</tr>
+							<tr>
+								<td align="center">
+									<span id="remainingMinutes">$clock.remainingMinutes</span>
+								</td>
+								<td align="center">:</td>
+								<td align="center">
+									<span id="remainingSeconds">$clock.remainingSeconds</span>
+								</td>
+							</tr>
+							<tr>
+								<td align="center"><img id="downMinutes" src="/toc/resources/img/down.arrow.png"></td>
+								<td align="center"></td>
+								<td align="center"><img id="downSeconds" src="/toc/resources/img/down.arrow.png"></td>
+							</tr>
+							<tr>
+								<td align="center"><img id="dblDownMinutes" src="/toc/resources/img/dbldown.arrow.png"></td>
+								<td align="center"></td>
+								<td align="center"><img id="dblDownSeconds" src="/toc/resources/img/dbldown.arrow.png"></td>
+							</tr>
+						</table>
+						</h1>
+					</td>
+					<td align="center">
+						<h1>
+						<span id="currentSmallBlind">$clock.currentLevel.smallBlind</span>
+						<br/>
+						<span id="currentBigBlind">$clock.currentLevel.bigBlind</span>
+						<br/>
+						<span id="currentAnte">$clock.currentLevel.ante</span>
+						</h1>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<h2><span id="nextRound">$clock.nextLevel.round</span></h2>
+					</td>
+					<td colspan="2" align="right">
+						<h2>
+						<span id="nextSmallBlind">$clock.nextLevel.smallBlind</span>
+						/
+						<span id="nextBigBlind">$clock.nextLevel.bigBlind</span>
+						/
+						<span id="nextAnte">$clock.nextLevel.ante</span>
+						</h2>
+					</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="center">
+						<span id="leftarrow">
+						<button id="prev">Prev</button>
+						</span>
+					</td>
+					<td align="center">
+						<button id="play">
+					</td>
+					<td align="center">
+						<span id="rightarrow">
+						<button id="next">Next</button>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="center">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="center">
+						&nbsp;
+					</td>
+				</tr>
+				<tr>
+					<td align="center">
+						&nbsp;
+					</td>
+					<td align="center">
+						<span id="resetClock">
+						<button id="reset">Reset</button>
+						</span">
+					</td>
+					<td align="center">
+						&nbsp;
+					</td>
+				</tr>
+			</table>
+    	</div>
+ 	</div>
 </div>
-
+ 	
 </body>
 </html>

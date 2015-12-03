@@ -1,0 +1,98 @@
+#parse("header.vm")
+
+<script src="/toc/resources/js/jquery-1.10.2.js"></script>
+<script src="/toc/resources/js/jquery-ui-1.10.4.custom.js"></script>
+<script src="/toc/resources/js/game.js"></script>
+
+<div id="main">
+	<a href="/toc/admin/home">Home</a> -> 
+	<a href="/toc/admin/seasons">Seasons</a> -> 
+	<a href="/toc/admin/season/$season.id">Season</a>
+
+	#set($hasErrors = false)
+	#foreach($error in $status.errorMessages)
+		#set($hasErrors = true)
+		#break
+	#end 
+	#if ($hasErrors == true)
+		<div id=validationErrors>
+			Please fix the following validation problems:
+			<ul id="binderrors">
+				#foreach($error in $status.errorMessages) <li>$error</li> #end 
+			</ul>
+		</div>
+	#end
+	
+	<form name="input" action="/toc/admin/season/payouts" method="post">
+	<input type="hidden" name="seasonId" value="$season.id">
+	
+	#set ($d = "$")	
+	<table>
+		<tr>
+			<td colspan="3" align="center">
+			<h1>Payouts</h1>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3" align="center">
+			An asterisk (*) in the place field means all subsequent
+			places will have that amount.
+			</td>
+		</tr>
+		#if ($error)
+		<tr>
+			<td colspan="3" align="center">
+			<span style="color:red;">$error</span>
+			</td>
+		</tr>
+		#end
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<th>Place</th>
+			<th>Amount</th>
+			<th>Description</th>
+			<th>Delete</th>
+		</tr>
+		#foreach($payout in $season.payouts)
+			#if ($payout.temp == false && $payout.place != "*")
+			<tr>
+				<td><input type="text" maxlength="2" id="place_$payout.id" name="place_$payout.id" value="$payout.place"></td>
+				<td><input type="text" maxlength="4" id="amount_$payout.id" name="amount_$payout.id" value="$payout.amount"></td>
+				<td><input type="text" id="desc_$payout.id" name="desc_$payout.id" value="$!payout.description"></td>
+				<td><input type="checkbox" name="delete_$payout.id" value="delete_$payout.id"></td>
+			</tr>
+			#end
+		#end
+		#foreach($payout in $season.payouts)
+			#if ($payout.temp == false && $payout.place == "*")
+			<tr>
+				<td><input type="text" maxlength="2" id="place_$payout.id" name="place_$payout.id" value="$payout.place"></td>
+				<td><input type="text" maxlength="4" id="amount_$payout.id" name="amount_$payout.id" value="$payout.amount"></td>
+				<td><input type="text" id="desc_$payout.id" name="desc_$payout.id" value="$!payout.description"></td>
+				<td><input type="checkbox" name="delete_$payout.id" value="delete_$payout.id">
+			</tr>
+			#end
+		#end
+		<tr>
+			<td><input type="text" maxlength="2" name="place"></td>
+			<td><input type="text" maxlength="4" name="amount"></td>
+			<td><input type="text" name="desc"></td>
+		</tr>
+		<tr>
+			<td>&nbsp;</td>
+		</tr>
+		<tr>
+			<td colspan="3" align="center">
+				<input id="submit" type="submit" value="Add/Update/Delete">
+				<input id="cancel" type="button" value="Done"
+					onClick="window.location.href='/toc/admin/season/$season.id'"></td>
+				
+			</td>
+		</tr>
+	</table>
+	</form>
+</div>
+
+#parse("footer.vm")

@@ -1,24 +1,18 @@
 package com.texastoc.dao;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -26,45 +20,42 @@ import org.springframework.stereotype.Repository;
 import com.texastoc.domain.Game;
 import com.texastoc.domain.Season;
 import com.texastoc.domain.SeasonHistoryEntry;
+import com.texastoc.domain.SeasonPayout;
 
 @Repository
-public class SeasonDaoImpl implements SeasonDao {
+public class SeasonDaoImpl extends BaseJDBCTemplateDao implements SeasonDao {
 
-    private JdbcTemplate jdbcTemplate;
+    static final Logger logger = Logger.getLogger(SeasonDaoImpl.class);
 
     @Autowired
-    GameDao gameDao;
+    private GameDao gameDao;
     @Autowired
-    PlayerDao playerDao;
+    private PlayerDao playerDao;
     @Autowired
-    GamePlayerDao gamePlayerDao;
+    private GamePlayerDao gamePlayerDao;
     @Autowired
-    SeasonPlayerDao seasonPlayerDao;
+    private SeasonPlayerDao seasonPlayerDao;
     @Autowired
-    QuarterlySeasonDao quarterlySeasonDao;
+    private QuarterlySeasonDao quarterlySeasonDao;
     @Autowired
-    SeasonHistoryEntryDao seasonHistoryEntryDao;
+    private SeasonHistoryEntryDao seasonHistoryEntryDao;
 
     @Autowired
     public void init(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        setDataSource(dataSource);
     }
 
     public List<Season> selectAll() {
-        List<Season> seasons = this.jdbcTemplate
-                .query("select id, startDate, endDate, useHistoricalData, "
-                        + " note, totalBuyIn, totalReBuy, totalPot, totalAnnualToc, "
-                        + " lastCalculated from season order by startDate desc",
+        List<Season> seasons = this.getJdbcTemplate()
+                .query("select * from season order by startDate desc",
                         new SeasonMapper());
         return seasons;
     }
 
     public Season selectById(int id) {
-        Season season = this.jdbcTemplate
+        Season season = this.getJdbcTemplate()
                 .queryForObject(
-                        "select id, startDate, endDate, useHistoricalData, "
-                                + " note, totalBuyIn, totalReBuy, totalPot, totalAnnualToc, "
-                                + " lastCalculated from season where id = "
+                        "select * from season where id = "
                                 + id, new SeasonMapper());
         
         if (season.isUseHistoricalData()) {
@@ -76,6 +67,7 @@ public class SeasonDaoImpl implements SeasonDao {
             season.setQuarterlies(quarterlySeasonDao.selectBySeasonId(id));
             season.setGames(gameDao.selectBySeasonId(season.getId(), false));
             season.setSeasonPlayers(seasonPlayerDao.selectBySeasonId(id));
+            season.setPayouts(selectPayoutsBySeasonId(id));
             
             for (Game game : season.getGames()) {
                 game.setPlayers(gamePlayerDao.selectByGameId(game.getId()));
@@ -85,83 +77,152 @@ public class SeasonDaoImpl implements SeasonDao {
         return season;
     }
 
-    private static final String INSERT_SQL = "INSERT INTO season (startDate, endDate, useHistoricalData, note) "
-            + " VALUES (?,?,?,?)";
-    public int insert(final Season season) throws SQLException {
+    private static final String INSERT_SQL = "INSERT INTO season "
+            + " (startDate, endDate, useHistoricalData, note) "
+            + " VALUES "
+            + " (:startDate, :endDate, :historical, :note)";
+    public int insert(final Season season) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        Connection connection = jdbcTemplate.getDataSource().getConnection();
-        jdbcTemplate.update(
-            new PreparedStatementCreator() {
-                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                    PreparedStatement ps =
-                        connection.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);
-                    int index = 1;
-                    ps.setTimestamp(index++, new Timestamp(season.getStartDate().toDate().getTime()));
-                    ps.setTimestamp(index++, new Timestamp(season.getEndDate().toDate().getTime()));
-                    ps.setBoolean(index++, season.isUseHistoricalData());
-                    ps.setString(index++, season.getNote());
-                    return ps;
-                }
-            },
-            keyHolder);
         
-        // ;;!! Not sure if I need to do this
-        DataSourceUtils.releaseConnection(connection, jdbcTemplate.getDataSource());
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("startDate", season.getStartDate().toDate());
+        params.addValue("endDate", season.getEndDate().toDate());
+        params.addValue("historical", season.isUseHistoricalData());
+        params.addValue("note", season.getNote());
 
+        String [] keys = {"id"};
+        getTemplate().update(INSERT_SQL, params, keyHolder, keys);
+        
         return keyHolder.getKey().intValue();
     }
     
-    private static final String UPDATE_SQL = "UPDATE season set startDate=?, endDate=?, useHistoricalData=?, "
-            + " note=?, totalBuyIn=?, totalReBuy=?, totalPot=?, totalAnnualToc=?, lastCalculated=? "
-            + " where id=?";
+    private static final String UPDATE_SQL = "UPDATE season set startDate=:startDate, endDate=:endDate, useHistoricalData=:historical, "
+            + " note=:note, totalBuyIn=:totalBuyIn, totalReBuy=:totalReBuy, totalPot=:totalPot, "
+            + " totalAnnualToc=:totalAnnualToc, lastCalculated=:lastCalculated, "
+            + " totalAnnualTocSupplies=:totalAnnualTocSupplies, kittyGameDebit=:kittyGameDebit, "
+            + " finalized=:finalized, finalTableImage=:finalTableImage, finalTableThumb=:finalTableThumb "
+            + " where id=:id";
 
-    public void update(final Season season) throws SQLException {
-        Connection connection = jdbcTemplate.getDataSource().getConnection();
-        jdbcTemplate.update(
-            new PreparedStatementCreator() {
-                public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-                    PreparedStatement ps = connection.prepareStatement(UPDATE_SQL);
-                    int index = 1;
-                    ps.setTimestamp(index++, new Timestamp(season.getStartDate().toDate().getTime()));
-                    ps.setTimestamp(index++, new Timestamp(season.getEndDate().toDate().getTime()));
-                    ps.setBoolean(index++, season.isUseHistoricalData());
-                    ps.setString(index++, season.getNote());
-                    ps.setInt(index++, season.getTotalBuyIn());
-                    ps.setInt(index++, season.getTotalReBuy());
-                    ps.setInt(index++, season.getTotalPot());
-                    ps.setInt(index++, season.getTotalAnnualToc());
-                    if (season.getLastCalculated() == null) {
-                        ps.setNull(index++, Types.DATE);
-                    } else {
-                        ps.setTimestamp(index++, new Timestamp(season.getLastCalculated().toDate().getTime()));
-                    }
-                    ps.setInt(index++, season.getId());
-                    return ps;
-                }
-            });
-        
-        // ;;!! Not sure if I need to do this
-        DataSourceUtils.releaseConnection(connection, jdbcTemplate.getDataSource());
+    public void update(final Season season) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("startDate", season.getStartDate().toDate());
+        params.addValue("endDate", season.getEndDate().toDate());
+        params.addValue("historical", season.isUseHistoricalData());
+        params.addValue("note", season.getNote());
+        params.addValue("totalBuyIn", season.getTotalBuyIn());
+        params.addValue("totalReBuy", season.getTotalReBuy());
+        params.addValue("totalPot", season.getTotalPot());
+        params.addValue("totalAnnualToc", season.getTotalAnnualToc());
+        params.addValue("totalAnnualTocSupplies", season.getTotalAnnualTocSupplies());
+        params.addValue("kittyGameDebit", season.getKittyGameDebit());
+        params.addValue("lastCalculated", season.getLastCalculated());
+        params.addValue("finalized", season.isFinalized());
+        params.addValue("finalTableImage", season.getFinalTableImage());
+        params.addValue("finalTableThumb", season.getFinalTableThumb());
+        params.addValue("id", season.getId());
+
+        getTemplate().update(UPDATE_SQL, params);
     }
-    
-    private static final class SeasonMapper implements RowMapper<Season> {
-        public Season mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Season season = new Season();
-            season.setId(rs.getInt("id"));
-            season.setStartDate(new LocalDate(rs.getDate("startDate")));
-            season.setEndDate(new LocalDate(rs.getDate("endDate")));
-            season.setUseHistoricalData(rs.getBoolean("useHistoricalData"));
-            season.setNote(rs.getString("note"));
-            season.setTotalBuyIn(rs.getInt("totalBuyIn"));
-            season.setTotalReBuy(rs.getInt("totalReBuy"));
-            season.setTotalPot(rs.getInt("totalPot"));
-            season.setTotalAnnualToc(rs.getInt("totalAnnualToc"));
 
-            Date date = rs.getDate("lastCalculated");
-            if (date != null) {
-                season.setLastCalculated(new DateTime(date));
+    @Override
+    public List<SeasonPayout> selectPayoutsBySeasonId(int seasonId) {
+        return this.getJdbcTemplate()
+                .query("select * from seasonpayout where seasonId = "
+                        + seasonId + " order by place", new SeasonPayoutMapper());
+    }
+
+    private static final String INSERT_PAYOUT_SQL = "INSERT INTO seasonpayout "
+            + " (seasonId, place, amount, description, temp) "
+            + " VALUES "
+            + " (:seasonId, :place, :amount, :description, :temp)";
+    @Override
+    public void insertPayout(SeasonPayout payout) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("seasonId", payout.getSeasonId());
+        params.addValue("place", payout.getPlace());
+        params.addValue("amount", payout.getAmount());
+        params.addValue("description", payout.getDescription());
+        params.addValue("temp", payout.isTemp());
+
+        getTemplate().update(INSERT_PAYOUT_SQL, params);
+    }
+
+    private static final String UPDATE_PAYOUT_SQL = 
+            "UPDATE seasonpayout set place=:place, amount=:amount, "
+            + " description=:description, temp=:temp "
+            + " where id=:id";
+    @Override
+    public void updatePayout(SeasonPayout payout) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("place", payout.getPlace());
+        params.addValue("amount", payout.getAmount());
+        params.addValue("description", payout.getDescription());
+        params.addValue("temp", payout.isTemp());
+        params.addValue("id", payout.getId());
+
+        getTemplate().update(UPDATE_PAYOUT_SQL, params);
+    }
+
+    private static final String DELETE_PAYOUT_SQL = "delete from seasonpayout where id=";
+    @Override
+    public void deletePayout(int id) {
+        this.getJdbcTemplate().execute(DELETE_PAYOUT_SQL + id);
+    }
+
+    private static final String DELETE_TEMP_PAYOUTS_SQL = 
+            "delete from seasonpayout where seasonId=:seasonId and temp=true";
+    @Override
+    public void deleteTempPayoutsBySeasonId(int seasonId) {
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("seasonId", seasonId);
+        getTemplate().update(DELETE_TEMP_PAYOUTS_SQL, params);
+    }
+
+    private static final class SeasonMapper implements RowMapper<Season> {
+        public Season mapRow(ResultSet rs, int rowNum) {
+            Season season = new Season();
+            try {
+                season.setId(rs.getInt("id"));
+                season.setStartDate(new LocalDate(rs.getDate("startDate")));
+                season.setEndDate(new LocalDate(rs.getDate("endDate")));
+                season.setUseHistoricalData(rs.getBoolean("useHistoricalData"));
+                season.setNote(rs.getString("note"));
+                season.setTotalBuyIn(rs.getInt("totalBuyIn"));
+                season.setTotalReBuy(rs.getInt("totalReBuy"));
+                season.setTotalPot(rs.getInt("totalPot"));
+                season.setTotalAnnualToc(rs.getInt("totalAnnualToc"));
+                season.setTotalAnnualTocSupplies(rs.getInt("totalAnnualTocSupplies"));
+                season.setKittyGameDebit(rs.getInt("kittyGameDebit"));
+                season.setFinalized(rs.getBoolean("finalized"));
+                season.setFinalTableImage(rs.getString("finalTableImage"));
+                season.setFinalTableThumb(rs.getString("finalTableThumb"));
+
+                Date date = rs.getDate("lastCalculated");
+                if (date != null) {
+                    season.setLastCalculated(new DateTime(date));
+                }
+            } catch (SQLException e) {
+                logger.error(e);
             }
             return season;
         }
     }
+    
+    private static final class SeasonPayoutMapper implements RowMapper<SeasonPayout> {
+        public SeasonPayout mapRow(ResultSet rs, int rowNum) {
+            SeasonPayout seasonPayout = new SeasonPayout();
+            try {
+                seasonPayout.setId(rs.getInt("id"));
+                seasonPayout.setSeasonId(rs.getInt("seasonId"));
+                seasonPayout.setAmount(rs.getInt("amount"));
+                seasonPayout.setDescription(rs.getString("description"));
+                seasonPayout.setPlace(rs.getString("place"));
+                seasonPayout.setTemp(rs.getBoolean("temp"));
+            } catch (SQLException e) {
+                logger.error(e);
+            }
+            return seasonPayout;
+        }
+    }
+
 }

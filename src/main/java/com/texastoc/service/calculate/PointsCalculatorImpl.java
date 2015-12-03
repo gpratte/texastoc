@@ -1,8 +1,7 @@
 package com.texastoc.service.calculate;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,90 +16,86 @@ import com.texastoc.service.PointSystemService;
 public class PointsCalculatorImpl implements PointsCalculator {
 
     @Autowired
-    PointSystemService pointSystemService;
+    private GamePlayerDao gamePlayerDao;
     @Autowired
-    GamePlayerDao gamePlayerDao;
+    private ChopCalculator chopCalculator;
+    @Autowired
+    private PointSystemService pointSystemService;
 
     // TODO cache results
     public void calculate(Game game) {
         TopTenPoints ttp = pointSystemService.getTopTenPoints(game
                 .getNumPlayers());
 
-        ArrayList<GamePlayer> playersThatChopped = new ArrayList<GamePlayer>();
-        int totalChips = 0;
-
         for (GamePlayer player : game.getPlayers()) {
-            boolean update = false;
 
             if (player.getPoints() != null) {
                 player.setPoints(null);
-                update = true;
             }
 
             if (player.getFinish() != null && player.getFinish() <= 10) {
-                if (player.getChop() == null || player.getChop() < 1) {
-                    if (player.isAnnualTocPlayer() || player.isQuarterlyTocPlayer()) {
-                        player.setPoints(ttp.getPointsForPlace(player.getFinish()));
-                        update = true;
-                    }
+                if (player.isAnnualTocPlayer() || player.isQuarterlyTocPlayer()) {
+                    player.setPoints(ttp.getPointsForPlace(player.getFinish()));
+                } else {
+                    player.setNonTocPoints(ttp.getPointsForPlace(player.getFinish()));
                 }
             }
 
-            if (player.getChop() != null && player.getChop() > 0) {
-                playersThatChopped.add(player);
-                totalChips += player.getChop();
-            }
-
-            try {
-                gamePlayerDao.update(player);
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            gamePlayerDao.update(player);
         }
 
-        if (playersThatChopped.size() > 0) {
-            int minPoints = ttp.getPointsForPlace(playersThatChopped.size());
-
-            int totalPointsToChop = 0;
-            for (int i = playersThatChopped.size(); i > 0; --i) {
-                totalPointsToChop += ttp.getPointsForPlace(i) - minPoints;
-            }
-
-            Collections.sort(playersThatChopped);
-            int pointsAwarded = 0;
-            //int finish = 1;
-            for (GamePlayer player : playersThatChopped) {
-                //player.setFinish(finish++);
-                double percentage = (double) player.getChop()
-                        / (double) totalChips;
-                double extraPointsD = percentage * totalPointsToChop;
-                int extraPointsI = (int) Math.round(extraPointsD);
-                pointsAwarded += extraPointsI;
-                player.setPoints(minPoints + extraPointsI);
-            }
-
-            if (pointsAwarded < totalPointsToChop) {
-                int leftOverPoints = totalPointsToChop - pointsAwarded;
-                while (leftOverPoints > 0) {
-                    for (GamePlayer player : playersThatChopped) {
-                        player.setPoints(player.getPoints() + 1);
-                        if (--leftOverPoints == 0) {
+        // See if there is a chop
+        List<Integer> chips = null;
+        List<Integer> amounts = null;
+        for (GamePlayer player : game.getPlayers()) {
+            if (player.getChop() != null) {
+                if (chips == null) {
+                    chips = new ArrayList<Integer>();
+                    chips.add(player.getChop());
+                    amounts = new ArrayList<Integer>();
+                    if (player.getPoints() != null) {
+                        amounts.add(player.getPoints());
+                    } else if (player.getNonTocPoints() != null) {
+                        amounts.add(player.getNonTocPoints());
+                    }
+                } else {
+                    boolean inserted = false;
+                    for (int i = 0; i < chips.size(); ++i) {
+                        if (player.getChop().intValue() >= chips.get(i).intValue()) {
+                            chips.add(i, player.getChop());
+                            if (player.getPoints() != null) {
+                                amounts.add(i, player.getPoints());
+                            } else if (player.getNonTocPoints() != null) {
+                                amounts.add(i, player.getNonTocPoints());
+                            }
+                            inserted = true;
                             break;
+                        }
+                    }
+                    if (!inserted) {
+                        chips.add(player.getChop());
+                        if (player.getPoints() != null) {
+                            amounts.add(player.getPoints());
+                        } else if (player.getNonTocPoints() != null) {
+                            amounts.add(player.getNonTocPoints());
                         }
                     }
                 }
             }
-
-            for (GamePlayer player : playersThatChopped) {
-                try {
-                    if (!player.isAnnualTocPlayer() && !player.isQuarterlyTocPlayer()) {
-                        player.setPoints(null);
+        }
+        
+        if (chips != null) {
+            List<Chop> chops = chopCalculator.calculate(chips, amounts);
+            if (chops != null && chops.size() > 1) {
+                for (Chop chop : chops) {
+                    for (GamePlayer player : game.getPlayers()) {
+                        if (player.getPoints() != null && 
+                                player.getPoints().intValue() == chop.getOrgAmount()) {
+                            player.setPoints(chop.getChopAmount());
+                            gamePlayerDao.update(player);
+                            break;
+                        }
                     }
-                    gamePlayerDao.update(player);
-                } catch (SQLException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
                 }
             }
         }

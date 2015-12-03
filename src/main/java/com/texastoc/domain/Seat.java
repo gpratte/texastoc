@@ -1,6 +1,6 @@
 package com.texastoc.domain;
 
-public class Seat {
+public class Seat implements Comparable<Seat> {
 
     private int table;
     private int position;
@@ -25,4 +25,21 @@ public class Seat {
         this.player = player;
     }
     
+    @Override
+    public int compareTo(Seat o) {
+        if (table < o.getTable()) {
+            return -1;
+        } else if (table > o.getTable()) {
+            return 1;
+        } else {
+            if (position < o.getPosition()) {
+                return -1;
+            } else if (position < o.getPosition()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+
 }
