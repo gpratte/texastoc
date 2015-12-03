@@ -33,14 +33,6 @@
 	<div role="main" class="ui-content" align="center">
 		<form name="input" action="/toc/mobile/game/sendrally/$game.id" method="post">
 		
-		Select who the email is from: 
-		<select name="playerId">
-			<option value="0">&nbsp;</option>
-			#foreach($player in $players)
-				<option value="$player.id">$player.fullName</option>
-			#end
-		</select>
-		<br>
 		<br>
 		Enter the email body: 
 		<br>

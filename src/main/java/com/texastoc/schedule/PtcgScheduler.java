@@ -50,7 +50,7 @@ public class PtcgScheduler {
                 Player host = playerService.findById(currentGame.getHostId());
                 if (host != null) {
                     List<Player> ptcgs = playerService.findPtcg();
-                    mailService.sendPtcg(host, ptcgs);
+                    mailService.sendPtcg(host, ptcgs, currentGame.getGameDate());
                 }
             }
         }

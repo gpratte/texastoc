@@ -661,16 +661,16 @@ public class GameController extends BaseController {
             return new ModelAndView("login");
         }
 
+        Game game = gameService.findById(id);
         if (StringUtils.isNotBlank(body)) {
             List<Player> activePlayers = playerService.findActive();
             Player host = null;
-            if (playerId != null && playerId != 0) {
-                host = playerService.findById(playerId);
+            if (game.getHostId() != null) {
+                host = playerService.findById(game.getHostId());
             }
-            mailService.sendRally(host, activePlayers, body);
+            mailService.sendRally(host, activePlayers, body, game.getGameDate());
         }
         
-        Game game = gameService.findById(id);
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
         mav.addObject("homegames", HomeGame.values());
         Clock clock = clockService.getClock(id);

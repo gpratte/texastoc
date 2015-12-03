@@ -27,6 +27,7 @@ import com.texastoc.domain.QuarterlySeasonPlayer;
 import com.texastoc.domain.Season;
 import com.texastoc.domain.SeasonPlayer;
 import com.texastoc.domain.Seat;
+import com.texastoc.util.DateConverter;
 
 @Component
 public class MailServiceImpl implements MailService {
@@ -177,7 +178,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendPtcg(Player host, List<Player> ptcgs) {
+    public void sendPtcg(Player host, List<Player> ptcgs, LocalDate gameDate) {
 
         if (!StringUtils.equals("true", sendEmail)) {
             return;
@@ -208,8 +209,8 @@ public class MailServiceImpl implements MailService {
             }
             recipients.append(host.getEmail());
         }
-        
-        StringBuilder subject = new StringBuilder("PTCG");
+
+        StringBuilder subject = new StringBuilder("PTCG (" + DateConverter.getDateAsString(gameDate) + ")");
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -227,7 +228,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendRally(Player host, List<Player> actives, String message) {
+    public void sendRally(Player host, List<Player> actives, String message, LocalDate gameDate) {
 
         if (!StringUtils.equals("true", sendEmail)) {
             return;
@@ -263,7 +264,7 @@ public class MailServiceImpl implements MailService {
             recipients.append(host.getEmail());
         }
         
-        StringBuilder subject = new StringBuilder("Rally!");
+        StringBuilder subject = new StringBuilder("Rally! (" + DateConverter.getDateAsString(gameDate) + ")");
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -272,12 +273,8 @@ public class MailServiceImpl implements MailService {
         sb.append("Subject: '" + subject.toString() + "',");
         sb.append("HtmlBody: '");
 
-
-        if (host != null) {
-            sb.append(host.getFullName() + " says: " + message);
-        } else {
-            sb.append(message);
-        }
+        message = StringUtils.replace(message, "'", "");
+        sb.append(message);
 
         sb.append("'");
         sb.append("}");
