@@ -26,6 +26,7 @@ public interface MailService {
     void sendTransportReminder(Player host, List<Player> possibleTransporters);
     void sendPtcg(Player host, List<Player> ptgcs, LocalDate gameDate);
     void sendRally(Player host, List<Player> actives, String message, LocalDate gameDate);
+    void sendToGroup(List<Player> recipients, String subject, String message);
 
     String sendEmail(String address);
 }

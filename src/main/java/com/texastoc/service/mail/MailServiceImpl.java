@@ -283,6 +283,56 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
+    public void sendToGroup(List<Player> players, String subject, String message) {
+
+        if (!StringUtils.equals("true", sendEmail)) {
+            return;
+        }
+
+        if (players == null || players.size() < 1) {
+            return;
+        }
+        
+        if (StringUtils.isBlank(message)) {
+            return;
+        }
+        
+        StringBuilder recipients = new StringBuilder();
+        boolean addComma = false;
+        for (Player player : players) {
+            if (player.isActive() && StringUtils.isNotBlank(player.getEmail())) {
+                if (addComma) {
+                    recipients.append(",");
+                } else {
+                    addComma = true;
+                }
+                recipients.append(player.getEmail());
+            }
+        }
+
+        if (subject == null) {
+            subject = "Listen up";
+        } else {
+            subject = StringUtils.replace(subject, "'", "");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("From: 'info@texastoc.com',");
+        sb.append("To: '" + recipients.toString() + "',");
+        sb.append("Subject: '" + subject.toString() + "',");
+        sb.append("HtmlBody: '");
+
+        message = StringUtils.replace(message, "'", "");
+        sb.append(message);
+
+        sb.append("'");
+        sb.append("}");
+        
+        send(sb.toString());
+    }
+
+    @Override
     public void sendGameChangedMail(Game game) {
 
         if (!StringUtils.equals("true", sendEmail)) {
