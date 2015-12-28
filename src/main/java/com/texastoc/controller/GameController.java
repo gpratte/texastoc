@@ -394,7 +394,7 @@ public class GameController extends BaseController {
         }
         Game game = gameService.findById(id);
         mav.addObject("game", game);
-        mav.addObject("homegames", HomeGame.values());
+        mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(id);
         clock.sync();
         mav.addObject("clock", clock);
@@ -412,7 +412,7 @@ public class GameController extends BaseController {
         gameService.clearSeats(id);
         Game game = gameService.findById(id);
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
-        mav.addObject("homegames", HomeGame.values());
+        mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(id);
         clock.sync();
         mav.addObject("clock", clock);
@@ -452,7 +452,7 @@ public class GameController extends BaseController {
         Clock clock = clockService.getClock(id);
         clock.sync();
         mav.addObject("clock", clock);
-        mav.addObject("homegames", HomeGame.values());
+        mav.addObject("host", playerService.findById(game.getHostId()));
         return mav;
     }
 
@@ -520,7 +520,7 @@ public class GameController extends BaseController {
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
         List<Player> players = playerService.findAll();
         mav.addObject("players", players);
-        mav.addObject("homegames", HomeGame.values());
+        mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(id);
         clock.sync();
         mav.addObject("clock", clock);
@@ -538,7 +538,7 @@ public class GameController extends BaseController {
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
         List<Player> players = playerService.findAll();
         mav.addObject("players", players);
-        mav.addObject("homegames", HomeGame.values());
+        mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(id);
         clock.sync();
         mav.addObject("clock", clock);
@@ -628,7 +628,7 @@ public class GameController extends BaseController {
         gameService.updateTransport(id, required);
         Game game = gameService.findById(id);
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
-        mav.addObject("homegames", HomeGame.values());
+        mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(id);
         clock.sync();
         mav.addObject("clock", clock);
@@ -672,7 +672,7 @@ public class GameController extends BaseController {
         }
         
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
-        mav.addObject("homegames", HomeGame.values());
+        mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(id);
         clock.sync();
         mav.addObject("clock", clock);
@@ -701,6 +701,7 @@ public class GameController extends BaseController {
     		@RequestParam(value = "marker", required = true) Integer marker) {
 
         gameService.updateHomeGame(gameId, marker);
-        return "OK from update home game";    }
+        return "OK from update home game";    
+    }
     
 }

@@ -9,7 +9,7 @@
 	<script src="/toc/resources/js/jquery-2.1.0.js"></script>
 	<script src="/toc/resources/js/mobileconfig.js"></script>
 	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
-	<script src="/toc/resources/js/mobilegame_v1_7.js"></script>
+	<script src="/toc/resources/js/mobilegame_v1_8.js"></script>
 	<script src="/toc/resources/js/mobileclock_v1.3.js"></script>
 	<script src="/toc/resources/js/mobileseated.js"></script>
 	<script src="/toc/resources/js/ion.sound.js"></script>
@@ -56,18 +56,10 @@
 		    	</div>
 		    		<br/>
 	    	#end
-			<select id="homegame" name="homegame">
-				#foreach($homegame in $homegames)
-				<option value="$homegame.marker"
-					#if ($game.homeGame.marker == $homegame.marker)
-						selected="selected"
-					#end
-					>Home Game: $homegame</option>
-				#end
-			</select>
-			<br/>	    
 
 			Date: $game.gameDateText 
+			<span style="border-left: thin solid black;">&nbsp;</span> 
+			Host: $host.fullName
 			<span style="border-left: thin solid black;">&nbsp;</span> 
 			Double buy in:
 			#if($game.doubleBuyIn) Yes #else No #end
