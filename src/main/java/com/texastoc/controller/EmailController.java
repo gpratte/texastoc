@@ -28,6 +28,7 @@ public class EmailController extends BaseController {
     
     private static final String DGS = "dgs";
     private static final String TOURNY = "tourny";
+    private static final String DGS_AND_TOURNY = "dgstourny";
     private static final String HOSTS = "hosts";
     private static final String TRANSPORT = "transport";
 
@@ -72,6 +73,7 @@ public class EmailController extends BaseController {
             return new ModelAndView("login");
         }
 
+        System.out.println("!!! group is " + group);
         List<Player> recipients = null;
         if (StringUtils.equals(group, DGS)) {
             recipients = playerService.findPtcg();
@@ -79,13 +81,35 @@ public class EmailController extends BaseController {
         if (StringUtils.equals(group, TOURNY)) {
             recipients = playerService.findActive();
         }
+        if (StringUtils.equals(group, DGS_AND_TOURNY)) {
+            recipients = playerService.findActive();
+            List<Player> dgs = playerService.findPtcg();
+            for (Player dg : dgs) {
+                boolean found = false;
+                for (Player active : recipients) {
+                    if (active.getId() == dg.getId()) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    recipients.add(dg);
+                }
+            }
+        }
         if (StringUtils.equals(group, HOSTS)) {
             recipients = playerService.findPossibleHosts();
         }
         if (StringUtils.equals(group, TRANSPORT)) {
             recipients = playerService.findPossibleTransporters();
         }
-        
+
+//        StringBuilder sb = new StringBuilder();
+//        for (Player player : recipients) {
+//            sb.append(player.getFullName() + " ");
+//        }
+//        System.out.println(sb.toString());
+
         ModelAndView mav = null;
         if (recipients == null) {
             mav = new ModelAndView("mobileemails");

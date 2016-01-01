@@ -39,6 +39,7 @@
 		<ul data-role="listview">
 			<li><a href="/toc/mobile/email?group=dgs">Email Degenerates</a></li>
 			<li><a href="/toc/mobile/email?group=tourny">Email Tournament Players</a></li>
+			<li><a href="/toc/mobile/email?group=dgstourny">Email DGs and Tournament Players</a></li>
 			<li><a href="/toc/mobile/email?group=hosts">Email Those That Hosts</a></li>
 			<li><a href="/toc/mobile/email?group=transport">Email Supply Transporters</a></li>
 		</ul>

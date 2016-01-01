@@ -93,7 +93,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td>Active</td>
+			<td>Active Tourny</td>
 			#set($yesno = {"false":"No","true":"Yes"})
 			<td>#springFormSingleSelect("player.active", $yesno)</td>
 		</tr>
@@ -108,7 +108,7 @@
 			<td>#springFormSingleSelect("player.transporter", $yesno)</td>
 		</tr>
 		<tr>
-			<td>PTCG Player</td>
+			<td>Degenerate (DG)</td>
 			#set($yesno = {"false":"No","true":"Yes"})
 			<td>#springFormSingleSelect("player.ptcg", $yesno)</td>
 		</tr>
