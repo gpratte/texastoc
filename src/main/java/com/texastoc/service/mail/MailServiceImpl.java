@@ -300,7 +300,7 @@ public class MailServiceImpl implements MailService {
         StringBuilder recipients = new StringBuilder();
         boolean addComma = false;
         for (Player player : players) {
-            if (player.isActive() && StringUtils.isNotBlank(player.getEmail())) {
+            if (StringUtils.isNotBlank(player.getEmail())) {
                 if (addComma) {
                     recipients.append(",");
                 } else {
