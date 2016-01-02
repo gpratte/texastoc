@@ -10,11 +10,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -181,7 +177,7 @@ public class SeasonServiceImpl implements SeasonService {
                 String hours = "" + (averageDateTime.getHourOfDay() - 12);
                 String minutes = "" + averageDateTime.getMinuteOfHour();
                 if (minutes.length() == 1) {
-                    minutes = StringUtils.rightPad(minutes, 2, '0');
+                    minutes = StringUtils.leftPad(minutes, 2, '0');
                 }
                 String averageTimeText = hours + ":" + minutes;
                 playerCount.setMisc1(averageTimeText);
