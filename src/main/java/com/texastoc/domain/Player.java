@@ -14,6 +14,7 @@ public class Player implements Validator {
     private String cellCarrier;
     private String address;
     private String note;
+    private String password;
     private boolean possibleHost;
     private boolean transporter;
     private boolean ptcg;
@@ -70,6 +71,12 @@ public class Player implements Validator {
     }
     public void setNote(String note) {
         this.note = note;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
     }
     public boolean isPossibleHost() {
         return possibleHost;

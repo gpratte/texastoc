@@ -13,11 +13,13 @@ public interface PlayerService {
     List<Player> findPtcg();
     List<Player> findActive();
     Player findById(int id);
+    Player findByEmail(String email);
     void update(Player player) throws Exception;
     void delete(int id) throws Exception;
     List<Player> findBankersByGameId(int id);
     void addGameBanker(int gameId, int playerId);
     void removeGameBanker(int gameId, int playerId);
     void updateGameBanker(int gameId, Integer includePlayerId, Integer excludePlayerId);
-
+    boolean isPasswordValid(String email, String password);
+    void updatePassword(int id, String password);
 }

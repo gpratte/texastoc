@@ -2,6 +2,7 @@ package com.texastoc.service;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -56,6 +57,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
     
     @Override
+    public Player findByEmail(String email) {
+        return playerDao.selectByEmail(email);
+    }
+    
+    @Override
     @CacheEvict(value="playercache", allEntries=true)
     public void update(Player player) throws Exception {
         playerDao.update(player);
@@ -72,6 +78,11 @@ public class PlayerServiceImpl implements PlayerService {
         return playerDao.selectBankersByGameId(id);
     }
     
+    @Override
+    public void updatePassword(int id, String password) {
+        playerDao.updatePassword(id, password);
+    }   
+
     @Override
     public void addGameBanker(int gameId, int playerId) {
         playerDao.insertGameBanker(gameId, playerId);
@@ -116,6 +127,20 @@ public class PlayerServiceImpl implements PlayerService {
                 playerDao.deleteGameBanker(gameId, excludePlayerId);
             }
         }
+    }
+
+    @Override
+    public boolean isPasswordValid(String email, String password) {
+        Player player = playerDao.selectByEmail(email);
+        if (player == null) {
+            return false;
+        }
+        
+        if (StringUtils.equals(password, player.getPassword())) {
+            return true;
+        }
+        
+        return false;
     }
 
 }

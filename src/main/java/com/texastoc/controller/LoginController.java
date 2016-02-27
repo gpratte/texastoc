@@ -1,7 +1,5 @@
 package com.texastoc.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -16,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.texastoc.domain.Game;
 import com.texastoc.domain.Season;
 import com.texastoc.service.GameService;
+import com.texastoc.service.PlayerService;
 import com.texastoc.service.SeasonService;
 
 @Controller
@@ -28,6 +27,8 @@ public class LoginController extends BaseController {
     @Autowired
     GameService gameService;
     @Autowired
+    PlayerService playerService;
+    @Autowired
     SeasonService seasonService;
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
@@ -35,7 +36,8 @@ public class LoginController extends BaseController {
         if (this.isAdminLoggedIn(request)) {
             return new ModelAndView("adminhome");            
         }
-        if (this.isMobileLoggedIn(request)) {
+
+        if (this.isLoggedIn(request)) {
             Boolean allowStartNewGame = false;
             Boolean allowGoToCurrentGame = false;
             Season currentSeason = seasonService.getCurrent();
@@ -52,6 +54,7 @@ public class LoginController extends BaseController {
             mav.addObject("allowGoToCurrentGame", allowGoToCurrentGame);
             return mav;
         }
+
         return new ModelAndView("mobilelogin");
     }
 
@@ -61,12 +64,16 @@ public class LoginController extends BaseController {
             @RequestParam(value="password", required=true) String password) {
         request.getSession().removeAttribute(USER_LOGGED_IN);
         
-        if (StringUtils.equals(user, "admin") && StringUtils.equals(password, "wsop2015")) {
+        user = StringUtils.trim(user);
+        password = StringUtils.trim(password);
+        
+        if (StringUtils.equals(user, "admin") && StringUtils.equals(password, "wsop2016")) {
             request.getSession().setAttribute(USER_LOGGED_IN, "admin");
             return new ModelAndView("adminhome");            
         }
-        if (StringUtils.equals(user, "toc") && StringUtils.equals(password, "shipit")) {
-            request.getSession().setAttribute(USER_LOGGED_IN, "mobile");
+
+        if (playerService.isPasswordValid(user, password)) {
+            request.getSession().setAttribute(USER_LOGGED_IN, user);
             Boolean allowStartNewGame = false;
             Boolean allowGoToCurrentGame = false;
             Season currentSeason = seasonService.getCurrent();

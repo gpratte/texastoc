@@ -27,6 +27,7 @@ public interface MailService {
     void sendPtcg(Player host, List<Player> ptgcs, LocalDate gameDate);
     void sendRally(Player host, List<Player> actives, String message, LocalDate gameDate);
     void sendToGroup(List<Player> recipients, String subject, String message);
+    void sendNewPassword(String email, String password);
 
     String sendEmail(String address);
 }

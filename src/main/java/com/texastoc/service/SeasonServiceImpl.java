@@ -165,15 +165,15 @@ public class SeasonServiceImpl implements SeasonService {
             PlayerCount playerCount = entry.getValue();
             List<GameTime> gameTimes = times.get(key);
             if (gameTimes.size() > 0) {
-                // Get the number of millisseconds past 7:30 and average them
-                long totalMillis = 0l;
+                // Get the number of milliseconds past 7:30 and average them
+                long totalMinutes = 0l;
                 for (int i = 0; i < gameTimes.size(); ++i) {
                     GameTime gameTime = gameTimes.get(i);
-                    totalMillis += gameTime.actualStartTime.getMillis() - 
-                            gameTime.startTime.getMillis();
+                    totalMinutes += (gameTime.actualStartTime.getMillis() - 
+                            gameTime.startTime.getMillis()) / 1000 / 60;
                 }
-                long averageMillis = totalMillis / gameTimes.size();
-                DateTime averageDateTime = gameTimes.get(0).startTime.plus(averageMillis);
+                long averageMinutes = totalMinutes / gameTimes.size();
+                DateTime averageDateTime = gameTimes.get(0).startTime.plus(averageMinutes * 60 * 1000);
                 String hours = "" + (averageDateTime.getHourOfDay() - 12);
                 String minutes = "" + averageDateTime.getMinuteOfHour();
                 if (minutes.length() == 1) {

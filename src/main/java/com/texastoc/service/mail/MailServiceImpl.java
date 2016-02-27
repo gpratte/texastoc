@@ -2,6 +2,7 @@ package com.texastoc.service.mail;
 
 import java.util.List;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -325,6 +326,30 @@ public class MailServiceImpl implements MailService {
 
         message = StringUtils.replace(message, "'", "");
         sb.append(message);
+
+        sb.append("'");
+        sb.append("}");
+        
+        send(sb.toString());
+    }
+
+    @Override
+    public void sendNewPassword(String email, String password) {
+
+        if (!StringUtils.equals("true", sendEmail)) {
+            return;
+        }
+        
+        StringBuilder subject = new StringBuilder("Password reset");
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("From: 'info@texastoc.com',");
+        sb.append("To: '" + email + "',");
+        sb.append("Subject: '" + subject.toString() + "',");
+        sb.append("HtmlBody: '");
+
+        sb.append(password);
 
         sb.append("'");
         sb.append("}");
@@ -889,6 +914,7 @@ public class MailServiceImpl implements MailService {
     }
 
     private String send(String emailPayload) {
+        logger.info("Attemping to send email " + emailPayload);
 
         String response = null;
 
@@ -911,9 +937,11 @@ public class MailServiceImpl implements MailService {
                 case 422:
                     logger.warn("There was a problem with the email: "
                             + hre.getMessage());
+                    break;
                 case 500:
                     logger.warn("There has been an error sending your email: "
                             + hre.getMessage());
+                    break;
                 default:
                     logger.warn("There has been an unknow error sending your email: "
                             + hre.getMessage());

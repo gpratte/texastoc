@@ -1,10 +1,12 @@
 package com.texastoc.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,8 +19,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.texastoc.common.CellPhoneCarrier;
+import com.texastoc.domain.Game;
 import com.texastoc.domain.Player;
+import com.texastoc.domain.Season;
+import com.texastoc.service.GameService;
 import com.texastoc.service.PlayerService;
+import com.texastoc.service.SeasonService;
 import com.texastoc.service.mail.MailService;
 
 @Controller
@@ -26,6 +32,10 @@ public class PlayerController extends BaseController {
 
     @Autowired
     MailService mailService;
+    @Autowired
+    GameService gameService;
+    @Autowired
+    SeasonService seasonService;
     @Autowired
     PlayerService playerService;
 
@@ -65,6 +75,118 @@ public class PlayerController extends BaseController {
         mav.addObject("cellCarriers", CellPhoneCarrier.values());
 
         return mav;
+    }
+
+    @RequestMapping(value = "/mobile/player/changePassword", method = RequestMethod.GET)
+    public ModelAndView showChangePassword(final HttpServletRequest request) {
+
+        if (this.isNotLoggedIn(request)) {
+            return new ModelAndView("login");
+        }
+
+        return new ModelAndView("mobileChangePassword");
+    }
+
+    @RequestMapping(value = "/mobile/player/updatePassword", method = RequestMethod.POST)
+    public ModelAndView updatePassword(final HttpServletRequest request,
+            @RequestParam(value="current", required=true) String currentPassword,
+            @RequestParam(value="new", required=true) String newPassword,
+            @RequestParam(value="confirm", required=true) String confirmNewPassword) {
+
+        if (this.isNotLoggedIn(request)) {
+            return new ModelAndView("login");
+        }
+
+        ArrayList<String> problems = new ArrayList<String>();
+        if (StringUtils.isBlank(currentPassword)) {
+            problems.add("Current password is required");
+        }
+        if (StringUtils.isBlank(newPassword)) {
+            problems.add("New password is required");
+        }
+        if (StringUtils.isBlank(confirmNewPassword)) {
+            problems.add("Confirm New password is required");
+        }
+        
+        currentPassword = StringUtils.trim(currentPassword);
+        newPassword = StringUtils.trim(newPassword);
+        confirmNewPassword = StringUtils.trim(confirmNewPassword);
+
+        String loggedInUserEmail = getLoggedIn(request);
+        if (problems.size() == 0) {
+            if (!playerService.isPasswordValid(loggedInUserEmail, currentPassword)) {
+                problems.add("Current password is not correct");
+            }
+        }
+
+        if (problems.size() == 0) {
+            if (!StringUtils.equals(newPassword, confirmNewPassword)) {
+                problems.add("New password and confirm password are not the same");
+            }
+        }
+        
+        if (problems.size() == 0) {
+            Player player = playerService.findByEmail(loggedInUserEmail);
+            playerService.updatePassword(player.getId(), newPassword);
+            
+            Boolean allowStartNewGame = false;
+            Boolean allowGoToCurrentGame = false;
+            Season currentSeason = seasonService.getCurrent();
+            if (! currentSeason.isFinalized()) {
+                Game currentGame = gameService.findMostRecent();
+                if (currentGame.isFinalized()) {
+                    allowStartNewGame = true;
+                } else {
+                    allowGoToCurrentGame = true;
+                }
+            }
+            ModelAndView mav = new ModelAndView("mobilehome");
+            mav.addObject("allowStartNewGame", allowStartNewGame);
+            mav.addObject("allowGoToCurrentGame", allowGoToCurrentGame);
+            mav.addObject("passwordChanged",new Boolean(true));
+            return mav;
+        } else {
+            ModelAndView mav = new ModelAndView("mobileChangePassword","problems",problems);
+            mav.addObject("currentPassword",currentPassword);
+            mav.addObject("newPassword",newPassword);
+            mav.addObject("confirmNewPassword",confirmNewPassword);
+            return mav;
+        }
+    }
+
+    @RequestMapping(value = "/mobile/player/forgotPassword", method = RequestMethod.GET)
+    public ModelAndView showForgotPassword(final HttpServletRequest request) {
+
+        return new ModelAndView("mobileForgotPassword");
+    }
+
+    @RequestMapping(value = "/mobile/player/generatePassword", method = RequestMethod.POST)
+    public ModelAndView generatePassword(final HttpServletRequest request,
+            @RequestParam(value="email", required=true) String email) {
+
+        ArrayList<String> problems = new ArrayList<String>();
+        if (StringUtils.isBlank(email)) {
+            problems.add("email is required");
+        }
+
+        Player player = null;
+        if (problems.size() == 0) {
+            player = playerService.findByEmail(email);
+            if (player == null) {
+                problems.add("No player found with that email");
+            }
+        }
+
+        if (problems.size() == 0) {
+            String password = RandomStringUtils.random(6, true, false);
+            playerService.updatePassword(player.getId(), password);
+            mailService.sendNewPassword(email, password);
+            return new ModelAndView("mobilelogin");
+        } else {
+            ModelAndView mav = new ModelAndView("mobileForgotPassword","problems",problems);
+            mav.addObject("email",email);
+            return mav;
+        }
     }
 
     @RequestMapping(value = "/mobile/player/{id}/text", method = RequestMethod.GET)
@@ -172,7 +294,7 @@ public class PlayerController extends BaseController {
         return mav;
     }
 
-    @RequestMapping(value = "/admin/player/add", method = RequestMethod.POST)
+   @RequestMapping(value = "/admin/player/add", method = RequestMethod.POST)
     public ModelAndView createPlayer(final HttpServletRequest request,
             @Valid Player player, Errors errors) throws Exception {
         if (this.isNotLoggedIn(request)) {

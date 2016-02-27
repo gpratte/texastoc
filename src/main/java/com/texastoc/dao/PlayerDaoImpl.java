@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -83,6 +84,21 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
         return player;
     }
 
+    @Override
+    public Player selectByEmail(String email) {
+        Player player = null;
+        try {
+            player = this.getJdbcTemplate()
+                    .queryForObject(
+                            "select * from player "
+                            + " where email = '" + email + "'",
+                            new PlayerMapper());
+        } catch(IncorrectResultSizeDataAccessException e) {
+            // do nothing which returns null
+        }
+        return player;
+    }
+
     private static final String INSERT_SQL = "INSERT INTO player "
             + " (id, firstName, lastName, phone, email, cellCarrier, "
             + " address, active, note, possibleHost, transporter, ptcg) "
@@ -138,6 +154,18 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
         getTemplate().update(UPDATE_SQL, params);
     }
 
+    private static final String UPDATE_PASSWORD_SQL = "UPDATE player set password=:password "
+            + " where id=:id";
+
+    public void updatePassword(final int id, String password) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("password", password);
+        params.addValue("id", id);
+        
+        getTemplate().update(UPDATE_PASSWORD_SQL, params);
+    }
+
     private static final String DELETE_SQL = "delete from player where id=";
     @Override
     public void delete(int id) {
@@ -191,6 +219,7 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
                 player.setCellCarrier(rs.getString("cellCarrier"));
                 player.setAddress(rs.getString("address"));
                 player.setNote(rs.getString("note"));
+                player.setPassword(rs.getString("password"));
                 player.setPossibleHost(rs.getBoolean("possibleHost"));
                 player.setTransporter(rs.getBoolean("transporter"));
                 player.setPtcg(rs.getBoolean("ptcg"));

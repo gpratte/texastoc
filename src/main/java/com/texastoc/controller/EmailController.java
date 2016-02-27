@@ -73,7 +73,6 @@ public class EmailController extends BaseController {
             return new ModelAndView("login");
         }
 
-        System.out.println("!!! group is " + group);
         List<Player> recipients = null;
         if (StringUtils.equals(group, DGS)) {
             recipients = playerService.findPtcg();
