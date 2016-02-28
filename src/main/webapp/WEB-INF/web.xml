@@ -52,7 +52,6 @@
 	</session-config>
 
 	<!-- 
-	 -->
 	<security-constraint>
     	<web-resource-collection>
         	<url-pattern>/*</url-pattern>
@@ -61,6 +60,7 @@
         	<transport-guarantee>CONFIDENTIAL</transport-guarantee>
     	</user-data-constraint>
 	</security-constraint>
+	 -->
 
    <welcome-file-list>
         <welcome-file>index.html</welcome-file>

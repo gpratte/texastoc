@@ -467,6 +467,11 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public void updateNote(int id, String note) {
+        gameDao.updateNote(id, note);
+    }
+
+    @Override
     public void clearSeats(int id) {
         gameSeating.remove(id);
         gameTables.remove(id);

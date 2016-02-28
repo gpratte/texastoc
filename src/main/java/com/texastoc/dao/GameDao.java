@@ -21,4 +21,5 @@ public interface GameDao {
     void seated(int gameId);
     void recordStartTime(int gameId);
     void updateTransport(int gameId, boolean flag);
+    void updateNote(int id, String note);
 }

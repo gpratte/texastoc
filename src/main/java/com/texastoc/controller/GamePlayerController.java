@@ -290,7 +290,7 @@ public class GamePlayerController extends BaseController {
         if (!errors.hasErrors()) {
             try {
                 // Update
-                gamePlayerService.update(gamePlayer);
+                gamePlayerService.update(gamePlayer, null);
                 // Get it
                 gamePlayer = gamePlayerService.findById(gamePlayer.getId());
             } catch (DuplicatePlayerException e) {
@@ -538,7 +538,7 @@ public class GamePlayerController extends BaseController {
             gamePlayer.setFinish(null);
         }
 
-        gamePlayerService.update(gamePlayer);
+        gamePlayerService.update(gamePlayer, getLoggedIn(request));
 
         if (StringUtils.isNotBlank(banker)) {
             playerService.updateGameBanker(gamePlayer.getGameId(), gamePlayer.getPlayerId(), null);

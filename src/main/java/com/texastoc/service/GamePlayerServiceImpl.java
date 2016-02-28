@@ -52,7 +52,7 @@ public class GamePlayerServiceImpl implements GamePlayerService {
     }   
 
     @Override
-    public void update(GamePlayer gamePlayer) throws Exception {
+    public void update(GamePlayer gamePlayer, String updator) throws Exception {
         checkGame(gamePlayer);
         GamePlayer existingPlayer = findById(gamePlayer.getId());
         checkPlayer(gamePlayer, existingPlayer);
@@ -64,11 +64,25 @@ public class GamePlayerServiceImpl implements GamePlayerService {
         gameCalculator.calculate(gamePlayer.getGameId());
         payoutCalculator.calculate(gamePlayer.getGameId());
         
+        String optedInBy = null;
         if (!existingPlayer.isOptIn() && gamePlayer.isOptIn()) {
+            if (updator != null) {
+                optedInBy = gamePlayer.getPlayer().getFullName() + " opted in by " + updator;
+                logger.info(optedInBy);
+            }
             mailService.sendOptIn(gamePlayer);
         }
 
         Game game = gameDao.selectById(gamePlayer.getGameId());
+        if (optedInBy != null) {
+            String note = game.getNote();
+            if (note == null) {
+                note = "";
+            }
+            note += "\n" + optedInBy;
+            game.setNote(note);
+            gameService.updateNote(game.getId(), note);
+        }
         gateway.notifyGameChanged(game);
     }   
 

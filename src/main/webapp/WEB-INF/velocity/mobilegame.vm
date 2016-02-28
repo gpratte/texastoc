@@ -153,6 +153,8 @@
 					onClick="window.location.href='/toc/mobile/game/rally/$game.id'">
 			#end
 			
+			<br><pre>$!game.note</pre>
+			
 			
 	    </div>
 	    <div id="two" class="ui-content">

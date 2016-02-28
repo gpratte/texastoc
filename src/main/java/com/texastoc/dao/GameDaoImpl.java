@@ -177,6 +177,21 @@ public class GameDaoImpl extends BaseJDBCTemplateDao implements GameDao {
         //gameAuditDao.insert(game, null);
     }
     
+    private static final String UPDATE_NOTE_SQL = "UPDATE game set note=:note "
+            + " where id=:id";
+
+    @Override
+    public void updateNote(int id, String note) {
+
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("note", note);
+        params.addValue("id", id);
+
+        getTemplate().update(UPDATE_NOTE_SQL, params);
+
+        //gameAuditDao.insert(game, null);
+    }
+    
     private static final String DELETE_SQL = "delete from game where id=:id";
 	@Override
 	public void delete(int id) {

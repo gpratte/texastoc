@@ -33,5 +33,6 @@ public interface GameService {
             List<String> playersWOBuyInList) throws CannotRandomizeException;
     void recordStartTime(int gameId);
     void updateTransport(int gameId, boolean flag);
+    void updateNote(int gameId, String note);
 
 }
