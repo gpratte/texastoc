@@ -109,8 +109,11 @@ public class PlayerController extends BaseController {
         }
         
         currentPassword = StringUtils.trim(currentPassword);
+        currentPassword = StringUtils.lowerCase(currentPassword);
         newPassword = StringUtils.trim(newPassword);
+        newPassword = StringUtils.lowerCase(newPassword);
         confirmNewPassword = StringUtils.trim(confirmNewPassword);
+        confirmNewPassword = StringUtils.lowerCase(confirmNewPassword);
 
         String loggedInUserEmail = getLoggedIn(request);
         if (problems.size() == 0) {
@@ -363,7 +366,10 @@ public class PlayerController extends BaseController {
             
             if (StringUtils.isNotBlank(player.getEmail()) &&
                     player.getEmail().indexOf('*') == -1) {
-                existingPlayer.setEmail(player.getEmail());
+                String newEmail = player.getEmail();
+                newEmail = StringUtils.trim(newEmail);
+                newEmail = StringUtils.lowerCase(newEmail);
+                existingPlayer.setEmail(newEmail);
                 updated = "email";
             }
             if (StringUtils.isNotBlank(player.getPhone()) &&

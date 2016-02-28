@@ -65,6 +65,7 @@ public class LoginController extends BaseController {
         request.getSession().removeAttribute(USER_LOGGED_IN);
         
         user = StringUtils.trim(user);
+        user = StringUtils.lowerCase(user);
         password = StringUtils.trim(password);
         
         if (StringUtils.equals(user, "admin") && StringUtils.equals(password, "wsop2016")) {

@@ -576,7 +576,7 @@ public class GamePlayerController extends BaseController {
         String toc = request.getParameter("toc");
         String qtoc = request.getParameter("qtoc");
         String buyin = request.getParameter("buyin");
-
+        
         if (StringUtils.isEmpty(firstName) && StringUtils.isEmpty(lastName)) {
             throw new IllegalArgumentException(
                     "Either first name or last name must set");
@@ -590,6 +590,8 @@ public class GamePlayerController extends BaseController {
             player.setLastName(lastName);
         }
         if (StringUtils.isNotBlank(email)) {
+            email = StringUtils.trim(email);
+            email = StringUtils.lowerCase(email);
             player.setEmail(email);
         }
         int playerId = playerService.create(player);
