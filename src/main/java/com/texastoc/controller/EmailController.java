@@ -64,7 +64,7 @@ public class EmailController extends BaseController {
     }
 
     @RequestMapping(value = "/mobile/email", method = RequestMethod.POST)
-    public ModelAndView sendRally (
+    public ModelAndView sendToGroup (
             final HttpServletRequest request,
             @RequestParam(value = "subject", required = true) String subject,
             @RequestParam(value = "group", required = true) String group,
@@ -109,11 +109,14 @@ public class EmailController extends BaseController {
 //        }
 //        System.out.println(sb.toString());
 
+        String loggedInUserEmail = getLoggedIn(request);
+        Player fromPlayer = playerService.findByEmail(loggedInUserEmail);
+
         ModelAndView mav = null;
         if (recipients == null) {
             mav = new ModelAndView("mobileemails");
         } else {
-            mailService.sendToGroup(recipients, subject, body);
+            mailService.sendToGroup(fromPlayer, recipients, subject, body);
             mav = new ModelAndView("mobileemails", "sent", true);
         }
         

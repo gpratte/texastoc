@@ -229,7 +229,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendRally(Player host, List<Player> actives, String message, LocalDate gameDate) {
+    public void sendRally(Player fromPlayer, Player host, List<Player> actives, String message, LocalDate gameDate) {
 
         if (!StringUtils.equals("true", sendEmail)) {
             return;
@@ -265,6 +265,15 @@ public class MailServiceImpl implements MailService {
             recipients.append(host.getEmail());
         }
         
+        if (fromPlayer != null && StringUtils.isNotBlank(fromPlayer.getEmail()) && recipients.indexOf(fromPlayer.getEmail()) == -1) {
+            if (addComma) {
+                recipients.append(",");
+            } else {
+                addComma = true;
+            }
+            recipients.append(fromPlayer.getEmail());
+        }
+
         StringBuilder subject = new StringBuilder("Rally! (" + DateConverter.getDateAsString(gameDate) + ")");
 
         StringBuilder sb = new StringBuilder();
@@ -273,6 +282,8 @@ public class MailServiceImpl implements MailService {
         sb.append("To: '" + recipients.toString() + "',");
         sb.append("Subject: '" + subject.toString() + "',");
         sb.append("HtmlBody: '");
+
+        sb.append(fromPlayer.getFullName() + " says:<br><br>");
 
         message = StringUtils.replace(message, "'", "");
         sb.append(message);
@@ -284,7 +295,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendToGroup(List<Player> players, String subject, String message) {
+    public void sendToGroup(Player fromPlayer, List<Player> players, String subject, String message) {
 
         if (!StringUtils.equals("true", sendEmail)) {
             return;
@@ -311,6 +322,15 @@ public class MailServiceImpl implements MailService {
             }
         }
 
+        if (fromPlayer != null && StringUtils.isNotBlank(fromPlayer.getEmail()) && recipients.indexOf(fromPlayer.getEmail()) == -1) {
+            if (addComma) {
+                recipients.append(",");
+            } else {
+                addComma = true;
+            }
+            recipients.append(fromPlayer.getEmail());
+        }
+
         if (subject == null) {
             subject = "Listen up";
         } else {
@@ -324,6 +344,8 @@ public class MailServiceImpl implements MailService {
         sb.append("Subject: '" + subject.toString() + "',");
         sb.append("HtmlBody: '");
 
+        sb.append(fromPlayer.getFullName() + " says:<br><br>");
+        
         message = StringUtils.replace(message, "'", "");
         sb.append(message);
 

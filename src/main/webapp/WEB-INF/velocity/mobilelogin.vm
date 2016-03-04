@@ -39,12 +39,12 @@
 			</tr>
 			<tr>
 				<td colspan="2" align="center">
-					<a href="/toc/mobile/player/forgotPassword">Forgot password</a>
+					<input id="submit" type="submit" value="Log In">
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2" align="center">
-					<input id="submit" type="submit" value="Log In">
+					<a href="/toc/mobile/player/forgotPassword">Forgot password</a>
 				</td>
 			</tr>
 		<table>

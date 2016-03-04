@@ -25,8 +25,8 @@ public interface MailService {
     void sendHostReminder(List<Player> possibleHosts, LocalDate monday, LocalDate friday);
     void sendTransportReminder(Player host, List<Player> possibleTransporters);
     void sendPtcg(Player host, List<Player> ptgcs, LocalDate gameDate);
-    void sendRally(Player host, List<Player> actives, String message, LocalDate gameDate);
-    void sendToGroup(List<Player> recipients, String subject, String message);
+    void sendRally(Player fromPlayer, Player host, List<Player> actives, String message, LocalDate gameDate);
+    void sendToGroup(Player fromPlayer, List<Player> recipients, String subject, String message);
     void sendNewPassword(String email, String password);
 
     String sendEmail(String address);

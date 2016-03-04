@@ -664,11 +664,16 @@ public class GameController extends BaseController {
         Game game = gameService.findById(id);
         if (StringUtils.isNotBlank(body)) {
             List<Player> activePlayers = playerService.findActive();
+
             Player host = null;
             if (game.getHostId() != null) {
                 host = playerService.findById(game.getHostId());
             }
-            mailService.sendRally(host, activePlayers, body, game.getGameDate());
+
+            String loggedInUserEmail = getLoggedIn(request);
+            Player fromPlayer = playerService.findByEmail(loggedInUserEmail);
+
+            mailService.sendRally(fromPlayer, host, activePlayers, body, game.getGameDate());
         }
         
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
