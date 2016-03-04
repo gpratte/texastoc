@@ -109,11 +109,8 @@ public class PlayerController extends BaseController {
         }
         
         currentPassword = StringUtils.trim(currentPassword);
-        currentPassword = StringUtils.lowerCase(currentPassword);
         newPassword = StringUtils.trim(newPassword);
-        newPassword = StringUtils.lowerCase(newPassword);
         confirmNewPassword = StringUtils.trim(confirmNewPassword);
-        confirmNewPassword = StringUtils.lowerCase(confirmNewPassword);
 
         String loggedInUserEmail = getLoggedIn(request);
         if (problems.size() == 0) {
