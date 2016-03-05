@@ -1,6 +1,5 @@
 
-move forgot password under submit button
-When changing round in clock change time to max
+When changing round in clock change time to max (need to rewrite clock/timer to be MVC) 
 
 nginx 
 Season champion out of table into columns of other tables
