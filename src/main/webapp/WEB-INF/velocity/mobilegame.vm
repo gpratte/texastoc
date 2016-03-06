@@ -10,7 +10,7 @@
 	<script src="/toc/resources/js/mobileconfig.js"></script>
 	<script src="/toc/resources/js/jquery.mobile.custom.min.js"></script>
 	<script src="/toc/resources/js/mobilegame_v1_8.js"></script>
-	<script src="/toc/resources/js/mobileclock_v1.3.js"></script>
+	<script src="/toc/resources/js/mobileclock_v1.4.js"></script>
 	<script src="/toc/resources/js/mobileseated.js"></script>
 	<script src="/toc/resources/js/ion.sound.js"></script>
 </head>

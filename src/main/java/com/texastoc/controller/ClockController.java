@@ -33,7 +33,6 @@ public class ClockController extends BaseController {
             return new ModelAndView("login");
         }
         Clock clock = clockService.getClock(gameId);
-        clock.sync();
         return new ModelAndView("mobileclock", "clock", clock);
     }
 
@@ -42,32 +41,49 @@ public class ClockController extends BaseController {
     Clock updateClock(final HttpServletRequest request,
             @RequestParam(value = "gameId", required = false) Integer gameId,
             @RequestParam(value = "activity", required = true) String activity,
-            @RequestParam(value = "round", required = false) String round,
-            @RequestParam(value = "minutes", required = false) Integer minutes,
-            @RequestParam(value = "seconds", required = false) Integer seconds) {
+            @RequestParam(value = "round", required = false) String round) {
 
         if ("play".equals(activity)) {
-            clockService.getClock(gameId).start(round, minutes, seconds);
-            if ("Round 1".equals(round) && 20 == minutes.intValue() &&
-                    0 == seconds.intValue()) {
+            Clock clock = clockService.getClock(gameId);
+            if ("Round 1".equals(clock.getCurrentLevel().getRound()) && 20 == clock.getRemainingMinutes() &&
+                    0 == clock.getRemainingSeconds()) {
                 gameService.recordStartTime(gameId);
             }
+            clock.go();
         } else if ("pause".equals(activity)) {
-            clockService.getClock(gameId).pause();
+            clockService.getClock(gameId).stop();
         } else if ("reset".equals(activity)) {
             clockService.getClock(gameId).reset();;
         } else if ("next".equals(activity)) {
-            clockService.getClock(gameId).goToNextLevel(round);
+            clockService.getClock(gameId).goToNextLevel();
         } else if ("prev".equals(activity)) {
-            clockService.getClock(gameId).goToPreviousLevel(round);
+            clockService.getClock(gameId).goToPreviousLevel();
         } else if ("round".equals(activity)) {
             clockService.getClock(gameId).setRound(round);
+
+        } else if ("downMinutes".equals(activity)) {
+            clockService.getClock(gameId).updateMinute(-1);
+        } else if ("dblDownMinutes".equals(activity)) {
+            clockService.getClock(gameId).updateMinute(-20);
+        } else if ("upMinutes".equals(activity)) {
+            clockService.getClock(gameId).updateMinute(1);
+        } else if ("dblUpMinutes".equals(activity)) {
+            clockService.getClock(gameId).updateMinute(20);
+
+        } else if ("downSeconds".equals(activity)) {
+            clockService.getClock(gameId).updateSecond(-1);
+        } else if ("dblDownSeconds".equals(activity)) {
+            clockService.getClock(gameId).updateSecond(-60);
+        } else if ("upSeconds".equals(activity)) {
+            clockService.getClock(gameId).updateSecond(1);
+        } else if ("dblUpSeconds".equals(activity)) {
+            clockService.getClock(gameId).updateSecond(60);
+        
         } else {
         	logger.warn("unknown activity: " + activity);
         }
 
         Clock clock = clockService.getClock(gameId);
-        clock.sync();
         return clock;
     }
 
@@ -76,7 +92,6 @@ public class ClockController extends BaseController {
     Clock getClockJson(final HttpServletRequest request,
     		@PathVariable("gameId") Integer gameId) {
         Clock clock = clockService.getClock(gameId);
-        clock.sync();
         return clock;
     }
 

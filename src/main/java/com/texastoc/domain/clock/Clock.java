@@ -14,17 +14,17 @@ public interface Clock {
 
     public List<Level> getLevels();
 
-    public void goToNextLevel(String round);
+    public void goToNextLevel();
     
-    public void goToPreviousLevel(String round);
-    
-    public String getMaxRound();
-    
-    public void start(String round, Integer minutes, Integer seconds);
+    public void goToPreviousLevel();
     
     public void setRound(String round);
 
-    public void pause();
+    public String getMaxRound();
+    
+    public void go();
+    
+    public void stop();
     
     public void reset();
 
@@ -32,6 +32,7 @@ public interface Clock {
     public int getRemainingSeconds();
     
     public void setHomeGame(HomeGame homeGame);
-    
-    public void sync();
+
+    public void updateMinute(int value);
+    public void updateSecond(int value);
 }

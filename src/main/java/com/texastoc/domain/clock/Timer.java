@@ -2,26 +2,31 @@ package com.texastoc.domain.clock;
 
 public class Timer extends Thread {
     private long duration;
-    private long staticElapsed;
-    private long runningElapsed;
-    private Clock clock;
+    private long elapsed = 0;
     private boolean stopped = false;
     private boolean paused = false;
     private TimerListener listener;
     
-    public Timer(long duration, long elapsed, TimerListener listener) {
+    public Timer(long duration, TimerListener listener) {
         this.duration = duration;
-        this.staticElapsed = elapsed;
         this.listener = listener;
     }
 
-    public long getElapsed() {
-        return staticElapsed + runningElapsed;
+    public long getDuration() {
+        return duration;
+    }
+
+    public long getRemaining() {
+        return duration - elapsed;
+    }
+    
+    public void setRemaining(long remaining) {
+        elapsed = duration - remaining;
     }
     
     public void run() {
-        long start = System.currentTimeMillis();
-        while((staticElapsed + runningElapsed) < duration && !stopped) {
+        while((elapsed < duration || paused) && !stopped) {
+            long start = System.currentTimeMillis();
             try {
                 Thread.sleep(900L);
             } catch(Exception e) {
@@ -30,7 +35,7 @@ public class Timer extends Thread {
             
             if (!stopped && !paused) {
                 long now = System.currentTimeMillis();
-                runningElapsed = now - start;
+                elapsed += now - start;
             }
         }
         if (!stopped) {

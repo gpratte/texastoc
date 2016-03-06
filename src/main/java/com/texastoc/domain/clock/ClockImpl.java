@@ -3,6 +3,7 @@ package com.texastoc.domain.clock;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.log4j.Logger;
 
 import com.texastoc.common.HomeGame;
@@ -11,7 +12,7 @@ import com.texastoc.service.GameService;
 import com.texastoc.service.mail.MailService;
 
 /**
- * Spring makes this a singleton
+ * POJO
  */
 public class ClockImpl implements Clock, TimerListener {
     
@@ -30,11 +31,8 @@ public class ClockImpl implements Clock, TimerListener {
     private List<Level> levels;
     private List<Level> tocLevels;
     private List<Level> cpplLevels;
-    private boolean running;
-    private int remainingMinutes;
-    private int remainingSeconds;
 
-    private transient Timer timer;
+    private Timer timer;
 
     public ClockImpl(GameService gameService, MailService mailService) {
     	this.gameService = gameService;
@@ -58,45 +56,101 @@ public class ClockImpl implements Clock, TimerListener {
         }
     }
     
-    public void goToNextLevel(String round) {
-        reset();
-        currentLevelIndex = getLevelIndexFromRound(round);
+    public void goToNextLevel() {
         // This last level is a dummy level not to be used, just shown
         if (currentLevelIndex + 2 < levels.size()) {
             ++currentLevelIndex;
         }
-        
-        Level level = this.getCurrentLevel();
-        this.remainingMinutes = level.getDurationMinutes();
-        this.remainingSeconds = 0;
-        
+        if (timer != null) {
+            timer.end();
+            timer = null;
+        }
         sendLevelChange();
     }
     
-    public void goToPreviousLevel(String round) {
-        reset();
-        currentLevelIndex = getLevelIndexFromRound(round);
+    public void goToPreviousLevel() {
         if (currentLevelIndex > 0) {
             --currentLevelIndex;
         }
-
-        Level level = this.getCurrentLevel();
-        this.remainingMinutes = level.getDurationMinutes();
-        this.remainingSeconds = 0;
-        
+        if (timer != null) {
+            timer.end();
+            timer = null;
+        }
         sendLevelChange();
     }
     
 	public void setRound(String round) {
-
         if (round == null) {
             round = "Round 1";
         }
         currentLevelIndex = getLevelIndexFromRound(round);
+        sendLevelChange();
 	}
 
 	public String getMaxRound() {
         return levels.get(levels.size() - 1).getRound();
+    }
+    
+    public void updateMinute(int value) {
+        if (timer == null) {
+            timer = new Timer(getCurrentLevel().getDuration(), this);
+            timer.setPaused(true);
+            timer.start();
+        }
+        int currentMinutes = getRemainingMinutes();
+        if (value < 0) {
+            if (currentMinutes > 0) {
+                currentMinutes += value;
+                if (currentMinutes < 0) {
+                    currentMinutes = 0;
+                }
+                int currentSeconds = getRemainingSeconds();
+                long remainingTime = (long)((currentMinutes * 60 * 1000) + (currentSeconds * 1000));
+                timer.setRemaining(remainingTime);
+            }
+        } else {
+            if (currentMinutes < getCurrentLevel().getDurationMinutes()) {
+                currentMinutes += value;
+                if (currentMinutes > getCurrentLevel().getDurationMinutes()) {
+                    currentMinutes = getCurrentLevel().getDurationMinutes();
+                }
+                int currentSeconds = getRemainingSeconds();
+                if (currentMinutes == getCurrentLevel().getDurationMinutes()) {
+                    currentSeconds = 0;
+                }
+                long remainingTime = (long)((currentMinutes * 60 * 1000) + (currentSeconds * 1000));
+                timer.setRemaining(remainingTime);
+            }
+        }
+    }
+    
+    public void updateSecond(int value) {
+        if (timer == null) {
+            timer = new Timer(getCurrentLevel().getDuration(), this);
+            timer.setPaused(true);
+            timer.start();
+        }
+        int currentSeconds = getRemainingSeconds();
+        int currentMinutes = getRemainingMinutes();
+        if (value < 0) {
+            if (currentSeconds > 0) {
+                currentSeconds += value;
+                if (currentSeconds < 0) {
+                    currentSeconds = 0;
+                }
+                long remainingTime = (long)((currentMinutes * 60 * 1000) + (currentSeconds * 1000));
+                timer.setRemaining(remainingTime);
+            }
+        } else {
+            if (currentSeconds < 59 && currentMinutes < getCurrentLevel().getDurationMinutes()) {
+                currentSeconds += value;
+                if (currentSeconds > 59) {
+                    currentSeconds = 59;
+                }
+                long remainingTime = (long)((currentMinutes * 60 * 1000) + (currentSeconds * 1000));
+                timer.setRemaining(remainingTime);
+            }
+        }
     }
     
 	@Override
@@ -108,36 +162,47 @@ public class ClockImpl implements Clock, TimerListener {
 		}
 	}
 
-	public void start(String round, Integer minutes, Integer seconds) {
-        reset();
+	public void go() {
+	    if (timer == null) {
+	        timer = new Timer(getCurrentLevel().getDuration(), this);
+	        timer.start();
+	    } else {
+	        timer.setPaused(false);
+	    }
+    }
 
-        if (round == null) {
-            round = "Round 1";
+    public void stop() {
+        if (timer != null) {
+            timer.setPaused(true);
         }
-        
-        if (minutes == null) {
-            minutes = 0;
-        } else if (minutes > MINUTES_IN_ROUND) {
-            minutes = MINUTES_IN_ROUND - 1;
-        } else if (minutes == MINUTES_IN_ROUND) {
-            seconds = 0;
+    }
+    
+    public boolean isRunning() {
+        if (timer == null) {
+            return false;
+        } else {
+            return timer != null && !timer.isPaused();
         }
-        
-        if (seconds == null) {
-            seconds = 0;
-        } else if (seconds >= 60) {
-            seconds = 0;
+    }
+    
+    public int getRemainingMinutes() {
+        long millis = 0;
+        if (timer != null) {
+            millis = timer.getRemaining();
+        } else {
+            millis = getCurrentLevel().getDuration();
         }
+        return (int) ((millis / (1000*60)) % 60);
+    }
 
-        currentLevelIndex = getLevelIndexFromRound(round);
-        
-        long remainingMinutesAsMillis = minutes * 60 * 1000l;
-        long remainingSecondsAsMillis = seconds * 1000l;
-        long elapsedMillis = getCurrentLevel().getDuration() - remainingMinutesAsMillis - remainingSecondsAsMillis;
-
-        Level level = getCurrentLevel();
-        timer = new Timer(level.getDuration(), elapsedMillis, this);
-        timer.start();
+    public int getRemainingSeconds() {
+        long millis = 0;
+        if (timer != null) {
+            millis = timer.getRemaining();
+        } else {
+            millis = getCurrentLevel().getDuration();
+        }
+        return (int) ((millis / 1000) % 60);
     }
 
     public void reset() {
@@ -148,52 +213,21 @@ public class ClockImpl implements Clock, TimerListener {
         timer = null;
     }
 
-    public void pause() {
-        if (timer != null) {
-            timer.setPaused(true);
-        }
-    }
-    
-    public boolean isRunning() {
-        return running;
-    }
-    
-    public int getRemainingMinutes() {
-        return remainingMinutes;
-    }
-
-    public int getRemainingSeconds() {
-        return remainingSeconds;
-    }
-
-    public void sync() {
-        running = timer != null && !timer.isPaused();
-
-        long elasped = 0l;
-        if (timer != null) {
-            elasped = timer.getElapsed();
-        }
-
-        long remaining = getCurrentLevel().getDuration() - elasped;
-        if (remaining < 0) {
-            remainingMinutes = 0;
-            remainingSeconds = 0;
-        } else {
-            remainingMinutes = (int)(remaining / 60000f);
-            
-            long remainder = remaining % 60000l;
-            remainingSeconds = (int)(remainder / 1000);
-        }
-    }
-
     // TimerListener 
-    public void finished() {        
-        goToNextLevel(getCurrentLevel().getRound());
-        Level level = getCurrentLevel();
-        start(level.getRound(), level.getDurationMinutes(), 0);
+    public void finished() {
+        goToNextLevel();
+        timer = new Timer(getCurrentLevel().getDuration(), this);
+        timer.start();
+    }
+    
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
     }
 
     private void init() {
+        currentLevelIndex = 0;
+
         tocLevels = new ArrayList<Level>(26);
         levels = tocLevels;
         Level level = new Level("Round 1", LevelType.NORMAL, 25, 50, 0, MILLISECONDS_IN_ROUND, this);
@@ -318,6 +352,7 @@ public class ClockImpl implements Clock, TimerListener {
         cpplLevels.add(level);
         level = new Level("Repeat Round 26", LevelType.NORMAL, 0, 0, 0, MILLISECONDS_IN_ROUND, this);
         cpplLevels.add(level);
+        
     }
 
     private int getLevelIndexFromRound(String round) {

@@ -444,7 +444,6 @@ public class GamePlayerController extends BaseController {
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
         mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(gameId);
-        clock.sync();
         mav.addObject("clock", clock);
         return mav;
     }
@@ -556,7 +555,6 @@ public class GamePlayerController extends BaseController {
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
         mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(game.getId());
-        clock.sync();
         mav.addObject("clock", clock);
         return mav;
     }
@@ -632,7 +630,6 @@ public class GamePlayerController extends BaseController {
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
         mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(game.getId());
-        clock.sync();
         mav.addObject("clock", clock);
         return mav;
     }
@@ -697,7 +694,6 @@ public class GamePlayerController extends BaseController {
         ModelAndView mav = new ModelAndView("mobilegame", "game", game);
         mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(game.getId());
-        clock.sync();
         mav.addObject("clock", clock);
         return mav;
     }
