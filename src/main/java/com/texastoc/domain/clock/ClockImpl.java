@@ -84,6 +84,10 @@ public class ClockImpl implements Clock, TimerListener {
             round = "Round 1";
         }
         currentLevelIndex = getLevelIndexFromRound(round);
+        if (timer != null) {
+            timer.end();
+            timer = null;
+        }
         sendLevelChange();
 	}
 
