@@ -11,6 +11,7 @@ public interface PlayerService {
     List<Player> findPossibleHosts();
     List<Player> findPossibleTransporters();
     List<Player> findPtcg();
+    List<Player> findTocBoard();
     List<Player> findActive();
     Player findById(int id);
     Player findByEmail(String email);

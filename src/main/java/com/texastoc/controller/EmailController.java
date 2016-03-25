@@ -31,6 +31,7 @@ public class EmailController extends BaseController {
     private static final String DGS_AND_TOURNY = "dgstourny";
     private static final String HOSTS = "hosts";
     private static final String TRANSPORT = "transport";
+    private static final String TOC_BOARD = "tocboard";
 
     @Autowired
     private GameService gameService;
@@ -101,6 +102,9 @@ public class EmailController extends BaseController {
         }
         if (StringUtils.equals(group, TRANSPORT)) {
             recipients = playerService.findPossibleTransporters();
+        }
+        if (StringUtils.equals(group, TOC_BOARD)) {
+            recipients = playerService.findTocBoard();
         }
 
 //        StringBuilder sb = new StringBuilder();

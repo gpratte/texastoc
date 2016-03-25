@@ -46,6 +46,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
     
     @Override
+    public List<Player> findTocBoard() {
+        return playerDao.selectTocBoard();
+    }
+    
+    @Override
     @Cacheable(value="playercache")
     public List<Player> findAll() {
         return playerDao.selectAll();

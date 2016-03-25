@@ -389,6 +389,7 @@ public class PlayerController extends BaseController {
             existingPlayer.setPossibleHost(player.isPossibleHost());
             existingPlayer.setTransporter(player.isTransporter());
             existingPlayer.setPtcg(player.isPtcg());
+            existingPlayer.setTocBoard(player.isTocBoard());
             existingPlayer.setActive(player.isActive());
             
             if (StringUtils.equals(player.getCellCarrier(), "#")) {

@@ -113,6 +113,11 @@
 			<td>#springFormSingleSelect("player.ptcg", $yesno)</td>
 		</tr>
 		<tr>
+			<td>TOC Board Member</td>
+			#set($yesno = {"false":"No","true":"Yes"})
+			<td>#springFormSingleSelect("player.tocBoard", $yesno)</td>
+		</tr>
+		<tr>
 			<td colspan="2" align="center">
 				<input id="submit" type="submit" value="Update">
 				<input id="cancel" type="button" value="Cancel"

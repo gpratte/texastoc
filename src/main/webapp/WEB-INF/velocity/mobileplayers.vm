@@ -44,6 +44,7 @@
 			<th>Trans-<br>porter</th>
 			<th>DG</th>
 			<th>Active</th>
+			<th>Board</th>
 		</tr>
 	
 		#foreach($player in $players)
@@ -71,6 +72,7 @@
 				<td class="uline">#if($player.transporter)Yes#end</td>
 				<td class="uline">#if($player.ptcg)Yes#end</td>
 				<td class="uline">#if($player.active)Yes#end</td>
+				<td class="uline">#if($player.tocBoard)Yes#end</td>
 			</tr>
 		#end
 	</table>

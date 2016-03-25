@@ -161,9 +161,7 @@
 				</tr>
 				#end
 				<tr>
-					<td align="right">Notes:</td>
-					<td>&nbsp;&nbsp;</td>
-					<td>$!game.note</td>
+					<td align="left" colspan="3">Notes: $!game.note</td>
 				</tr>
 				#if ($game.totalPotSupplies > 0 || $game.totalAnnualTocSupplies > 0)
 					<tr>

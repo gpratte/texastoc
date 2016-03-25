@@ -63,6 +63,13 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
         return players;
     }
 
+    public List<Player> selectTocBoard() {
+        List<Player> players = this.getJdbcTemplate()
+                .query("select * from player where tocBoard = true order by firstName, lastName",
+                        new PlayerMapper());
+        return players;
+    }
+
     @Override
     public Player selectById(int id) {
         Player player = this.getJdbcTemplate()
@@ -133,7 +140,7 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
             + " lastName=:lastName, phone=:phone, email=:email, "
             + " cellCarrier=:cellCarrier, address=:address, active=:active, "
             + " note=:note, possibleHost=:possibleHost, "
-            + " transporter=:transporter, ptcg=:ptcg where id=:id";
+            + " transporter=:transporter, ptcg=:ptcg, tocBoard=:tocBoard where id=:id";
 
     public void update(final Player player) {
 
@@ -148,6 +155,7 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
         params.addValue("possibleHost", player.isPossibleHost());
         params.addValue("transporter", player.isTransporter());
         params.addValue("ptcg", player.isPtcg());
+        params.addValue("tocBoard", player.isTocBoard());
         params.addValue("note", player.getNote());
         params.addValue("id", player.getId());
         
@@ -223,6 +231,7 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
                 player.setPossibleHost(rs.getBoolean("possibleHost"));
                 player.setTransporter(rs.getBoolean("transporter"));
                 player.setPtcg(rs.getBoolean("ptcg"));
+                player.setTocBoard(rs.getBoolean("tocBoard"));
                 player.setActive(rs.getBoolean("active"));
             } catch (SQLException e) {
                 logger.error(e);
