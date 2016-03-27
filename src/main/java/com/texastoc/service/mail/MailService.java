@@ -26,8 +26,10 @@ public interface MailService {
     void sendTransportReminder(Player host, List<Player> possibleTransporters);
     void sendPtcg(Player host, List<Player> ptgcs, LocalDate gameDate);
     void sendRally(Player fromPlayer, Player host, List<Player> actives, String message, LocalDate gameDate);
+    void sendEviteHasBeenSent(List<Player> core);
     void sendToGroup(Player fromPlayer, List<Player> recipients, String subject, String message);
     void sendNewPassword(String email, String password);
+    boolean isEviteEmailSent(LocalDate gameDate);
 
     String sendEmail(String address);
 }

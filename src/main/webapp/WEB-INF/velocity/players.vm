@@ -27,7 +27,9 @@ border-right:1px solid black;
 			<th>Active</th>
 			<th>Host</th>
 			<th>Transporter</th>
-			<th>PTCG Player</th>
+			<th>PTCG<br>Player</th>
+			<th>Board<br>Member</th>
+			<th>Core</th>
 			<th>Address</th>
 			<th>Note</th>
 		</tr>
@@ -53,6 +55,8 @@ border-right:1px solid black;
 				<td class="uline">#if($player.possibleHost == true)Yes#end</td>
 				<td class="uline">#if($player.transporter == true)Yes#end</td>
 				<td class="uline">#if($player.ptcg == true)Yes#end</td>
+				<td class="uline">#if($player.tocBoard == true)Yes#end</td>
+				<td class="uline">#if($player.core == true)Yes#end</td>
 				<td class="uline">$!player.address</td>
 				#if($player.note && "$player.note" != "")
 					<td class="uline" align="center">

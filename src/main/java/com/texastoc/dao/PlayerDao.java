@@ -15,6 +15,7 @@ public interface PlayerDao {
     List<Player> selectPossibleTransporters();
     List<Player> selectPtcg();
     List<Player> selectTocBoard();
+    List<Player> selectCore();
     List<Player> selectActive();
     void update(Player player);
     void delete(int id);

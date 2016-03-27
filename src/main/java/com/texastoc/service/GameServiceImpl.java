@@ -135,7 +135,6 @@ public class GameServiceImpl implements GameService {
         game.setStartTime(startTime);
         logger.debug("GameServiceImpl recording hardcoded startTime " + game.getStartTime() + " tz " + game.getStartTime().getZone());
 
-
         int id = gameDao.insert(game);
         game = gameDao.selectById(id);
         
@@ -146,6 +145,11 @@ public class GameServiceImpl implements GameService {
         gamePlayer.setPlayerId(host.getId());
         gamePlayer.setEmailOptIn(true);
         gamePlayerDao.insert(gamePlayer);
+
+        if (mailService.isEviteEmailSent(game.getGameDate())) {
+            List<Player> corePlayers = playerDao.selectCore();
+            mailService.sendEviteHasBeenSent(corePlayers);
+        }
         
         gateway.notifyGameChanged(game);
         return id;

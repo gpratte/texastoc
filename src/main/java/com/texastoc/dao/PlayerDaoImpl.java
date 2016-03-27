@@ -63,9 +63,18 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
         return players;
     }
 
+    @Override
     public List<Player> selectTocBoard() {
         List<Player> players = this.getJdbcTemplate()
                 .query("select * from player where tocBoard = true order by firstName, lastName",
+                        new PlayerMapper());
+        return players;
+    }
+
+    @Override
+    public List<Player> selectCore() {
+        List<Player> players = this.getJdbcTemplate()
+                .query("select * from player where core = true order by firstName, lastName",
                         new PlayerMapper());
         return players;
     }
@@ -140,7 +149,8 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
             + " lastName=:lastName, phone=:phone, email=:email, "
             + " cellCarrier=:cellCarrier, address=:address, active=:active, "
             + " note=:note, possibleHost=:possibleHost, "
-            + " transporter=:transporter, ptcg=:ptcg, tocBoard=:tocBoard where id=:id";
+            + " transporter=:transporter, ptcg=:ptcg, tocBoard=:tocBoard, "
+            + " core=:core where id=:id";
 
     public void update(final Player player) {
 
@@ -156,6 +166,7 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
         params.addValue("transporter", player.isTransporter());
         params.addValue("ptcg", player.isPtcg());
         params.addValue("tocBoard", player.isTocBoard());
+        params.addValue("core", player.isCore());
         params.addValue("note", player.getNote());
         params.addValue("id", player.getId());
         
@@ -232,6 +243,7 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
                 player.setTransporter(rs.getBoolean("transporter"));
                 player.setPtcg(rs.getBoolean("ptcg"));
                 player.setTocBoard(rs.getBoolean("tocBoard"));
+                player.setCore(rs.getBoolean("core"));
                 player.setActive(rs.getBoolean("active"));
             } catch (SQLException e) {
                 logger.error(e);

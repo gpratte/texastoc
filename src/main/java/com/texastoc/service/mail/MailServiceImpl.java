@@ -1,8 +1,14 @@
 package com.texastoc.service.mail;
 
 import java.util.List;
+import java.util.Properties;
 
-import org.apache.commons.lang.RandomStringUtils;
+import javax.mail.Folder;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Store;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
@@ -34,6 +40,8 @@ import com.texastoc.util.DateConverter;
 public class MailServiceImpl implements MailService {
 
     static final Logger logger = Logger.getLogger(MailServiceImpl.class);
+    private static final String EVITE = "Evite";
+    private static final String EVITE_SENT = "TOC evite has been sent";
 
     @Autowired
     PlayerDao playerDao;
@@ -77,7 +85,8 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendHostReminder(List<Player> possibleHosts, LocalDate monday, LocalDate friday) {
+    public void sendHostReminder(List<Player> possibleHosts, LocalDate monday,
+            LocalDate friday) {
 
         if (!StringUtils.equals("true", sendEmail)) {
             return;
@@ -86,11 +95,12 @@ public class MailServiceImpl implements MailService {
         if (possibleHosts == null || possibleHosts.size() < 1) {
             return;
         }
-        
+
         StringBuilder recipients = new StringBuilder();
         boolean addComma = false;
         for (Player player : possibleHosts) {
-            if (player.isPossibleHost() && StringUtils.isNotBlank(player.getEmail())) {
+            if (player.isPossibleHost()
+                    && StringUtils.isNotBlank(player.getEmail())) {
                 if (addComma) {
                     recipients.append(",");
                 } else {
@@ -99,7 +109,7 @@ public class MailServiceImpl implements MailService {
                 recipients.append(player.getEmail());
             }
         }
-        
+
         StringBuilder subject = new StringBuilder("Need a host ");
         if (monday != null || friday != null) {
             subject.append("(week of ");
@@ -109,7 +119,7 @@ public class MailServiceImpl implements MailService {
                 subject.append(getMonthDay(monday));
             } else if (friday != null) {
                 subject.append(getMonthDay(friday));
-            } 
+            }
             subject.append(")");
         }
 
@@ -121,7 +131,7 @@ public class MailServiceImpl implements MailService {
         sb.append("HtmlBody: '");
 
         sb.append("Who will host?");
-        
+
         sb.append("'");
         sb.append("}");
 
@@ -129,7 +139,8 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendTransportReminder(Player host, List<Player> possibleTransporters) {
+    public void sendTransportReminder(Player host,
+            List<Player> possibleTransporters) {
 
         if (!StringUtils.equals("true", sendEmail)) {
             return;
@@ -138,11 +149,12 @@ public class MailServiceImpl implements MailService {
         if (possibleTransporters == null || possibleTransporters.size() < 1) {
             return;
         }
-        
+
         StringBuilder recipients = new StringBuilder();
         boolean addComma = false;
         for (Player player : possibleTransporters) {
-            if (player.isTransporter() && StringUtils.isNotBlank(player.getEmail())) {
+            if (player.isTransporter()
+                    && StringUtils.isNotBlank(player.getEmail())) {
                 if (addComma) {
                     recipients.append(",");
                 } else {
@@ -151,7 +163,7 @@ public class MailServiceImpl implements MailService {
                 recipients.append(player.getEmail());
             }
         }
-        
+
         if (host != null && recipients.indexOf(host.getEmail()) == -1) {
             if (addComma) {
                 recipients.append(",");
@@ -160,7 +172,7 @@ public class MailServiceImpl implements MailService {
             }
             recipients.append(host.getEmail());
         }
-        
+
         StringBuilder subject = new StringBuilder("Transport supplies");
 
         StringBuilder sb = new StringBuilder();
@@ -171,7 +183,7 @@ public class MailServiceImpl implements MailService {
         sb.append("HtmlBody: '");
 
         sb.append("The supplies need to be transported. Who will step up?");
-        
+
         sb.append("'");
         sb.append("}");
 
@@ -188,7 +200,7 @@ public class MailServiceImpl implements MailService {
         if (ptcgs == null || ptcgs.size() < 1) {
             return;
         }
-        
+
         StringBuilder recipients = new StringBuilder();
         boolean addComma = false;
         for (Player player : ptcgs) {
@@ -201,8 +213,9 @@ public class MailServiceImpl implements MailService {
                 recipients.append(player.getEmail());
             }
         }
-        
-        if (host != null && StringUtils.isNotBlank(host.getEmail()) && recipients.indexOf(host.getEmail()) == -1) {
+
+        if (host != null && StringUtils.isNotBlank(host.getEmail())
+                && recipients.indexOf(host.getEmail()) == -1) {
             if (addComma) {
                 recipients.append(",");
             } else {
@@ -211,7 +224,8 @@ public class MailServiceImpl implements MailService {
             recipients.append(host.getEmail());
         }
 
-        StringBuilder subject = new StringBuilder("PTCG (" + DateConverter.getDateAsString(gameDate) + ")");
+        StringBuilder subject = new StringBuilder("PTCG ("
+                + DateConverter.getDateAsString(gameDate) + ")");
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -221,7 +235,7 @@ public class MailServiceImpl implements MailService {
         sb.append("HtmlBody: '");
 
         sb.append("Is there a PTCG? If so, who is in?");
-        
+
         sb.append("'");
         sb.append("}");
 
@@ -229,7 +243,8 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendRally(Player fromPlayer, Player host, List<Player> actives, String message, LocalDate gameDate) {
+    public void sendRally(Player fromPlayer, Player host, List<Player> actives,
+            String message, LocalDate gameDate) {
 
         if (!StringUtils.equals("true", sendEmail)) {
             return;
@@ -238,11 +253,11 @@ public class MailServiceImpl implements MailService {
         if (actives == null || actives.size() < 1) {
             return;
         }
-        
+
         if (StringUtils.isBlank(message)) {
             return;
         }
-        
+
         StringBuilder recipients = new StringBuilder();
         boolean addComma = false;
         for (Player player : actives) {
@@ -255,8 +270,9 @@ public class MailServiceImpl implements MailService {
                 recipients.append(player.getEmail());
             }
         }
-        
-        if (host != null && StringUtils.isNotBlank(host.getEmail()) && recipients.indexOf(host.getEmail()) == -1) {
+
+        if (host != null && StringUtils.isNotBlank(host.getEmail())
+                && recipients.indexOf(host.getEmail()) == -1) {
             if (addComma) {
                 recipients.append(",");
             } else {
@@ -264,8 +280,9 @@ public class MailServiceImpl implements MailService {
             }
             recipients.append(host.getEmail());
         }
-        
-        if (fromPlayer != null && StringUtils.isNotBlank(fromPlayer.getEmail()) && recipients.indexOf(fromPlayer.getEmail()) == -1) {
+
+        if (fromPlayer != null && StringUtils.isNotBlank(fromPlayer.getEmail())
+                && recipients.indexOf(fromPlayer.getEmail()) == -1) {
             if (addComma) {
                 recipients.append(",");
             } else {
@@ -274,7 +291,8 @@ public class MailServiceImpl implements MailService {
             recipients.append(fromPlayer.getEmail());
         }
 
-        StringBuilder subject = new StringBuilder("Rally! (" + DateConverter.getDateAsString(gameDate) + ")");
+        StringBuilder subject = new StringBuilder("Rally! ("
+                + DateConverter.getDateAsString(gameDate) + ")");
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
@@ -290,12 +308,44 @@ public class MailServiceImpl implements MailService {
 
         sb.append("'");
         sb.append("}");
-        
+
         send(sb.toString());
     }
 
     @Override
-    public void sendToGroup(Player fromPlayer, List<Player> players, String subject, String message) {
+    public void sendEviteHasBeenSent(List<Player> core) {
+
+//        if (!StringUtils.equals("true", sendEmail)) {
+//            return;
+//        }
+
+        if (core == null || core.size() < 1) {
+            return;
+        }
+
+        for (Player player : core) {
+            if (StringUtils.isNotBlank(player.getPhone()) && StringUtils.isNotBlank(player.getCellCarrier())) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("{");
+                sb.append("From: 'info@texastoc.com',");
+                sb.append("To: '" + player.getPhone() + player.getCellCarrier() + "',");
+                sb.append("Subject: '" + EVITE + "',");
+                sb.append("HtmlBody: '");
+
+                sb.append(EVITE_SENT);
+
+                sb.append("'");
+                sb.append("}");
+
+                send(sb.toString());
+            }
+        }
+
+    }
+
+    @Override
+    public void sendToGroup(Player fromPlayer, List<Player> players,
+            String subject, String message) {
 
         if (!StringUtils.equals("true", sendEmail)) {
             return;
@@ -304,11 +354,11 @@ public class MailServiceImpl implements MailService {
         if (players == null || players.size() < 1) {
             return;
         }
-        
+
         if (StringUtils.isBlank(message)) {
             return;
         }
-        
+
         StringBuilder recipients = new StringBuilder();
         boolean addComma = false;
         for (Player player : players) {
@@ -322,7 +372,8 @@ public class MailServiceImpl implements MailService {
             }
         }
 
-        if (fromPlayer != null && StringUtils.isNotBlank(fromPlayer.getEmail()) && recipients.indexOf(fromPlayer.getEmail()) == -1) {
+        if (fromPlayer != null && StringUtils.isNotBlank(fromPlayer.getEmail())
+                && recipients.indexOf(fromPlayer.getEmail()) == -1) {
             if (addComma) {
                 recipients.append(",");
             } else {
@@ -345,13 +396,13 @@ public class MailServiceImpl implements MailService {
         sb.append("HtmlBody: '");
 
         sb.append(fromPlayer.getFullName() + " says:<br><br>");
-        
+
         message = StringUtils.replace(message, "'", "");
         sb.append(message);
 
         sb.append("'");
         sb.append("}");
-        
+
         send(sb.toString());
     }
 
@@ -361,7 +412,7 @@ public class MailServiceImpl implements MailService {
         if (!StringUtils.equals("true", sendEmail)) {
             return;
         }
-        
+
         StringBuilder subject = new StringBuilder("Password reset");
 
         StringBuilder sb = new StringBuilder();
@@ -375,7 +426,7 @@ public class MailServiceImpl implements MailService {
 
         sb.append("'");
         sb.append("}");
-        
+
         send(sb.toString());
     }
 
@@ -454,8 +505,7 @@ public class MailServiceImpl implements MailService {
             }
 
             if (player.getReBuyIn() != null && player.getReBuyIn() > 0) {
-                sb.append("<td align=\"center\">$" 
-                        + player.getReBuyIn()
+                sb.append("<td align=\"center\">$" + player.getReBuyIn()
                         + "</td>");
             } else {
                 sb.append("<td></td>");
@@ -594,7 +644,7 @@ public class MailServiceImpl implements MailService {
     }
 
     @Override
-    public void sendSeasonSummary(Player player, Game game, Season season, 
+    public void sendSeasonSummary(Player player, Game game, Season season,
             QuarterlySeason qSeason, List<GamePayout> payouts,
             List<PlayerCount> hosts) {
 
@@ -623,8 +673,8 @@ public class MailServiceImpl implements MailService {
                 + "</td>");
         sb.append("   </tr>");
         sb.append("   <tr>");
-        sb.append("    <td colspan=\"2\">Quarterly games " + game.getQuarterlyIndex()
-                + "</td>");
+        sb.append("    <td colspan=\"2\">Quarterly games "
+                + game.getQuarterlyIndex() + "</td>");
         sb.append("   </tr>");
         sb.append("   <tr>");
         sb.append("    <td>Host:</td>");
@@ -717,15 +767,15 @@ public class MailServiceImpl implements MailService {
 
         for (GamePlayer gamePlayer : game.getPlayers()) {
             sb.append("    <tr>");
-            sb.append("     <td align=\"center\">" + 
-                    (gamePlayer.getFinish() == null ? "" : gamePlayer.getFinish())
-                    + "</td>");
+            sb.append("     <td align=\"center\">"
+                    + (gamePlayer.getFinish() == null ? "" : gamePlayer
+                            .getFinish()) + "</td>");
             sb.append("     <td>");
             sb.append(gamePlayer.getPlayer().getFullName());
             sb.append("     </td>");
-            sb.append("     <td align=\"center\">" 
-                    + (gamePlayer.getPoints() == null ? "" : gamePlayer.getPoints())
-                    + "</td>");
+            sb.append("     <td align=\"center\">"
+                    + (gamePlayer.getPoints() == null ? "" : gamePlayer
+                            .getPoints()) + "</td>");
 
             if (gamePlayer.getChop() != null && gamePlayer.getChop() > 0)
                 sb.append("     <td>" + gamePlayer.getChop() + "</td>");
@@ -745,9 +795,8 @@ public class MailServiceImpl implements MailService {
             else
                 sb.append("     <td></td>");
             if (gamePlayer.getReBuyIn() != null && gamePlayer.getReBuyIn() > 0)
-                sb.append("     <td align=\"center\">" 
-                        + gamePlayer.getReBuyIn() 
-                        + "</td>");
+                sb.append("     <td align=\"center\">"
+                        + gamePlayer.getReBuyIn() + "</td>");
             else
                 sb.append("     <td></td>");
             sb.append("    </tr>");
@@ -767,8 +816,8 @@ public class MailServiceImpl implements MailService {
         sb.append("  </td>");
         sb.append(" </tr>");
         sb.append(" <tr>");
-        sb.append("  <td colspan=\"2\">Games played "
-                + game.getAnnualIndex() + "  </td>");
+        sb.append("  <td colspan=\"2\">Games played " + game.getAnnualIndex()
+                + "  </td>");
         sb.append(" </tr>");
         sb.append(" <tr>");
         sb.append("  <td>Start date:</td>");
@@ -880,24 +929,25 @@ public class MailServiceImpl implements MailService {
         sb.append("     <th>Points</th>");
         sb.append("     <th>Entries</th>");
         sb.append("    </tr>");
-        for (QuarterlySeasonPlayer qsPlayer : qSeason.getQuarterlySeasonPlayers()) {
+        for (QuarterlySeasonPlayer qsPlayer : qSeason
+                .getQuarterlySeasonPlayers()) {
             sb.append("    <tr>");
             if (qsPlayer.getPlace() > 0)
-                sb.append("     <td align=\"center\">"
-                        + qsPlayer.getPlace() + "</td>");
+                sb.append("     <td align=\"center\">" + qsPlayer.getPlace()
+                        + "</td>");
             else
                 sb.append("     <td align=\"center\"></td>");
 
             sb.append("     <td align=\"right\">"
                     + qsPlayer.getPlayer().getFullName() + "</td>");
             if (qsPlayer.getPoints() > 0)
-                sb.append("     <td align=\"center\">"
-                        + qsPlayer.getPoints() + "</td>");
+                sb.append("     <td align=\"center\">" + qsPlayer.getPoints()
+                        + "</td>");
             else
                 sb.append("     <td align=\"center\"></td>");
 
-            sb.append("     <td align=\"center\">"
-                    + qsPlayer.getNumEntries() + "</td>");
+            sb.append("     <td align=\"center\">" + qsPlayer.getNumEntries()
+                    + "</td>");
             sb.append("    </tr>");
         }
         sb.append("   </table>");
@@ -933,6 +983,53 @@ public class MailServiceImpl implements MailService {
         sb.append("'");
         sb.append("}");
         send(sb.toString());
+    }
+
+    @Override
+    public boolean isEviteEmailSent(LocalDate gameDate) {
+        Store store = null;
+        Folder inbox = null;
+        try {
+            Properties props = new Properties();
+            props.setProperty("mail.store.protocol", "imaps");
+            Session session = Session.getDefaultInstance(props, null);
+
+            store = session.getStore("imaps");
+            store.connect("imap.googlemail.com", "texastoc@gmail.com",
+                    "suited10Jack");
+
+            inbox = store.getFolder("inbox");
+            inbox.open(Folder.READ_ONLY);
+            int messageCount = inbox.getMessageCount();
+
+            Message[] messages = inbox.getMessages();
+            String gameDateAsString = "" + gameDate.getMonthOfYear() + "/" + gameDate.getDayOfMonth() + "/" + gameDate.getYear();
+            for (int i = 0; i < messages.length; i++) {
+                //System.out.println("Mail Subject:- " + messages[i].getSubject());
+                if (StringUtils.contains(messages[i].getSubject(), gameDateAsString)) {
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (inbox != null) {
+                try {
+                    inbox.close(true);
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }                
+            }
+            if (store != null) {
+                try {
+                    store.close();
+                } catch (MessagingException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return false;
     }
 
     private String send(String emailPayload) {

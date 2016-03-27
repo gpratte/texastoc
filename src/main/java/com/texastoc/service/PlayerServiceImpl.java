@@ -51,6 +51,11 @@ public class PlayerServiceImpl implements PlayerService {
     }
     
     @Override
+    public List<Player> findCore() {
+        return playerDao.selectCore();
+    }
+    
+    @Override
     @Cacheable(value="playercache")
     public List<Player> findAll() {
         return playerDao.selectAll();

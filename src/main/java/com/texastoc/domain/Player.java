@@ -19,6 +19,7 @@ public class Player implements Validator {
     private boolean transporter;
     private boolean ptcg;
     private boolean tocBoard;
+    private boolean core;
     private boolean active;
     
     private transient String fullName;
@@ -102,6 +103,12 @@ public class Player implements Validator {
     }
     public void setTocBoard(boolean tocBoard) {
         this.tocBoard = tocBoard;
+    }
+    public boolean isCore() {
+        return core;
+    }
+    public void setCore(boolean core) {
+        this.core = core;
     }
     public boolean isActive() {
         return active;

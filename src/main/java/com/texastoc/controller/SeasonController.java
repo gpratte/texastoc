@@ -81,6 +81,7 @@ public class SeasonController extends BaseController {
         List<SeasonChampion> champions = seasonService.findAllChampions();
         ModelAndView mav = new ModelAndView("mobileseasons", "seasons", seasons);
         mav.addObject("champions", champions);
+        
         return mav;
     }
 

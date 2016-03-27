@@ -161,6 +161,32 @@
 			#end
 		</tr>
 		<tr>
+			<td>Board Member:</td>
+			#if ($creating || $editing)
+				#set($yesno = {"false":"No","true":"Yes"})
+				<td>#springFormSingleSelect("player.tocBoard", $yesno)</td>
+			#else
+				#if($player.tocBoard)
+					<td>Yes</td>
+				#else
+					<td>No</td>
+				#end
+			#end
+		</tr>
+		<tr>
+			<td>Core:</td>
+			#if ($creating || $editing)
+				#set($yesno = {"false":"No","true":"Yes"})
+				<td>#springFormSingleSelect("player.core", $yesno)</td>
+			#else
+				#if($player.core)
+					<td>Yes</td>
+				#else
+					<td>No</td>
+				#end
+			#end
+		</tr>
+		<tr>
 			<td>Notes:</td>
 			#if ($creating || $editing)
 				<td>#springFormTextarea("player.note")</td>

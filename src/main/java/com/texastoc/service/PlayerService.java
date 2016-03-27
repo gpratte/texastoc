@@ -12,6 +12,7 @@ public interface PlayerService {
     List<Player> findPossibleTransporters();
     List<Player> findPtcg();
     List<Player> findTocBoard();
+    List<Player> findCore();
     List<Player> findActive();
     Player findById(int id);
     Player findByEmail(String email);
