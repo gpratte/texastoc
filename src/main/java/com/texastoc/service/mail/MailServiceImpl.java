@@ -1,13 +1,6 @@
 package com.texastoc.service.mail;
 
 import java.util.List;
-import java.util.Properties;
-
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Store;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.client.HttpResponseException;
@@ -315,9 +308,9 @@ public class MailServiceImpl implements MailService {
     @Override
     public void sendEviteHasBeenSent(List<Player> core) {
 
-//        if (!StringUtils.equals("true", sendEmail)) {
-//            return;
-//        }
+        if (!StringUtils.equals("true", sendEmail)) {
+            return;
+        }
 
         if (core == null || core.size() < 1) {
             return;
@@ -983,53 +976,6 @@ public class MailServiceImpl implements MailService {
         sb.append("'");
         sb.append("}");
         send(sb.toString());
-    }
-
-    @Override
-    public boolean isEviteEmailSent(LocalDate gameDate) {
-        Store store = null;
-        Folder inbox = null;
-        try {
-            Properties props = new Properties();
-            props.setProperty("mail.store.protocol", "imaps");
-            Session session = Session.getDefaultInstance(props, null);
-
-            store = session.getStore("imaps");
-            store.connect("imap.googlemail.com", "texastoc@gmail.com",
-                    "suited10Jack");
-
-            inbox = store.getFolder("inbox");
-            inbox.open(Folder.READ_ONLY);
-            int messageCount = inbox.getMessageCount();
-
-            Message[] messages = inbox.getMessages();
-            String gameDateAsString = "" + gameDate.getMonthOfYear() + "/" + gameDate.getDayOfMonth() + "/" + gameDate.getYear();
-            for (int i = 0; i < messages.length; i++) {
-                //System.out.println("Mail Subject:- " + messages[i].getSubject());
-                if (StringUtils.contains(messages[i].getSubject(), gameDateAsString)) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (inbox != null) {
-                try {
-                    inbox.close(true);
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                }                
-            }
-            if (store != null) {
-                try {
-                    store.close();
-                } catch (MessagingException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        return false;
     }
 
     private String send(String emailPayload) {

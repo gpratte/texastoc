@@ -135,6 +135,8 @@ public class GameServiceImpl implements GameService {
         game.setStartTime(startTime);
         logger.debug("GameServiceImpl recording hardcoded startTime " + game.getStartTime() + " tz " + game.getStartTime().getZone());
 
+        boolean isEvited = game.isEvited();
+        
         int id = gameDao.insert(game);
         game = gameDao.selectById(id);
         
@@ -146,7 +148,7 @@ public class GameServiceImpl implements GameService {
         gamePlayer.setEmailOptIn(true);
         gamePlayerDao.insert(gamePlayer);
 
-        if (mailService.isEviteEmailSent(game.getGameDate())) {
+        if (isEvited) {
             List<Player> corePlayers = playerDao.selectCore();
             mailService.sendEviteHasBeenSent(corePlayers);
         }

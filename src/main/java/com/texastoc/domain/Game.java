@@ -42,7 +42,10 @@ public class Game implements Comparable<Game> {
     private List<GamePayout> payouts;
     private List<Player> bankers;
     private List<Seat> seating;
-    
+
+    // Not persisted
+    private boolean evited;
+
     public int getId() {
         return id;
     }
@@ -164,6 +167,12 @@ public class Game implements Comparable<Game> {
     }
     public void setTransportRequired(boolean transportRequired) {
         this.transportRequired = transportRequired;
+    }
+    public boolean isEvited() {
+        return evited;
+    }
+    public void setEvited(boolean evited) {
+        this.evited = evited;
     }
     public boolean isSeated() {
         return seated;

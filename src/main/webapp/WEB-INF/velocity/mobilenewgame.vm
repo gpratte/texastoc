@@ -74,6 +74,10 @@
 			<td align="right">Supplies Need <br>Transporting:</td>
 			<td>#springFormSingleSelect("game.transportRequired", $yesno)</td>
 		</tr>
+		<tr>
+			<td align="right">Evite Already Sent:</td>
+			<td>#springFormSingleSelect("game.evited", $yesno)</td>
+		</tr>
 	</table>
 	 
 	<input type="submit" value="Start Game"/>

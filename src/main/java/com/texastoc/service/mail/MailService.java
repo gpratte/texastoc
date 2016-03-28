@@ -29,7 +29,6 @@ public interface MailService {
     void sendEviteHasBeenSent(List<Player> core);
     void sendToGroup(Player fromPlayer, List<Player> recipients, String subject, String message);
     void sendNewPassword(String email, String password);
-    boolean isEviteEmailSent(LocalDate gameDate);
 
     String sendEmail(String address);
 }
