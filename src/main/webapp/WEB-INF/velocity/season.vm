@@ -252,7 +252,7 @@
 							<br/>
 						#end
 					#end
-					#if($season.games.size() < 52)
+					#if($season.games.size() < 53)
 						<br/>
 						<input id="cancel" type="button" value="Add Game"
 						onClick="window.location.href='/toc/admin/game/new/$season.id'">

@@ -212,7 +212,7 @@ public class PayoutCalculatorImpl implements PayoutCalculator {
                     if (!inserted) {
                         chips.add(player.getChop());
                         for (GamePayout gamePayout : gamePayouts) {
-                            if (gamePayout.getPlace() == player.getFinish()) {
+                            if (gamePayout != null && player != null && gamePayout.getPlace() == player.getFinish()) {
                                 amounts.add(gamePayout.getAmount());
                                 break;
                             }

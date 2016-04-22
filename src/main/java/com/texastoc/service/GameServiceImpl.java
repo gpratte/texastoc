@@ -571,8 +571,8 @@ public class GameServiceImpl implements GameService {
 
         List<Game> existingGames = findBySeasonId(newGame.getSeasonId(), false);
         
-        if (oldGame == null && existingGames.size() == 52) {
-            throw new CannotCreateGameException("There are already 52 games in the season");
+        if (oldGame == null && existingGames.size() == 53) {
+            throw new CannotCreateGameException("There are already 53 games in the season");
         }
         
         for (Game existingGame : existingGames) {
