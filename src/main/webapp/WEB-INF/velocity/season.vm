@@ -107,6 +107,22 @@
 							<td>$d$!season.annualTocAmount</td>
 						#end
 					</tr>
+					<tr>
+						<td>Quarterly TOC:</td>
+						#if ($creating || $editing)
+							<td>$d#springFormInput("season.quarterlyTocAmount")</td>
+						#else
+							<td>$d$!season.quarterlyTocAmount</td>
+						#end
+					</tr>
+					<tr>
+						<td>Quarterly Payouts:</td>
+						#if ($creating || $editing)
+							<td>$d#springFormInput("season.quarterlyTocPayouts")</td>
+						#else
+							<td>$!season.quarterlyTocPayouts</td>
+						#end
+					</tr>
 					#if($creating == false && $editing == false && $season.useHistoricalData == false)
 						#set ($pot = $season.totalBuyIn + $season.totalReBuy)
 						<tr>

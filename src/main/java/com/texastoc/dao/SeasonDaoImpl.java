@@ -101,7 +101,8 @@ public class SeasonDaoImpl extends BaseJDBCTemplateDao implements SeasonDao {
             + " totalAnnualToc=:totalAnnualToc, lastCalculated=:lastCalculated, "
             + " totalAnnualTocSupplies=:totalAnnualTocSupplies, kittyGameDebit=:kittyGameDebit, "
             + " finalized=:finalized, finalTableImage=:finalTableImage, finalTableThumb=:finalTableThumb, "
-            + " annualTocAmount=:annualTocAmount where id=:id";
+            + " annualTocAmount=:annualTocAmount, quarterlyTocAmount=:quarterlyTocAmount, " 
+            + " quarterlyTocPayouts=:quarterlyTocPayouts where id=:id";
 
     public void update(final Season season) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -116,6 +117,8 @@ public class SeasonDaoImpl extends BaseJDBCTemplateDao implements SeasonDao {
         params.addValue("totalAnnualTocSupplies", season.getTotalAnnualTocSupplies());
         params.addValue("kittyGameDebit", season.getKittyGameDebit());
         params.addValue("annualTocAmount", season.getAnnualTocAmount());
+        params.addValue("quarterlyTocAmount", season.getQuarterlyTocAmount());
+        params.addValue("quarterlyTocPayouts", season.getQuarterlyTocPayouts());
         params.addValue("lastCalculated", season.getLastCalculated());
         params.addValue("finalized", season.isFinalized());
         params.addValue("finalTableImage", season.getFinalTableImage());
@@ -195,6 +198,8 @@ public class SeasonDaoImpl extends BaseJDBCTemplateDao implements SeasonDao {
                 season.setTotalAnnualTocSupplies(rs.getInt("totalAnnualTocSupplies"));
                 season.setKittyGameDebit(rs.getInt("kittyGameDebit"));
                 season.setAnnualTocAmount(rs.getInt("annualTocAmount"));
+                season.setQuarterlyTocAmount(rs.getInt("quarterlyTocAmount"));
+                season.setQuarterlyTocPayouts(rs.getInt("quarterlyTocPayouts"));
                 season.setFinalized(rs.getBoolean("finalized"));
                 season.setFinalTableImage(rs.getString("finalTableImage"));
                 season.setFinalTableThumb(rs.getString("finalTableThumb"));

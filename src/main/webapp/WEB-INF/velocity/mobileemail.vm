@@ -39,7 +39,7 @@
 		<input name="subject" type="text">
 		<br>
 		Enter the email body: 
-		<input name="textbody" id="textbodyid" type="textarea" rows="4" cols="50" style="width:100%; height: 120px;">
+		<textarea name="textbody" id="textarea" style="width:100%; height: 120px;"></textarea>
 		<br>
 		<input type="submit" value="Send">
 		<br/>

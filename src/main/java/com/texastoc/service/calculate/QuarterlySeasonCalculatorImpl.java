@@ -104,7 +104,7 @@ public class QuarterlySeasonCalculatorImpl implements QuarterlySeasonCalculator 
             }
         }
 
-        calculatePayouts(qSeason);
+        calculatePayouts(qSeason, season);
     }
 
 
@@ -144,7 +144,7 @@ public class QuarterlySeasonCalculatorImpl implements QuarterlySeasonCalculator 
             qSeasonPlayer.setPlayer(playerDao.selectById(qSeasonPlayer.getPlayerId()));
         }
         upToQSeason.setQuarterlySeasonPlayers(qSeasonPlayers);
-        calculatePayouts(upToQSeason);
+        calculatePayouts(upToQSeason, season);
         
         return upToQSeason;
     }
@@ -213,21 +213,51 @@ public class QuarterlySeasonCalculatorImpl implements QuarterlySeasonCalculator 
         return qSeasonPlayers;
     }
     
-    private void calculatePayouts(QuarterlySeason qSeason) {
-        long firstPlace = Math.round(qSeason.getTotalQuarterlyToc() * 0.65d);
+    private void calculatePayouts(QuarterlySeason qSeason, Season season) {
+        long firstPlace = 0l;
+        long secondPlace = 0l;
+        long thirdPlace = 0l;
+        if (season.getQuarterlyTocPayouts() == 2) {
+            firstPlace = Math.round(qSeason.getTotalQuarterlyToc() * 0.65d);
+            secondPlace = qSeason.getTotalQuarterlyToc() - firstPlace;
 
-        QuarterlyPayout first = new QuarterlyPayout();
-        first.setQuarterId(qSeason.getId());
-        first.setPlace(1);
-        first.setAmount((int)firstPlace);
-        
-        QuarterlyPayout second = new QuarterlyPayout();
-        second.setQuarterId(qSeason.getId());
-        second.setPlace(2);
-        second.setAmount(qSeason.getTotalQuarterlyToc() - first.getAmount());
-        
-        qSeason.getPayouts().clear();
-        qSeason.getPayouts().add(first);
-        qSeason.getPayouts().add(second);
+            QuarterlyPayout first = new QuarterlyPayout();
+            first.setQuarterId(qSeason.getId());
+            first.setPlace(1);
+            first.setAmount((int)firstPlace);
+
+            QuarterlyPayout second = new QuarterlyPayout();
+            second.setQuarterId(qSeason.getId());
+            second.setPlace(2);
+            second.setAmount((int)secondPlace);
+            
+            qSeason.getPayouts().clear();
+            qSeason.getPayouts().add(first);
+            qSeason.getPayouts().add(second);
+        } else {
+            firstPlace = Math.round(qSeason.getTotalQuarterlyToc() * 0.5d);
+            secondPlace = Math.round(qSeason.getTotalQuarterlyToc() * 0.3d);
+            thirdPlace = qSeason.getTotalQuarterlyToc() - firstPlace - secondPlace;
+
+            QuarterlyPayout first = new QuarterlyPayout();
+            first.setQuarterId(qSeason.getId());
+            first.setPlace(1);
+            first.setAmount((int)firstPlace);
+
+            QuarterlyPayout second = new QuarterlyPayout();
+            second.setQuarterId(qSeason.getId());
+            second.setPlace(2);
+            second.setAmount((int)secondPlace);
+            
+            QuarterlyPayout third = new QuarterlyPayout();
+            second.setQuarterId(qSeason.getId());
+            second.setPlace(3);
+            second.setAmount((int)thirdPlace);
+
+            qSeason.getPayouts().clear();
+            qSeason.getPayouts().add(first);
+            qSeason.getPayouts().add(second);
+            qSeason.getPayouts().add(third);
+        }
     }
 }

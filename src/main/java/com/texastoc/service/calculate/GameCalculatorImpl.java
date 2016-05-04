@@ -39,6 +39,7 @@ public class GameCalculatorImpl implements GameCalculator {
         
         Season season = seasonDao.selectById(game.getSeasonId());
         int annualTocAmount = season.getAnnualTocAmount();
+        int quarterlyTocAmount = season.getQuarterlyTocAmount();
         
         for (GamePlayer gp : game.getPlayers()) {
             if (gp.getBuyIn() == null) {
@@ -70,7 +71,7 @@ public class GameCalculatorImpl implements GameCalculator {
             totalAnnualToc += toc;
 
             if (gp.isQuarterlyTocPlayer()) {
-                totalQuarterlyToc += 5;
+                totalQuarterlyToc += quarterlyTocAmount;
             }
         }
 

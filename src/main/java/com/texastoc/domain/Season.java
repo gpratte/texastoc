@@ -17,6 +17,8 @@ public class Season extends BaseSeason {
     private int totalAnnualTocSupplies;
     private int kittyGameDebit;
     private int annualTocAmount;
+    private int quarterlyTocAmount;
+    private int quarterlyTocPayouts;
     private boolean finalized;
     private String finalTableImage;
     private String finalTableThumb;
@@ -73,6 +75,18 @@ public class Season extends BaseSeason {
     }
     public void setAnnualTocAmount(int annualTocAmount) {
         this.annualTocAmount = annualTocAmount;
+    }
+    public int getQuarterlyTocAmount() {
+        return quarterlyTocAmount;
+    }
+    public void setQuarterlyTocAmount(int quarterlyTocAmount) {
+        this.quarterlyTocAmount = quarterlyTocAmount;
+    }
+    public int getQuarterlyTocPayouts() {
+        return quarterlyTocPayouts;
+    }
+    public void setQuarterlyTocPayouts(int quarterlyTocPayouts) {
+        this.quarterlyTocPayouts = quarterlyTocPayouts;
     }
     public boolean isFinalized() {
         return finalized;
