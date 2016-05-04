@@ -99,6 +99,14 @@
 							<td>$d$!season.kittyGameDebit</td>
 						#end
 					</tr>
+					<tr>
+						<td>Annual TOC:</td>
+						#if ($creating || $editing)
+							<td>$d#springFormInput("season.annualTocAmount")</td>
+						#else
+							<td>$d$!season.annualTocAmount</td>
+						#end
+					</tr>
 					#if($creating == false && $editing == false && $season.useHistoricalData == false)
 						#set ($pot = $season.totalBuyIn + $season.totalReBuy)
 						<tr>

@@ -100,8 +100,8 @@ public class SeasonDaoImpl extends BaseJDBCTemplateDao implements SeasonDao {
             + " note=:note, totalBuyIn=:totalBuyIn, totalReBuy=:totalReBuy, totalPot=:totalPot, "
             + " totalAnnualToc=:totalAnnualToc, lastCalculated=:lastCalculated, "
             + " totalAnnualTocSupplies=:totalAnnualTocSupplies, kittyGameDebit=:kittyGameDebit, "
-            + " finalized=:finalized, finalTableImage=:finalTableImage, finalTableThumb=:finalTableThumb "
-            + " where id=:id";
+            + " finalized=:finalized, finalTableImage=:finalTableImage, finalTableThumb=:finalTableThumb, "
+            + " annualTocAmount=:annualTocAmount where id=:id";
 
     public void update(final Season season) {
         MapSqlParameterSource params = new MapSqlParameterSource();
@@ -115,6 +115,7 @@ public class SeasonDaoImpl extends BaseJDBCTemplateDao implements SeasonDao {
         params.addValue("totalAnnualToc", season.getTotalAnnualToc());
         params.addValue("totalAnnualTocSupplies", season.getTotalAnnualTocSupplies());
         params.addValue("kittyGameDebit", season.getKittyGameDebit());
+        params.addValue("annualTocAmount", season.getAnnualTocAmount());
         params.addValue("lastCalculated", season.getLastCalculated());
         params.addValue("finalized", season.isFinalized());
         params.addValue("finalTableImage", season.getFinalTableImage());
@@ -193,6 +194,7 @@ public class SeasonDaoImpl extends BaseJDBCTemplateDao implements SeasonDao {
                 season.setTotalAnnualToc(rs.getInt("totalAnnualToc"));
                 season.setTotalAnnualTocSupplies(rs.getInt("totalAnnualTocSupplies"));
                 season.setKittyGameDebit(rs.getInt("kittyGameDebit"));
+                season.setAnnualTocAmount(rs.getInt("annualTocAmount"));
                 season.setFinalized(rs.getBoolean("finalized"));
                 season.setFinalTableImage(rs.getString("finalTableImage"));
                 season.setFinalTableThumb(rs.getString("finalTableThumb"));

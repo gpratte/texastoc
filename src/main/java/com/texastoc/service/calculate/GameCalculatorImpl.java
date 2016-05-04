@@ -10,6 +10,7 @@ import com.texastoc.dao.SeasonDao;
 import com.texastoc.dao.SupplyDao;
 import com.texastoc.domain.Game;
 import com.texastoc.domain.GamePlayer;
+import com.texastoc.domain.Season;
 import com.texastoc.domain.Supply;
 
 
@@ -36,6 +37,9 @@ public class GameCalculatorImpl implements GameCalculator {
         int totalPotSupplies = 0;
         int totalAnnualTocSupplies = 0;
         
+        Season season = seasonDao.selectById(game.getSeasonId());
+        int annualTocAmount = season.getAnnualTocAmount();
+        
         for (GamePlayer gp : game.getPlayers()) {
             if (gp.getBuyIn() == null) {
                 continue;
@@ -51,7 +55,7 @@ public class GameCalculatorImpl implements GameCalculator {
 
             int toc = 0;
             if (gp.isAnnualTocPlayer()) {
-                toc = 5;
+                toc = annualTocAmount;
                 
                 if (gp.isAnnualTocPlayer() && gp.getReBuyIn() != null) {
                     if (game.isDoubleBuyIn()) {
