@@ -116,7 +116,9 @@ public class SeasonCalculatorImpl implements SeasonCalculator {
         upToSeason.setUseHistoricalData(season.isUseHistoricalData());
         upToSeason.setFinalTableImage(season.getFinalTableImage());
         upToSeason.setFinalTableThumb(season.getFinalTableThumb());
-
+        upToSeason.setQuarterlyTocAmount(season.getQuarterlyTocAmount());
+        upToSeason.setQuarterlyTocPayouts(season.getQuarterlyTocPayouts());
+        
         ArrayList<SeasonPlayer> seasonPlayers = calculate(season, upToSeason,
                 upToGame);
 

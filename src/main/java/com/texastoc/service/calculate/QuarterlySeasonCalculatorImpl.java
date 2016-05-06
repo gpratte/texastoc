@@ -250,9 +250,9 @@ public class QuarterlySeasonCalculatorImpl implements QuarterlySeasonCalculator 
             second.setAmount((int)secondPlace);
             
             QuarterlyPayout third = new QuarterlyPayout();
-            second.setQuarterId(qSeason.getId());
-            second.setPlace(3);
-            second.setAmount((int)thirdPlace);
+            third.setQuarterId(qSeason.getId());
+            third.setPlace(3);
+            third.setAmount((int)thirdPlace);
 
             qSeason.getPayouts().clear();
             qSeason.getPayouts().add(first);
