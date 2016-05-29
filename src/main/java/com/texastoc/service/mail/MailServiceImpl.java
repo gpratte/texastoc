@@ -979,6 +979,10 @@ public class MailServiceImpl implements MailService {
     }
 
     private String send(String emailPayload) {
+        if (!StringUtils.equals("true", sendEmail)) {
+            return "Not sending because the sendEmail flag is false";
+        }
+
         logger.info("Attemping to send email " + emailPayload);
 
         String response = null;

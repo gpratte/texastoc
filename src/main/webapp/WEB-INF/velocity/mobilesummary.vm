@@ -22,6 +22,9 @@
 					<input type="button" value="<-- Back"
 					onClick="window.location.href='/toc/mobile/seasons'">
 				</td>
+				<td align="center">
+					<img id="texastoc" src="/toc/resources/img/texastoc.50x50.png">
+				</td>
 				<td align="right">
 					<input type="button" value="Logout"
 						onClick="window.location.href='/toc/logout'">

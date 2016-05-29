@@ -67,6 +67,11 @@
 			<br/>
 			<input id="submit" type="submit" value="Assign Seat">
 		#end
+
+		<br/>
+		<br/>
+		<input type="button" id="startOverId" value="Start Over" 
+			onClick="window.location.href='/toc/mobile/game/clear_seating/$game.id'">
 		
 		</form>
 		

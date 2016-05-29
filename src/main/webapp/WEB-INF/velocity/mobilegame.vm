@@ -24,6 +24,11 @@
 				<td align="left">
 					<input type="button" value="<-- Back"
 						onClick="window.location.href='/toc/mobile'">
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				</td>
+				<td align="center">
+					<img id="texastoc" src="/toc/resources/img/texastoc.50x50.png">
 				</td>
 				<td align="right">
 					<input type="button" value="Refresh"
