@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.texastoc.domain.Game;
+import com.texastoc.domain.Player;
 import com.texastoc.domain.Season;
 import com.texastoc.service.GameService;
 import com.texastoc.service.PlayerService;
@@ -52,6 +53,7 @@ public class LoginController extends BaseController {
             ModelAndView mav = new ModelAndView("mobilehome");
             mav.addObject("allowStartNewGame", allowStartNewGame);
             mav.addObject("allowGoToCurrentGame", allowGoToCurrentGame);
+            mav.addObject("readOnly", new Boolean(isReadOnly(request)));
             return mav;
         }
 
@@ -63,6 +65,7 @@ public class LoginController extends BaseController {
             @RequestParam(value="user", required=true) String user,
             @RequestParam(value="password", required=true) String password) {
         request.getSession().removeAttribute(USER_LOGGED_IN);
+        request.getSession().removeAttribute(USER_READ_ONLY);
         
         user = StringUtils.trim(user);
         user = StringUtils.lowerCase(user);
@@ -75,6 +78,10 @@ public class LoginController extends BaseController {
 
         if (playerService.isPasswordValid(user, password)) {
             request.getSession().setAttribute(USER_LOGGED_IN, user);
+            Player player = playerService.findByEmail(user);
+            if (player.isReadOnly()) {
+                request.getSession().setAttribute(USER_READ_ONLY, new Boolean(true));
+            }
             Boolean allowStartNewGame = false;
             Boolean allowGoToCurrentGame = false;
             Season currentSeason = seasonService.getCurrent();
@@ -86,9 +93,11 @@ public class LoginController extends BaseController {
                     allowGoToCurrentGame = true;
                 }
             }
+            
             ModelAndView mav = new ModelAndView("mobilehome");
             mav.addObject("allowStartNewGame", allowStartNewGame);
             mav.addObject("allowGoToCurrentGame", allowGoToCurrentGame);
+            mav.addObject("readOnly", new Boolean(isReadOnly(request)));
             return mav;
         }
         return new ModelAndView("mobilelogin", "oops", "Try again");

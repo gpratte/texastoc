@@ -144,6 +144,7 @@ public class PlayerController extends BaseController {
             mav.addObject("allowStartNewGame", allowStartNewGame);
             mav.addObject("allowGoToCurrentGame", allowGoToCurrentGame);
             mav.addObject("passwordChanged",new Boolean(true));
+            mav.addObject("readOnly", new Boolean(isReadOnly(request)));
             return mav;
         } else {
             ModelAndView mav = new ModelAndView("mobileChangePassword","problems",problems);

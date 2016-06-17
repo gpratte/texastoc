@@ -20,6 +20,7 @@ public class Player implements Validator {
     private boolean ptcg;
     private boolean tocBoard;
     private boolean core;
+    private boolean readOnly;
     private boolean active;
     
     private transient String fullName;
@@ -109,6 +110,12 @@ public class Player implements Validator {
     }
     public void setCore(boolean core) {
         this.core = core;
+    }
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
     }
     public boolean isActive() {
         return active;

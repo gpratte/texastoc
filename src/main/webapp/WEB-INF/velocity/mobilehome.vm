@@ -36,12 +36,13 @@
 				<tr align="center"><td align="center"><h3>Password has been changed</h3></td></tr>
 			<table>
 		#end
+		
 		<ul data-role="listview">
-			#if ($allowGoToCurrentGame)
+			#if ($allowGoToCurrentGame && $readOnly == false)
 			<li>
 				<a href="/toc/mobile/game/current">Current Game</a>
 			</li>
-			#elseif ($allowStartNewGame)
+			#elseif ($allowStartNewGame && $readOnly == false)
 			<li>
 				<a href="/toc/mobile/game/new">Start a New Game</a>
 			</li>
@@ -49,24 +50,30 @@
 			<li>
 				<a href="/toc/mobile/seasons">Look at Results</a>
 			</li>
+			#if ($readOnly == false)
 			<li>
 				<a href="/toc/mobile/emails">Send Email</a>
 			</li>
+			#end
 			<li>
 				<a href="/toc/mobile/numbers">Blinds/Payouts/Points</a>
 			</li>
+			#if ($readOnly == false)
 			<li>
 				<a href="/toc/mobile/players">Players</a>
 			</li>
 			<li>
 				<a href="/toc/mobile/supplies">Supplies</a>
 			</li>
+			#end
 			<li>
 				<a href="/toc/mobile/faq">FAQ</a>
 			</li>
+			#if ($readOnly == false)
 			<li>
 				<a href="/toc/mobile/player/changePassword">Change Password</a>
 			</li>
+			#end
 		</ul>
 	</div>
 </div>

@@ -64,6 +64,7 @@ public class HomeController extends BaseController {
         ModelAndView mav = new ModelAndView("mobilehome");
         mav.addObject("allowStartNewGame", allowStartNewGame);
         mav.addObject("allowGoToCurrentGame", allowGoToCurrentGame);
+        mav.addObject("readOnly", new Boolean(isReadOnly(request)));
         return mav;
     }
     

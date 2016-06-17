@@ -30,6 +30,7 @@ border-right:1px solid black;
 			<th>PTCG<br>Player</th>
 			<th>Board<br>Member</th>
 			<th>Core</th>
+			<th>Read<br>Only</th>
 			<th>Address</th>
 			<th>Note</th>
 		</tr>
@@ -57,6 +58,7 @@ border-right:1px solid black;
 				<td class="uline">#if($player.ptcg == true)Yes#end</td>
 				<td class="uline">#if($player.tocBoard == true)Yes#end</td>
 				<td class="uline">#if($player.core == true)Yes#end</td>
+				<td class="uline">#if($player.readOnly == true)Yes#end</td>
 				<td class="uline">$!player.address</td>
 				#if($player.note && "$player.note" != "")
 					<td class="uline" align="center">

@@ -17,6 +17,7 @@ public abstract class BaseController {
     static final Logger logger = Logger.getLogger(BaseController.class);
     
     protected static final String USER_LOGGED_IN = "userLoggedIn";
+    protected static final String USER_READ_ONLY = "userReadOnly";
     
     protected boolean isLoggedIn(final HttpServletRequest request) {
         return request.getSession().getAttribute(USER_LOGGED_IN) != null;
@@ -40,6 +41,11 @@ public abstract class BaseController {
          }
          return false;
     }
+
+    protected boolean isReadOnly(final HttpServletRequest request) {
+        return request.getSession().getAttribute(USER_READ_ONLY) != null;
+    }
+
 
     @ExceptionHandler(value = MissingServletRequestParameterException.class)
     public ModelAndView handleParameterErrors(final Exception exception, final HttpServletRequest request,

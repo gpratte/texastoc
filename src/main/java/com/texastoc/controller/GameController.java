@@ -276,6 +276,7 @@ public class GameController extends BaseController {
             ModelAndView mav = new ModelAndView("mobilehome");
             mav.addObject("allowStartNewGame", allowStartNewGame);
             mav.addObject("allowGoToCurrentGame", allowGoToCurrentGame);
+            mav.addObject("readOnly", new Boolean(isReadOnly(request)));
             return mav;
         }
     }
@@ -502,6 +503,7 @@ public class GameController extends BaseController {
         Season season = seasonService.findById(game.getSeasonId());
         mav.addObject("season", season);
         mav.addObject("homegames", HomeGame.values());
+        mav.addObject("readOnly", new Boolean(isReadOnly(request)));
         return mav;
     }
 

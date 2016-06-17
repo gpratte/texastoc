@@ -150,7 +150,7 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
             + " cellCarrier=:cellCarrier, address=:address, active=:active, "
             + " note=:note, possibleHost=:possibleHost, "
             + " transporter=:transporter, ptcg=:ptcg, tocBoard=:tocBoard, "
-            + " core=:core where id=:id";
+            + " core=:core, readonly=:readonly where id=:id";
 
     public void update(final Player player) {
 
@@ -167,6 +167,7 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
         params.addValue("ptcg", player.isPtcg());
         params.addValue("tocBoard", player.isTocBoard());
         params.addValue("core", player.isCore());
+        params.addValue("readonly", player.isReadOnly());
         params.addValue("note", player.getNote());
         params.addValue("id", player.getId());
         
@@ -244,6 +245,7 @@ public class PlayerDaoImpl extends BaseJDBCTemplateDao implements PlayerDao {
                 player.setPtcg(rs.getBoolean("ptcg"));
                 player.setTocBoard(rs.getBoolean("tocBoard"));
                 player.setCore(rs.getBoolean("core"));
+                player.setReadOnly(rs.getBoolean("readonly"));
                 player.setActive(rs.getBoolean("active"));
             } catch (SQLException e) {
                 logger.error(e);

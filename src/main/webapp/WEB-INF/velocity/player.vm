@@ -187,6 +187,19 @@
 			#end
 		</tr>
 		<tr>
+			<td>Read Only:</td>
+			#if ($creating || $editing)
+				#set($yesno = {"false":"No","true":"Yes"})
+				<td>#springFormSingleSelect("player.readOnly", $yesno)</td>
+			#else
+				#if($player.readOnly)
+					<td>Yes</td>
+				#else
+					<td>No</td>
+				#end
+			#end
+		</tr>
+		<tr>
 			<td>Notes:</td>
 			#if ($creating || $editing)
 				<td>#springFormTextarea("player.note")</td>
