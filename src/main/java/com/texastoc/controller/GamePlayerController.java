@@ -445,6 +445,7 @@ public class GamePlayerController extends BaseController {
         mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(gameId);
         mav.addObject("clock", clock);
+        mav.addObject("readOnly", new Boolean(isReadOnly(request)));
         return mav;
     }
 
@@ -556,6 +557,7 @@ public class GamePlayerController extends BaseController {
         mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(game.getId());
         mav.addObject("clock", clock);
+        mav.addObject("readOnly", new Boolean(isReadOnly(request)));
         return mav;
     }
 
@@ -631,6 +633,7 @@ public class GamePlayerController extends BaseController {
         mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(game.getId());
         mav.addObject("clock", clock);
+        mav.addObject("readOnly", new Boolean(isReadOnly(request)));
         return mav;
     }
 
@@ -695,6 +698,7 @@ public class GamePlayerController extends BaseController {
         mav.addObject("host", playerService.findById(game.getHostId()));
         Clock clock = clockService.getClock(game.getId());
         mav.addObject("clock", clock);
+        mav.addObject("readOnly", new Boolean(isReadOnly(request)));
         return mav;
     }
 

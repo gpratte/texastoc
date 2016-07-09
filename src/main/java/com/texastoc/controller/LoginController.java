@@ -62,10 +62,15 @@ public class LoginController extends BaseController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ModelAndView processLogin(final HttpServletRequest request,
-            @RequestParam(value="user", required=true) String user,
-            @RequestParam(value="password", required=true) String password) {
+            @RequestParam(value="user", required=false) String user,
+            @RequestParam(value="password", required=false) String password) {
         request.getSession().removeAttribute(USER_LOGGED_IN);
         request.getSession().removeAttribute(USER_READ_ONLY);
+        
+        if (StringUtils.isBlank(user) && StringUtils.isBlank(password)) {
+            user = "guest";
+            password = "guest";
+        }
         
         user = StringUtils.trim(user);
         user = StringUtils.lowerCase(user);

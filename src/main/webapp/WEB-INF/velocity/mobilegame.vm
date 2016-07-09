@@ -49,7 +49,9 @@
           		<li><a href="#one" data-theme="a" data-ajax="false" class="ui-btn-active">Players</a></li>
           		<li><a href="#four" data-theme="a" data-ajax="false">Clock</a></li>
           		<li><a href="#three" data-theme="a" data-ajax="false">Money</a></li>
+				#if ($readOnly == false)
           		<li><a href="#two" data-theme="a" data-ajax="false">Seating</a></li>
+          		#end
         	</ul>
     	</div>
 	    <div id="one" class="ui-content">
@@ -64,7 +66,12 @@
 
 			Date: $game.gameDateText 
 			<span style="border-left: thin solid black;">&nbsp;</span> 
-			Host: $host.fullName
+			Host: 
+			#if ($readOnly == true)
+				$host.obfiscatedFullName
+			#else
+				$host.fullName
+			#end
 			<span style="border-left: thin solid black;">&nbsp;</span> 
 			Double buy in:
 			#if($game.doubleBuyIn) Yes #else No #end
@@ -73,10 +80,19 @@
 
 			#if(!$clock.running && $clock.currentLevel.round == 'Round 1')
 				&nbsp;<span style="border-left: thin solid black;">&nbsp;</span>
-				#if($game.transportRequired) 
-					Transport Supplies Required <a href="/toc/mobile/game/transport/$game.id?required=false">Yes</a>
+				Transport Supplies Required:  
+				#if($game.transportRequired)
+					#if ($readOnly == true)
+					   Yes
+					#else
+					 <a href="/toc/mobile/game/transport/$game.id?required=false">Yes</a>
+					#end 
 				#else
-					Transport Supplies Required <a href="/toc/mobile/game/transport/$game.id?required=true">No</a>
+					#if ($readOnly == true)
+					   No
+					#else
+					<a href="/toc/mobile/game/transport/$game.id?required=true">No</a>
+					#end 
 				#end
 			#end
 			<br/>
@@ -105,7 +121,11 @@
 						#end
 						#if ($player.optIn) <img id="texastoc" src="/toc/resources/img/icon-clock-small.png"> #end
 						#if ($player.emailOptIn) <img id="texastoc" src="/toc/resources/img/icon-small-email.gif"> #end
-						<a href="/toc/mobile/gameplayer/edit/$player.id">$!player.player.firstName<br/>$!player.player.lastName</a>
+						#if ($readOnly == true)
+							$!player.player.obfiscatedFullName
+						#else
+    						<a href="/toc/mobile/gameplayer/edit/$player.id">$!player.player.firstName<br/>$!player.player.lastName</a>
+						#end
 						</td>
 						
 						#if($player.annualTocPlayer)
@@ -145,14 +165,16 @@
 					onClick="window.location.href='/toc/mobile/game/finalize/$game.id'">
 				<br/>
 				#end
+				#if ($readOnly == false)
 				<input type="button" id="addPlayer" value="Add Players"
 					onClick="window.location.href='/toc/mobile/gameplayer/add/$game.id'">
 				<br/>
 				<input type="button" value="Add FNG"
 					onClick="window.location.href='/toc/mobile/gameplayer/addfng/$game.id'">
+				#end
 			#end
 			
-			#if(!$clock.running && $clock.currentLevel.round == 'Round 1')
+			#if(!$clock.running && $clock.currentLevel.round == 'Round 1' && $readOnly == false)
 				<br/>
 				<input type="button" value="Rally"
 					onClick="window.location.href='/toc/mobile/game/rally/$game.id'">
@@ -163,12 +185,14 @@
 			
 	    </div>
 	    <div id="two" class="ui-content">
-	    	#if ($game.seated)
-		    	#parse("mobileseated.vm")
-	    	#elseif ($game.seating)
-		    	#parse("mobilerandomseating.vm")
-	    	#else
-		    	#parse("mobilerandomizeseating.vm")
+	    	#if ($readOnly == false)
+	    		#if ($game.seated)
+		    		#parse("mobileseated.vm")
+	    		#elseif ($game.seating)
+		    		#parse("mobilerandomseating.vm")
+	    		#else
+		    		#parse("mobilerandomizeseating.vm")
+	    		#end
 	    	#end
     	</div>
 	    <div id="three" class="ui-content">
@@ -227,6 +251,7 @@
 					#end
 				</tr>
 				#end
+				#if ($readOnly == false)
 				<tr>
 					<td align="center"
 					#if($chop)
@@ -247,9 +272,12 @@
 							onClick="window.location.href='/toc/mobile/game/removepayout/$game.id'">
 					</td>
 				</tr>
+				#end
 			</table>
+			#if ($readOnly == false)
 				<input type="button" value="Procurement"
 					onClick="window.location.href='/toc/mobile/game/procure/$game.id'">
+			#end
     	</div>
  
  	    <div id="four" class="ui-content">
@@ -260,13 +288,17 @@
 					<td align="center">
 						<h1><span id="currentRound">$clock.currentLevel.round</span></h1>
 						<span id="selectRound">
-							<select id="round" name="round">
-							#foreach($level in $clock.levels)
-								<option value="$level.round"
-								#if ($clock.currentLevel.round == $level.round)
-									selected="selected"
+							#if ($readOnly == true)
+								$clock.currentLevel.round
+							#else
+								<select id="round" name="round">
+								#foreach($level in $clock.levels)
+									<option value="$level.round"
+									#if ($clock.currentLevel.round == $level.round)
+										selected="selected"
+									#end
+									>$level.round</option>
 								#end
-								>$level.round</option>
 							#end
 						</select>
 						</span>
@@ -274,6 +306,7 @@
 					<td align="center">
 						<h1>
 						<table>
+							#if ($readOnly == false)
 							<tr>
 								<td align="center"><img id="dblUpMinutes" src="/toc/resources/img/dblup.arrow.png"></td>
 								<td align="center"></td>
@@ -284,6 +317,7 @@
 								<td align="center"></td>
 								<td align="center"><img id="upSeconds" src="/toc/resources/img/up.arrow.png"></td>
 							</tr>
+							#end
 							<tr>
 								<td align="center">
 									<span id="remainingMinutes">$clock.remainingMinutes</span>
@@ -293,6 +327,7 @@
 									<span id="remainingSeconds">$clock.remainingSeconds</span>
 								</td>
 							</tr>
+							#if ($readOnly == false)
 							<tr>
 								<td align="center"><img id="downMinutes" src="/toc/resources/img/down.arrow.png"></td>
 								<td align="center"></td>
@@ -303,6 +338,7 @@
 								<td align="center"></td>
 								<td align="center"><img id="dblDownSeconds" src="/toc/resources/img/dbldown.arrow.png"></td>
 							</tr>
+							#end
 						</table>
 						</h1>
 					</td>
@@ -333,6 +369,7 @@
 				<tr>
 					<td>&nbsp;</td>
 				</tr>
+				#if ($readOnly == false)
 				<tr>
 					<td align="center">
 						<span id="leftarrow">
@@ -383,6 +420,7 @@
 						&nbsp;
 					</td>
 				</tr>
+				#end
 			</table>
     	</div>
  	</div>

@@ -60,7 +60,11 @@
 			</tr>
 			#foreach ($history in $season.histories)
 			<tr>
-				<td align="right">#if($history.wsop)*#end$history.player.fullName</td>
+				#if ($readOnly == false)
+					<td align="right">#if($history.wsop)*#end$history.player.fullName</td>
+				#else
+					<td align="right">#if($history.wsop)*#end$history.player.obfiscatedFullName</td>
+				#end
 				<td align="center">$history.points</td> 
 				<td align="center">$history.entries</td> 
 			</tr>

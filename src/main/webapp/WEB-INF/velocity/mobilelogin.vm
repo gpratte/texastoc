@@ -47,6 +47,16 @@
 					<a href="/toc/mobile/player/forgotPassword">Forgot password</a>
 				</td>
 			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<br>OR
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<input id="submit" type="submit" value="Continue as Guest">
+				</td>
+			</tr>
 		<table>
 		
 		</form>

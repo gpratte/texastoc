@@ -38,7 +38,7 @@
 		#end
 		
 		<ul data-role="listview">
-			#if ($allowGoToCurrentGame && $readOnly == false)
+			#if ($allowGoToCurrentGame)
 			<li>
 				<a href="/toc/mobile/game/current">Current Game</a>
 			</li>

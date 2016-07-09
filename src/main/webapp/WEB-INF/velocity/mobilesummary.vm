@@ -48,33 +48,28 @@
     	</div>
 	    <div id="one" class="ui-content">
 			#if ($games)
-				<br/>
-				<table width="100%">
-					<tr>
-						<td>Select a game:</td> 
-						<td align="right"><a id="sendemail" href="/toc/mobile/season/email?gameId=$game.id">Send Email</a></td> 
-					</tr>
-				</table>
-				<select id="gameId" name="gameId">
-				#foreach ($existingGame in $games)
-					#if ($game.finalized)
-						<option value="$existingGame.id" 
-						#if ($game.id == $existingGame.id)
-							selected="selected"
+				#if ($readOnly == false)
+					<br/>
+					<table width="100%">
+						<tr>
+							<td>Select a game:</td> 
+							<td align="right"><a id="sendemail" href="/toc/mobile/season/email?gameId=$game.id">Send Email</a></td> 
+						</tr>
+					</table>
+					<select id="gameId" name="gameId">
+					#foreach ($existingGame in $games)
+						#if ($game.finalized)
+							<option value="$existingGame.id" 
+							#if ($game.id == $existingGame.id)
+								selected="selected"
+							#end
+							>$existingGame.gameDateText</option>
 						#end
-						>$existingGame.gameDateText</option>
-					#end
+				#end
 				#end
 				</select>
 			#end
 			<p/>
-			<table>
-				<tr>
-					<td colspan="3" align="center">
-						<h2 align="center">Game</h2>
-					</td>
-				</tr>
-			</table>
 			<table>
 				<tr>
 					<td align="right">Date:</td>
@@ -92,7 +87,11 @@
 					#set ($host = "")
 					#foreach($player in $players)
 						#if ($player.id == $game.hostId)
-							#set($host = $!player.fullName)
+							#if ($readOnly == false)
+								#set($host = $!player.fullName)
+							#else
+								#set($host = $!player.obfiscatedFullName)
+							#end
 							#break
 						#end
 					#end
@@ -163,9 +162,11 @@
 					<td>$hour:$minutes</td>
 				</tr>
 				#end
+				#if ($readOnly == false)
 				<tr>
 					<td align="left" colspan="3">Notes: $!game.note</td>
 				</tr>
+				#end
 				#if ($game.totalPotSupplies > 0 || $game.totalAnnualTocSupplies > 0)
 					<tr>
 						<td align="right"><b>Supplies</b></td>
@@ -237,8 +238,12 @@
 									#break
 								#end
 							#end
-							$!player.player.firstName<br/>$!player.player.lastName
-							#if ($isBanker)($d)#end
+					    	#if ($readOnly == true)
+					    		$!player.player.obfiscatedFullName
+							#else
+								$!player.player.firstName<br/>$!player.player.lastName
+								#if ($isBanker)($d)#end
+							#end
 						</td>
 						<td align="center">$!player.points</td>
 						
@@ -295,16 +300,14 @@
 	    </div>
 
 	    <div id="two" class="ui-content">
+			#if ($readOnly == false)
 			<table width="100%">
 				<tr>
 					<td align="right"><a id="sendemail" href="/toc/mobile/season/email?gameId=$game.id">Send Email</a></td> 
 				</tr>
 			</table>
+			#end
 			<table>
-				<tr>
-					<td colspan="3" align="center"><h2>Season</h2>
-					</td>
-				</tr>
 				<tr>
 					<td align="right">Start date:</td>
 					<td>&nbsp;&nbsp;</td>
@@ -352,11 +355,13 @@
 						<td>$d$!totalAdjustedAnnualToc ($d$!season.totalAnnualToc - $d$!season.totalAnnualTocSupplies)</td>
 					#end
 				</tr>
+				#if ($readOnly == false)
 				<tr>
 					<td align="right">Notes:</td>
 					<td>&nbsp;&nbsp;</td>
 					<td>$!season.note</td>
 				</tr>
+				#end
 			</table>
 		
 			<p/>
@@ -395,7 +400,7 @@
 					#if ($count == 3)
 						<td colspan="5" align="center">
 							<hr/>
-							#if ($season.finalTableImage)
+							#if ($season.finalTableImage && $readOnly == false)
 								<br/>
 								<a href="/toc/resources/img/$season.finalTableImage" title="Click to enlarge">
 									<img id="texastoc" src="/toc/resources/img/$season.finalTableThumb">
@@ -420,9 +425,17 @@
 					<td align="center"></td> 
 					#end
 					#if ($player.forfeit)
-						<td align="right">#if($player.wsop)*#end<strike>$!player.player.firstName $!player.player.lastName</strike></td>
+						#if ($readOnly == false)
+							<td align="right">#if($player.wsop)*#end<strike>$!player.player.firstName $!player.player.lastName</strike></td>
+						#else
+							<td align="right">#if($player.wsop)*#end<strike>$!player.player.obfiscatedFullName</strike></td>
+						#end
 					#else
-						<td align="right">#if($player.wsop)*#end$!player.player.firstName $!player.player.lastName</td>
+						#if ($readOnly == false)
+							<td align="right">#if($player.wsop)*#end$!player.player.firstName $!player.player.lastName</td>
+						#else
+							<td align="right">#if($player.wsop)*#end$!player.player.obfiscatedFullName</td>
+						#end
 					#end
 					#if ($player.points > 0)
 						#if ($player.forfeit)
@@ -445,18 +458,13 @@
     	</div>
 
 	    <div id="three" class="ui-content">
+			#if ($readOnly == false)
 			<table width="100%">
 				<tr>
 					<td align="right"><a id="sendemail" href="/toc/mobile/season/email?gameId=$game.id">Send Email</a></td> 
 				</tr>
 			</table>
-			<table align="center">
-				<tr>
-					<tdalign="center">
-						<h2 align="center">Quarterly Season</h2>
-					</td>
-				</tr>
-			</table>
+			#end
 			#if ($quarterly)
 				<table>
 					<tr>
@@ -539,7 +547,11 @@
 						#else
 						<td align="center"></td> 
 						#end
-						<td align="right">$!player.player.firstName $!player.player.lastName</td>
+						#if ($readOnly == false)
+							<td align="right">$!player.player.firstName $!player.player.lastName</td>
+						#else
+							<td align="right">$!player.player.obfiscatedFullName</td>
+						#end
 						#if ($player.points > 0)
 							<td align="center">$player.points</td> 
 						#else
@@ -553,11 +565,13 @@
     	</div>
 
  	    <div id="four" class="ui-content">
+			#if ($readOnly == false)
 				<table width="100%">
 					<tr>
 						<td align="right"><a id="sendemail" href="/toc/mobile/season/email?gameId=$game.id">Send Email</a></td> 
 					</tr>
 				</table>
+			#end
 			<table>
 				<tr>
 					<td colspan="2" align="center">
@@ -574,7 +588,11 @@
 							</tr>
 							#foreach ($host in $hosts)
 							<tr>
-								<td align="right">$host.player.fullName</td> 
+								#if ($readOnly == false)
+									<td align="right">$host.player.fullName</td> 
+								#else
+									<td align="right">$host.player.obfiscatedFullName</td> 
+								#end
 								<td align="center">$host.count</td> 
 								<td align="center">
 								#if ($host.misc1) $host.misc1 #end
@@ -601,7 +619,11 @@
 							</tr>
 							#foreach ($banker in $bankers)
 							<tr>
-								<td align="right">$banker.player.fullName</td> 
+								#if ($readOnly == false)
+									<td align="right">$banker.player.fullName</td> 
+								#else
+									<td align="right">$banker.player.obfiscatedFullName</td> 
+								#end
 								<td align="center">$banker.count</td> 
 							</tr>
 							#end

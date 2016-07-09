@@ -41,7 +41,11 @@
 				$season.startDateYearText - $season.endDateYearText
 				#foreach ($champ in $champions)
 					#if ($season.id == $champ.seasonId)
-						&nbsp;($!champ.player.firstInitial. $!champ.player.lastName $!champ.points)
+						#if ($readOnly == false)
+							&nbsp;($!champ.player.firstInitial. $!champ.player.lastName $!champ.points)
+						#else
+							&nbsp;($!champ.player.obfiscatedFullName $!champ.points)
+						#end
 					#end
 				#end
 			</a>

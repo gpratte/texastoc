@@ -158,6 +158,17 @@ public class Player implements Validator {
         return fullName;
     }
     
+    public String getObfiscatedFullName() {
+        String name = this.getFullName();
+        if (name != null && name.length() > 3) {
+            StringBuilder sb = new StringBuilder(name);
+            for (int i = 3; i < name.length(); ++i) {
+                sb.setCharAt(i, '*');
+            }
+            name = sb.toString();
+        }
+        return name;
+    }
     /////////////////////
     // Validation stuff
     /////////////////////

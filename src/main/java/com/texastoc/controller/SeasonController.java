@@ -81,6 +81,7 @@ public class SeasonController extends BaseController {
         List<SeasonChampion> champions = seasonService.findAllChampions();
         ModelAndView mav = new ModelAndView("mobileseasons", "seasons", seasons);
         mav.addObject("champions", champions);
+        mav.addObject("readOnly", new Boolean(isReadOnly(request)));
         
         return mav;
     }
@@ -396,6 +397,7 @@ public class SeasonController extends BaseController {
         if (season.isUseHistoricalData()) {
             ModelAndView mav = new ModelAndView("mobilehistoricalsummary");
             mav.addObject("season", season);
+            mav.addObject("readOnly", new Boolean(isReadOnly(request)));
             return mav;
         }
 
@@ -422,6 +424,7 @@ public class SeasonController extends BaseController {
             mav.addObject("players", null);
             mav.addObject("payouts", null);
             mav.addObject("hosts", null);
+            mav.addObject("readOnly", new Boolean(isReadOnly(request)));
             return mav;
         }
     }
@@ -501,6 +504,7 @@ public class SeasonController extends BaseController {
         mav.addObject("payouts", payouts);
         mav.addObject("hosts", hosts);
         mav.addObject("bankers", bankers);
+        mav.addObject("readOnly", new Boolean(isReadOnly(request)));
         return mav;
     }
 
@@ -520,6 +524,7 @@ public class SeasonController extends BaseController {
         mav.addObject("season", season);
         mav.addObject("game", game);
         mav.addObject("topTen", topTen);
+        mav.addObject("readOnly", new Boolean(isReadOnly(request)));
         return mav;
     }
 
