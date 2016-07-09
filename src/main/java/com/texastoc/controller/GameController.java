@@ -484,7 +484,7 @@ public class GameController extends BaseController {
         List<Player> players = playerService.findAll();
         for (Player player : players) {
             if ("Pratte".equals(player.getLastName()) || 
-                    "Lendeckyy".equals(player.getLastName())) {
+                    "Lendecky".equals(player.getLastName())) {
             	if (game.getHomeGame() == HomeGame.TOC) {
                     seasonService.emailSeasonSummary(id, player.getId());
             	}
