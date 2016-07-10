@@ -205,21 +205,36 @@
 					<td>Paid Players: $!game.numPlayers</td>
 				</tr>
 				<tr>
-					<td>Money Collected: $d$all</td>
+					#if ($readOnly == false)
+						<td>Money Collected: $d$all</td>
+					#else
+						<td>Money Collected: $d$d$d</td>
+					#end
 				</tr>
 				<tr>
-					<td>Prize Pot: $d$pot</td>
+					#if ($readOnly == false)
+						<td>Prize Pot: $d$pot</td>
+					#else
+						<td>Prize Pot: $d$d$d</td>
+					#end
 				</tr>
 				<tr>
-					<td>TOC: $d$toc</td>
+					#if ($readOnly == false)
+						<td>TOC: $d$toc</td>
+					#else
+						<td>TOC: $d$d$d</td>
+					#end
 				</tr>
-				<tr>
-					<td>Supply Kitty: $d$game.kittyDebit</td>
-				</tr>
-				#if ($supplies > 0)
+				
+				#if ($readOnly == false)
 					<tr>
-						<td>Supplies: $d$supplies</td>
+						<td>Supply Kitty: $d$game.kittyDebit</td>
 					</tr>
+					#if ($supplies > 0)
+						<tr>
+							<td>Supplies: $d$supplies</td>
+						</tr>
+					#end
 				#end
 			</table>
 			<br/>
@@ -243,11 +258,21 @@
 				<tr>
 					<td align="center">$payout.place</td>
 					#if($chop && $payout.chopAmount)
-						<td align="center"><strike>$d$payout.amount</strike></td>
-						<td align="center">$d$payout.chopAmount</td>
-						<td align="center">$payout.chopPercent</td>
+						#if ($readOnly == false)
+							<td align="center"><strike>$d$payout.amount</strike></td>
+							<td align="center">$d$payout.chopAmount</td>
+							<td align="center">$payout.chopPercent</td>
+						#else
+							<td align="center"><strike>$d$d$d</strike></td>
+							<td align="center">$d$d$d</td>
+							<td align="center">$payout.chopPercent</td>
+						#end
 					#else
-						<td align="center">$d$payout.amount</td>
+						#if ($readOnly == false)
+							<td align="center">$d$payout.amount</td>
+						#else
+							<td align="center">$d$d$d</td>
+						#end
 					#end
 				</tr>
 				#end

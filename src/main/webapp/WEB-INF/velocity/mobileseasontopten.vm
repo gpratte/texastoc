@@ -204,10 +204,11 @@
 					<tr>
 						#if ($readOnly == false)
 							<td>$playerCount.player.fullName</td> 
+							<td align="center">$d$playerCount.count</td> 
 						#else
 							<td>$playerCount.player.obfiscatedFullName</td> 
+							<td align="center">$d$d$d</td> 
 						#end
-						<td align="center">$d$playerCount.count</td> 
 					</tr>
 					#end
 				</table>
@@ -239,10 +240,11 @@
 					<tr>
 						#if ($readOnly == false)
 							<td>$playerCount.player.fullName</td> 
+							<td align="center">$d$playerCount.count</td> 
 						#else
 							<td>$playerCount.player.obfiscatedFullName</td> 
+							<td align="center">$d$d$d</td> 
 						#end
-						<td align="center">$d$playerCount.count</td> 
 					</tr>
 					#end
 				</table>
@@ -277,10 +279,11 @@
 					<tr>
 						#if ($readOnly == false)
 							<td>$playerCount.player.fullName</td> 
+							<td align="center">$d$playerCount.count</td> 
 						#else
 							<td>$playerCount.player.obfiscatedFullName</td> 
+							<td align="center">$d$d$d</td> 
 						#end
-						<td align="center">$d$playerCount.count</td> 
 						<td align="center">$playerCount.count2</td> 
 					</tr>
 					#end

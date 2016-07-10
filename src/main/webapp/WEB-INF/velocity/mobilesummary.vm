@@ -129,24 +129,40 @@
 				<tr>
 					<td align="right">Total buy in:</td>
 					<td>&nbsp;&nbsp;</td>
-					<td>$d$!game.totalBuyIn</td>
+					#if ($readOnly == false)
+						<td>$d$!game.totalBuyIn</td>
+					#else
+						<td>$d$d$d</td>
+					#end
 				</tr>
 				<tr>
 					<td align="right">Total Re-buy/Add-on:</td>
 					<td>&nbsp;&nbsp;</td>
-					<td>$d$!game.totalReBuy</td>
+					#if ($readOnly == false)
+						<td>$d$!game.totalReBuy</td>
+					#else
+						<td>$d$d$d</td>
+					#end
 				</tr>
 				<tr>
 					<td align="right">Total Annual TOC:</td>
 					<td>&nbsp;&nbsp;</td>
-					<td>$d$!game.totalAnnualToc</td>
+					#if ($readOnly == false)
+						<td>$d$!game.totalAnnualToc</td>
+					#else
+						<td>$d$d$d</td>
+					#end
 				</tr>
 				<tr>
 					<td align="right">Total Quarterly TOC:</td>
 					<td>&nbsp;&nbsp;</td>
-					<td>$d$!game.totalQuarterlyToc</td>
+					#if ($readOnly == false)
+						<td>$d$!game.totalQuarterlyToc</td>
+					#else
+						<td>$d$d$d</td>
+					#end
 				</tr>
-				#if ($game.kittyDebit > 0)
+				#if ($game.kittyDebit > 0 && $readOnly == false)
 				<tr>
 					<td align="right">Kitty:</td>
 					<td>&nbsp;&nbsp;</td>
@@ -204,9 +220,17 @@
 				<tr>
 					<td align="center">$payout.place</td>
 					<td>#if($payout.chopAmount) 
-							$d$payout.chopAmount
+							#if ($readOnly == false)
+								$d$payout.chopAmount
+							#else
+								$d$d$d
+							#end
 						#else
-							$d$payout.amount
+							#if ($readOnly == false)
+								$d$payout.amount
+							#else
+								$d$d$d
+							#end
 						#end
 					</td>
 				</tr>
@@ -331,14 +355,22 @@
 				<tr>
 					<td align="right">Total buy in:</td>
 					<td>&nbsp;&nbsp;</td>
-					<td>$d$!season.totalBuyIn</td>
+					#if ($readOnly == false)
+						<td>$d$!season.totalBuyIn</td>
+					#else
+						<td>$d$d$d</td>
+					#end
 				</tr>
 				<tr>
 					<td align="right">Total rebuy/add on:</td>
 					<td>&nbsp;&nbsp;</td>
-					<td>$d$!season.totalReBuy</td>
+					#if ($readOnly == false)
+						<td>$d$!season.totalReBuy</td>
+					#else
+						<td>$d$d$d</td>
+					#end
 				</tr>
-				#if ($season.totalAnnualTocSupplies > 0)
+				#if ($season.totalAnnualTocSupplies > 0 && $readOnly == false)
 				<tr>
 					<td align="right">Total Supplies (from TOC):</td>
 					<td>&nbsp;&nbsp;</td>
@@ -348,11 +380,15 @@
 				<tr>
 					<td align="right">Total Annual TOC:</td>
 					<td>&nbsp;&nbsp;</td>
-					#if ($season.totalAnnualTocSupplies == 0)
-						<td>$d$!season.totalAnnualToc</td>
+					#if ($readOnly == false)
+						#if ($season.totalAnnualTocSupplies == 0)
+							<td>$d$!season.totalAnnualToc</td>
+						#else
+							#set ($totalAdjustedAnnualToc = $season.totalAnnualToc - $season.totalAnnualTocSupplies)
+							<td>$d$!totalAdjustedAnnualToc ($d$!season.totalAnnualToc - $d$!season.totalAnnualTocSupplies)</td>
+						#end
 					#else
-						#set ($totalAdjustedAnnualToc = $season.totalAnnualToc - $season.totalAnnualTocSupplies)
-						<td>$d$!totalAdjustedAnnualToc ($d$!season.totalAnnualToc - $d$!season.totalAnnualTocSupplies)</td>
+						<td>$d$d$d</td>
 					#end
 				</tr>
 				#if ($readOnly == false)
@@ -376,7 +412,11 @@
 					<tr>
 						<td align="center">$payout.place</td>
 						<td>&nbsp;&nbsp;</td>
-						<td>$d$payout.amount</td>
+						#if ($readOnly == false)
+							<td>$d$payout.amount</td>
+						#else
+							<td>$d$d$d</td>
+						#end
 					</tr>
 					#end
 				#end
@@ -495,34 +535,58 @@
 					<tr>
 						<td align="right">Total Quarterly TOC:</td>
 						<td>&nbsp;&nbsp;</td>
-						<td>$d$!quarterly.totalQuarterlyToc</td>
+						#if ($readOnly == false)
+							<td>$d$!quarterly.totalQuarterlyToc</td>
+						#else
+							<td>$d$d$d</td>
+						#end
 					</tr>
 					#if ($season.quarterlyTocPayouts == 2)
 					<tr>
 						<td align="right">1st Place Payout (65%):</td>
 						<td>&nbsp;&nbsp;</td>
-						<td>$d$!quarterly.payouts[0].amount</td>
+						#if ($readOnly == false)
+							<td>$d$!quarterly.payouts[0].amount</td>
+						#else
+							<td>$d$d$d</td>
+						#end
 					</tr>
 					<tr>
 						<td align="right">2nd Place Payout (35%):</td>
 						<td>&nbsp;&nbsp;</td>
-						<td>$d$!quarterly.payouts[1].amount</td>
+						#if ($readOnly == false)
+							<td>$d$!quarterly.payouts[1].amount</td>
+						#else
+							<td>$d$d$d</td>
+						#end
 					</tr>
 					#else
 					<tr>
 						<td align="right">1st Place Payout (50%):</td>
 						<td>&nbsp;&nbsp;</td>
-						<td>$d$!quarterly.payouts[0].amount</td>
+						#if ($readOnly == false)
+							<td>$d$!quarterly.payouts[0].amount</td>
+						#else
+							<td>$d$d$d</td>
+						#end
 					</tr>
 					<tr>
 						<td align="right">2nd Place Payout (30%):</td>
 						<td>&nbsp;&nbsp;</td>
-						<td>$d$!quarterly.payouts[1].amount</td>
+						#if ($readOnly == false)
+							<td>$d$!quarterly.payouts[1].amount</td>
+						#else
+							<td>$d$d$d</td>
+						#end
 					</tr>
 					<tr>
 						<td align="right">3rd Place Payout (20%):</td>
 						<td>&nbsp;&nbsp;</td>
-						<td>$d$!quarterly.payouts[2].amount</td>
+						#if ($readOnly == false)
+							<td>$d$!quarterly.payouts[2].amount</td>
+						#else
+							<td>$d$d$d</td>
+						#end
 					</tr>
 					#end
 					<tr>
