@@ -26,3 +26,6 @@ Instead of iterating on this project to add business rules to allow for defining
 
 Visit https://www.texastoc.com and Continue as Guest to see some of the features in read only mode. Names and dollar amounts have been obfuscated.
 
+# LICENSE
+Code is licensed under a unlimited license. See the LICENSE file for details.
+
