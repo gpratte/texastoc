@@ -48,24 +48,22 @@
     	</div>
 	    <div id="one" class="ui-content">
 			#if ($games)
-				#if ($readOnly == false)
-					<br/>
-					<table width="100%">
-						<tr>
-							<td>Select a game:</td> 
-							<td align="right"><a id="sendemail" href="/toc/mobile/season/email?gameId=$game.id">Send Email</a></td> 
-						</tr>
-					</table>
-					<select id="gameId" name="gameId">
-					#foreach ($existingGame in $games)
-						#if ($game.finalized)
-							<option value="$existingGame.id" 
-							#if ($game.id == $existingGame.id)
-								selected="selected"
-							#end
-							>$existingGame.gameDateText</option>
+				<br/>
+				<table width="100%">
+					<tr>
+						<td>Select a game:</td> 
+						<td align="right"><a id="sendemail" href="/toc/mobile/season/email?gameId=$game.id">Send Email</a></td> 
+					</tr>
+				</table>
+				<select id="gameId" name="gameId">
+				#foreach ($existingGame in $games)
+					#if ($game.finalized)
+						<option value="$existingGame.id" 
+						#if ($game.id == $existingGame.id)
+							selected="selected"
 						#end
-				#end
+						>$existingGame.gameDateText</option>
+					#end
 				#end
 				</select>
 			#end
