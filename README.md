@@ -24,7 +24,7 @@ The mobile application also supports viewing past results with
 
 Instead of iterating on this project to add business rules to allow for defining different point systems, buy in, clock round, etc a new github project "housetourney" will be used. 
 
-Visit https://www.texastoc.com and Continue as Guest to see some of the features in read only mode. Names and dollar amounts have been obfuscated (for obvious reasons).
+Visit https://www.texastoc.com and Continue as Guest to see some of the features in read only mode. Names and dollar amounts have been obfuscated.
 
 # LICENSE
 Code is licensed under a unlimited license. See the LICENSE file for details.
