@@ -50,14 +50,7 @@ public class HostReminderScheduler {
             if (!found) {
                 LocalDate monday = getMonday();
                 LocalDate friday = getFriday();
-
-                List<Player> possibleHosts = null;
-                if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
-                    possibleHosts = playerService.findPossibleHosts();
-                } else {
-                    possibleHosts = playerService.findActive();
-                }
-                
+                List<Player> possibleHosts = playerService.findActive();
                 mailService.sendHostReminder(possibleHosts, monday, friday);
             }
         }
