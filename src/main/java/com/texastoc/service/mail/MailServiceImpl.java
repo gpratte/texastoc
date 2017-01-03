@@ -89,12 +89,11 @@ public class MailServiceImpl implements MailService {
             return;
         }
 
-        logger.info("sendHostReminder possibleHosts " + possibleHosts);
+        //logger.info("sendHostReminder possibleHosts " + possibleHosts);
         StringBuilder recipients = new StringBuilder();
         boolean addComma = false;
         for (Player player : possibleHosts) {
-            if (player.isPossibleHost()
-                    && StringUtils.isNotBlank(player.getEmail())) {
+            if (StringUtils.isNotBlank(player.getEmail())) {
                 if (addComma) {
                     recipients.append(",");
                 } else {
