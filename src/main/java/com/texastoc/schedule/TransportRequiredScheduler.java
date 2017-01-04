@@ -49,16 +49,7 @@ public class TransportRequiredScheduler {
                 host = playerService.findById(hostId);
             }
             
-            List<Player> possibleTransporters = null;
-            GregorianCalendar cal = new GregorianCalendar();
-            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY || 
-                    cal.get(Calendar.DAY_OF_WEEK) == Calendar.WEDNESDAY || 
-                    cal.get(Calendar.DAY_OF_WEEK) == Calendar.THURSDAY) {
-                possibleTransporters = playerService.findActive();
-            } else {
-                possibleTransporters = playerService.findPossibleTransporters();
-            }
-            
+            List<Player> possibleTransporters = playerService.findActive();
             mailService.sendTransportReminder(host, possibleTransporters);
         }
     }

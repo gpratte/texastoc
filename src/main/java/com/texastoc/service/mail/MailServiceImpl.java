@@ -146,8 +146,7 @@ public class MailServiceImpl implements MailService {
         StringBuilder recipients = new StringBuilder();
         boolean addComma = false;
         for (Player player : possibleTransporters) {
-            if (player.isTransporter()
-                    && StringUtils.isNotBlank(player.getEmail())) {
+            if (StringUtils.isNotBlank(player.getEmail())) {
                 if (addComma) {
                     recipients.append(",");
                 } else {
