@@ -72,8 +72,8 @@ public class GamePlayerController extends BaseController {
                 mav.addObject("buyIn", new Integer(60));
                 mav.addObject("reBuy", new Integer(40));
             } else {
-                mav.addObject("buyIn", new Integer(30));
-                mav.addObject("reBuy", new Integer(20));
+                mav.addObject("buyIn", new Integer(40));
+                mav.addObject("reBuy", new Integer(40));
             }
         } else {
             mav.addObject("buyIn", new Integer(20));
@@ -101,8 +101,8 @@ public class GamePlayerController extends BaseController {
                 mav.addObject("buyIn", new Integer(60));
                 mav.addObject("reBuy", new Integer(40));
             } else {
-                mav.addObject("buyIn", new Integer(30));
-                mav.addObject("reBuy", new Integer(20));
+                mav.addObject("buyIn", new Integer(40));
+                mav.addObject("reBuy", new Integer(40));
             }
         } else {
             mav.addObject("buyIn", new Integer(20));
@@ -266,8 +266,8 @@ public class GamePlayerController extends BaseController {
                     mav.addObject("buyIn", new Integer(60));
                     mav.addObject("reBuy", new Integer(40));
                 } else {
-                    mav.addObject("buyIn", new Integer(30));
-                    mav.addObject("reBuy", new Integer(20));
+                    mav.addObject("buyIn", new Integer(40));
+                    mav.addObject("reBuy", new Integer(40));
                 }
             } else {
                 mav.addObject("buyIn", new Integer(20));
@@ -309,8 +309,8 @@ public class GamePlayerController extends BaseController {
                 mav.addObject("buyIn", new Integer(60));
                 mav.addObject("reBuy", new Integer(40));
             } else {
-                mav.addObject("buyIn", new Integer(30));
-                mav.addObject("reBuy", new Integer(20));
+                mav.addObject("buyIn", new Integer(40));
+                mav.addObject("reBuy", new Integer(40));
             }
         } else {
             mav.addObject("buyIn", new Integer(20));
@@ -371,8 +371,8 @@ public class GamePlayerController extends BaseController {
                 mav.addObject("buyIn", new Integer(60));
                 mav.addObject("reBuy", new Integer(40));
             } else {
-                mav.addObject("buyIn", new Integer(30));
-                mav.addObject("reBuy", new Integer(20));
+                mav.addObject("buyIn", new Integer(40));
+                mav.addObject("reBuy", new Integer(40));
             }
         } else {
             mav.addObject("buyIn", new Integer(20));
@@ -430,7 +430,7 @@ public class GamePlayerController extends BaseController {
                     if (game.isDoubleBuyIn()) {
                         gamePlayer.setBuyIn(60);
                     } else {
-                        gamePlayer.setBuyIn(30);
+                        gamePlayer.setBuyIn(40);
                     }
                 } else {
                     gamePlayer.setBuyIn(20);
@@ -507,7 +507,7 @@ public class GamePlayerController extends BaseController {
                 if (game.isDoubleBuyIn()) {
                     gamePlayer.setBuyIn(60);
                 } else {
-                    gamePlayer.setBuyIn(30);
+                    gamePlayer.setBuyIn(40);
                 }
             } else {
                 gamePlayer.setBuyIn(20);
@@ -520,7 +520,7 @@ public class GamePlayerController extends BaseController {
             if (game.isDoubleBuyIn()) {
                 gamePlayer.setReBuyIn(40);
             } else {
-                gamePlayer.setReBuyIn(20);
+                gamePlayer.setReBuyIn(40);
             }
         } else {
             gamePlayer.setReBuyIn(null);
@@ -617,7 +617,7 @@ public class GamePlayerController extends BaseController {
                 if (game.isDoubleBuyIn()) {
                     gamePlayer.setBuyIn(60);
                 } else {
-                    gamePlayer.setBuyIn(30);
+                    gamePlayer.setBuyIn(40);
                 }
             } else {
                 gamePlayer.setBuyIn(20);
@@ -673,8 +673,8 @@ public class GamePlayerController extends BaseController {
                 mav.addObject("buyIn", new Integer(60));
                 mav.addObject("reBuy", new Integer(40));
             } else {
-                mav.addObject("buyIn", new Integer(30));
-                mav.addObject("reBuy", new Integer(20));
+                mav.addObject("buyIn", new Integer(40));
+                mav.addObject("reBuy", new Integer(40));
             }
         } else {
             mav.addObject("buyIn", new Integer(20));
