@@ -63,8 +63,8 @@ public class GameCalculatorImpl implements GameCalculator {
                         toc += 15;
                         totalReBuy -= 15;
                     } else {
-                        toc += 10;
-                        totalReBuy -= 10;
+                        toc += 20;
+                        totalReBuy -= 20;
                     }
                 }
             }
